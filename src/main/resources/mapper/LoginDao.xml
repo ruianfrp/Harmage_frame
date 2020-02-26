@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.LoginInfoDao">
+
+    <select id="adminLogin" resultType="com.harmonycloud.view.AdminLoginView">
+        select account,fk_employee_gh,password from admin where account=#{account}
+    </select>
+
+    <select id="selectUserAuthority" resultType="java.lang.String">
+        select GROUP_CONCAT(authority_value SEPARATOR ',') as authority_value from user left join authority on user.user_authority_id=authority.id where fk_employee_gh=#{employeeGh}
+    </select>
+
+    <select id="selectNameByGh" resultType="java.lang.String">
+        select employee_name from employee where employee_gh=#{employeeGh}
+    </select>
+    
+    <select id="selectApplyWait" resultType="java.lang.Integer">
+        select count(*) from member_apply where member_application_status="待审批"
+    </select>
+    
+    <select id="selectLeaveWait" resultType="java.lang.Integer">
+        SELECT count(*) FROM member_leave where member_leave_status="待审批";
+    </select>
+    
+    <select id="selectProjectEndWait" resultType="java.lang.Integer">
+        SELECT count(*) FROM proj_end_apply where end_apply_status="待审批";
+    </select>
+    
+    <select id="selectApplicantAgreeWait" resultType="java.lang.Integer">
+        select count(distinct ma.id) as applicant_agree from member_apply_agree as maa left join member_apply as ma on
+        ma.id=maa.member_apply_id where maa.fk_employee_gh=#{employeeGh} and maa.agree_type=1 and maa.is_agree=0 and ma.member_application_status="审批通过"
+    </select>
+
+    <select id="selectOwnerAgreeWait" resultType="java.lang.Integer">
+        select count(distinct ma.id) as owner_agree from member_apply_agree as maa left join member_apply as ma on
+        ma.id=maa.member_apply_id where maa.fk_employee_gh=#{employeeGh} and maa.agree_type=2 and maa.is_agree=0 and ma.member_application_status="审批通过"
+    </select>
+
+    <insert id="insertAdmin">
+        insert into admin value("admin","admin",#{password})
+    </insert>
+</mapper>

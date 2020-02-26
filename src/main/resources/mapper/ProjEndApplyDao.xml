@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.ProjEndApplyDao">
+
+    <select id="listPMProjEndApply" resultType="com.harmonycloud.view.ProjEndApplyListView" >
+        select pe.id,pe.fk_proj_id,p.proj_name,p.proj_end_time as project_end_time,
+        pe.proj_end_time as actual_end_time,pe.end_apply_status,e.employee_name as apply_approval_name,
+        ee.employee_name as apply_name,pe.proj_end_meeting,pe.proj_end_meeting_time as meeting_time,
+        DATE_FORMAT(pe.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(pe.update_time,'%Y-%m-%d %H:%i:%S') as update_time
+        from proj_end_apply as pe left join project as p on pe.fk_proj_id=p.id
+        left join employee as e on pe.apply_approval_gh=e.employee_gh
+        left join employee as ee on p.proj_PM_gh=ee.employee_gh
+        where p.proj_PM_gh=#{projPMGh}
+        order by FIELD(pe.end_apply_status,"待审批") DESC,pe.create_time DESC
+    </select>
+    <select id="listPMOProjEndApply" resultType="com.harmonycloud.view.ProjEndApplyListView" >
+        select pe.id,pe.fk_proj_id,p.proj_name,p.proj_end_time as project_end_time,
+        pe.proj_end_time as actual_end_time,pe.end_apply_status,e.employee_name as apply_name,
+        ee.employee_name as apply_approval_name,pe.proj_end_meeting,pe.proj_end_meeting_time as meeting_time,
+        DATE_FORMAT(pe.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(pe.update_time,'%Y-%m-%d %H:%i:%S') as update_time
+        from proj_end_apply as pe left join project as p on pe.fk_proj_id=p.id
+        left join employee as e on p.proj_PM_gh=e.employee_gh
+        left join employee as ee on pe.apply_approval_gh=ee.employee_gh
+        order by FIELD(pe.end_apply_status,"待审批") DESC,pe.create_time DESC
+    </select>
+
+    <select id="projEndApplyDetail" resultType="com.harmonycloud.view.ProjEndApplyDetailView">
+        select pe.id,pe.fk_proj_id,p.proj_name,ee.employee_name as projSaleman,
+        p.proj_preend_time as project_end_time,pe.proj_end_time as actual_end_time,pe.create_time,
+        pe.proj_end_remark,pe.end_apply_status,e.employee_name as apply_name,
+        eee.employee_name as apply_approval_name,pe.proj_end_meeting,pe.proj_end_meeting_time as meeting_time
+        from proj_end_apply as pe left join project as p on pe.fk_proj_id=p.id
+        left join employee as e on p.proj_PM_gh=e.employee_gh
+        left join employee as ee on p.proj_Saleman=ee.employee_gh
+        left join employee as eee on pe.apply_approval_gh=eee.employee_gh
+        where pe.id=#{id}
+    </select>
+
+    <update id="updateProjEndApply">
+        update proj_end_apply
+        set end_apply_status=#{applyStatus},apply_approval_gh=#{applyApprovalGh},update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        where id=#{id}
+    </update>
+
+    <insert id="insertProjEndApply">
+        insert into proj_end_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            fk_proj_id,
+            proj_end_time,
+            proj_end_meeting,
+            <if test="applyApprovalGh != null">
+                apply_approval_gh,
+            </if>
+            <if test="projEndRemark != null">
+                proj_end_remark,
+            </if>
+            <if test="meetingTime != null">
+                proj_end_meeting_time,
+            </if>
+            end_apply_status
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{fkProjectId,jdbcType=BIGINT},
+            #{projEndTime,jdbcType=TIMESTAMP},
+            #{projEndMeeting,jdbcType=VARCHAR},
+            <if test="applyApprovalGh != null">
+                #{applyApprovalGh,jdbcType=VARCHAR},
+            </if>
+            <if test="projEndRemark != null">
+                #{projEndRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="meetingTime != null">
+                #{meetingTime,jdbcType=TIMESTAMP},
+            </if>
+            '待审批'
+        </trim>
+    </insert>
+    
+    <update id="updateProjectStatus">
+        update project as p set proj_status=#{status},proj_end_time=(select proj_end_time from proj_end_apply as pea where pea.id=#{id1})
+        where p.id=(select fk_proj_id from proj_end_apply as pea1 where pea1.id=#{id2})
+    </update>
+
+    <select id="selectProjectEndTime" resultType="java.lang.String">
+        select proj_end_time from proj_end_apply where id=#{id}
+    </select>
+
+    <select id="selectProjectPreendTime" resultType="java.lang.String">
+        select proj_preend_time from project as p where p.id=(select fk_proj_id from proj_end_apply as pea where pea.id=#{id})
+    </select>
+    
+    <update id="updateProjectEndTypeByProjectId">
+        update project set proj_end_type=#{projEndType} where id=#{fkProjectId}
+    </update>
+
+    <update id="updateProjectEndTypeById">
+        update project as p set p.proj_end_type=#{projEndType} where p.id=(select pea.fk_proj_id from proj_end_apply as pea where pea.id=#{id})
+    </update>
+
+    <select id="selectIfAgreeView" resultType="java.lang.Integer">
+        SELECT fk_proj_id FROM proj_end_apply where proj_end_meeting="否" and proj_end_meeting_time is not null and end_apply_status="审批通过" and id=#{id}
+    </select>
+    
+    <select id="selectMeetingTime" resultType="java.lang.String">
+        SELECT proj_end_meeting_time FROM proj_end_apply where fk_proj_id=#{fkProjectId} and proj_end_meeting="否" and end_apply_status="审批通过"
+    </select>
+
+    <select id="selectProjEndMsgInfo" resultType="com.harmonycloud.view.ProjectEndMsgView">
+        SELECT e.employee_name,p.proj_name,p.proj_preend_time,p.create_time
+        FROM harmage.project as p left join employee as e on p.proj_PM_gh=e.employee_gh where id=#{fkProjectId}
+    </select>
+
+    <select id="selectFileNum" resultType="java.lang.Integer">
+        select count(*) from project_file where fk_project_id=#{fkProjectId}
+    </select>
+
+    <select id="selectProjectEndFilePath" resultType="java.lang.String">
+        SELECT distinct file_save_path FROM harmage.project_file where fk_project_id=(select fk_proj_id from proj_end_apply where id=#{id}) and file_proj_stage="终验报告";
+    </select>
+    
+    <delete id="deleteProjectEndFiles">
+        delete from project_file where fk_project_id=(select fk_proj_id from proj_end_apply where id=#{id}) and file_proj_stage="终验报告";
+    </delete>
+</mapper>

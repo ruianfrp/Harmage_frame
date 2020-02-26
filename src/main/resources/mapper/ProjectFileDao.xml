@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.ProjectFileDao">
+
+    <select id="selectProjectName" resultType="java.lang.String">
+        select proj_name from project where id=#{id}
+    </select>
+
+    <select id="listAllProjectFile" resultType="com.harmonycloud.view.ProjectFileView">
+        SELECT pf.file_id, pf.fk_project_id, pf.file_type, pf.file_proj_stage, pf.file_milestone_name, pf.file_old_name, pf.file_new_name, pf.file_save_path, p.proj_name, p.proj_line, pf.file_url
+        FROM project_file as pf left join project as p on p.id=pf.fk_project_id where fk_project_id=#{projectId}
+    </select>
+
+    <select id="selectByFileId" resultType="com.harmonycloud.view.ProjectFileView">
+        SELECT pf.file_type, pf.file_old_name, pf.file_new_name, pf.file_save_path, pf.file_url
+        FROM project_file as pf left join project as p on p.id=pf.fk_project_id where file_id=#{fileId}
+    </select>
+
+    <select id="selectByInfo" resultType="com.harmonycloud.view.ProjectFileView">
+        SELECT pf.file_id, pf.fk_project_id, pf.file_type, pf.file_proj_stage, pf.file_milestone_name, pf.file_old_name, pf.file_new_name, pf.file_save_path, pf.file_url
+        FROM project_file as pf left join project as p on p.id=pf.fk_project_id where fk_project_id=#{id} and file_new_name=#{newName} and file_old_name=#{oldName}
+    </select>
+
+    <insert id="insertFile">
+        insert into project_file(fk_project_id,file_type,file_proj_stage,file_milestone_name,file_old_name,file_new_name,file_save_path,file_url)
+        value(#{id},#{fileType},#{fileProjStage},#{fileMilestoneName},#{oldName},#{newName},#{fileSavePath},#{fileUrl})
+    </insert>
+
+    <delete id="deleteFile">
+        delete from project_file where file_id=#{fileId}
+    </delete>
+    
+    <select id="selectNewName" resultType="java.lang.String">
+        select file_new_name from project_file where fk_project_id=#{projectId}
+    </select>
+
+</mapper>

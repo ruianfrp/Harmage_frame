@@ -1,0 +1,26 @@
+#spring:
+#  datasource:
+#    username: harmonycloud
+#    password: 123456
+#    url: jdbc:mysql://10.1.11.97:3306/harmage?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#
+#mybatis:
+#  mapper-locations: mapper/*.xml
+
+#spring:
+#  datasource:
+#    username: root
+#    password: 123456
+#    url: jdbc:mysql://localhost:3306/harmage?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#
+#mybatis:
+#  mapper-locations: mapper/*.xml
+#  configuration:
+#    map-underscore-to-camel-case: true
+
+
+
+#10.1.11.97
+#url: jdbc:mysql://10.1.11.97:3306/harmage?serverTimezone=UTC

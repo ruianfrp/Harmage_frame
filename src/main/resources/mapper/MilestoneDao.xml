@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.MilestoneDao">
+
+    <select id="selectMilestones" resultType="com.harmonycloud.entity.Milestone">
+        select * from milestone where fk_project_id=#{0}
+    </select>
+
+    <select id="selectMilestoneWeekPlan" resultType="com.harmonycloud.entity.MilestoneWeekPlan">
+        select * from milestone_week_plan where fk_project_id=#{0}
+    </select>
+
+    <insert id="addMilestone">
+        insert into milestone(milestone_index,fk_project_id,milestone_phase,milestone_presta_time,milestone_preend_time,milestone_new_presta_time,milestone_new_preend_time,milestone_start_time,milestone_end_time,milestone_status,create_time,update_time)
+        values(#{milestone_index},#{fk_project_id},#{milestone_phase},#{milestone_presta_time},#{milestone_preend_time},#{milestone_new_presta_time},#{milestone_new_preend_time},#{milestone_start_time},#{milestone_end_time},#{milestone_status},#{create_time},#{update_time})
+    </insert>
+
+    <insert id="milestoneBatchInsert">
+        insert into milestone(milestone_index,fk_project_id,milestone_phase,milestone_presta_time,milestone_preend_time,milestone_new_presta_time,milestone_new_preend_time,milestone_start_time,milestone_end_time,milestone_status,create_time,update_time)
+        values
+        <foreach collection ="list" item="it" separator =",">
+            (#{it.milestoneIndex},#{it.fkProjectId},#{it.milestonePhase},#{it.milestonePrestaTime},#{it.milestonePreendTime},#{it.milestoneNewPrestaTime},#{it.milestoneNewPreendTime},#{it.milestoneStartTime},#{it.milestoneEndTime},#{it.milestoneStatus},#{it.createTime},DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'))
+        </foreach >
+    </insert>
+
+    <select id="selectStatus" resultType="java.lang.String">
+        SELECT milestone_status from milestone where  fk_project_id=#{project_id} and milestone_status not like '%完成' and milestone_status!='未开始'
+    </select>
+
+    <insert id="addMilestoneWeekPlan">
+        insert into milestone_week_plan(fk_project_id,fk_milestone_index,time_point,week_plan_describe,week_plan_status)
+        values(#{fk_project_id},#{fk_milestone_index},#{time_point},#{week_plan_describe},#{week_plan_status})
+    </insert>
+
+    <insert id="weekPlanBatchInsert">
+        insert into milestone_week_plan(fk_project_id,fk_milestone_index,time_point,week_plan_describe,week_plan_status)
+        values
+        <foreach collection ="list" item="it" separator =",">
+            (#{it.fkProjectId},#{it.fkMilestoneIndex},#{it.timePoint},#{it.weekPlanDescribe},#{it.weekPlanStatus})
+        </foreach >
+    </insert>
+
+
+    <delete id="deleteMilestone">
+        delete from milestone where fk_project_id=#{0}
+    </delete>
+
+    <update id="startMilestone">
+        update milestone
+        set milestone_start_time=#{startTime},milestone_status=#{milestoneStatus},update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        where milestone_index=#{index} and fk_project_id=#{fkProjectId}
+    </update>
+
+    <insert id="saveMilestoneAndWeekPlanToLog">
+        insert into milestone_backlog(fk_project_id,milestone,operation)
+        values(#{fkProjectId},#{milestone},#{operation})
+    </insert>
+
+    <select id="selectMilestone" resultType="com.harmonycloud.entity.Milestone">
+        select * from milestone where fk_project_id=#{projectId} and milestone_index=#{index}
+    </select>
+
+    <update id="endMilestone">
+        update milestone
+        set milestone_end_time=#{endTime},milestone_status=#{milestoneStatus},
+        milestone_remark=#{milestoneRemark}
+        where milestone_index=#{index} and fk_project_id=#{fkProjectId}
+    </update>
+
+    <update id="updateProjectStatus">
+        UPDATE project SET proj_status=#{flag} WHERE id=#{project_id}
+    </update>
+
+    <select id="selectMilestoneInfo" resultType="com.harmonycloud.view.MilestoneStatusView">
+        SELECT milestone_index,fk_project_id,milestone_presta_time,milestone_preend_time,TIMESTAMPDIFF(DAY,milestone_presta_time,milestone_preend_time) as require_day,
+        TIMESTAMPDIFF(DAY,milestone_preend_time,DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')) as exceed_day FROM harmage.milestone where DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')>=milestone_preend_time
+        and milestone_status not like '%完成' and milestone_status not like '未%'
+    </select>
+    
+    <update id="updateScheduleStatus">
+        update milestone set milestone_status=#{flag},update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S') where milestone_index=#{milestoneIndex} and fk_project_id=#{fkProjectId}
+    </update>
+
+    <select id="projectDelayRanking" resultType="com.harmonycloud.view.ProjectDelayRankingView">
+        select * from (select m.fk_project_id,p.proj_name as project_name,m.milestone_phase,
+        if(m.milestone_new_preend_time,TIMESTAMPDIFF(DAY,m.milestone_new_preend_time,DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')),TIMESTAMPDIFF(DAY,m.milestone_preend_time,DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'))) as delay_time
+        from milestone as m left join project as p on m.fk_project_id=p.id
+        where m.milestone_start_time is not null and m.milestone_end_time is null
+        order by m.fk_project_id,delay_time desc) as A where delay_time>0
+    </select>
+</mapper>

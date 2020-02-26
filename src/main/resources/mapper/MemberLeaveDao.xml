@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.MemberLeaveDao">
+
+    <select id="listMemberLeave" resultType="com.harmonycloud.view.MemberLeaveListView">
+        select m.id,p.id as project_id,p.proj_name,e.employee_name as leave_apply_name,e2.employee_gh,e2.employee_name as member_leave_name,m.member_leave_time,
+        m.member_leave_status as leave_status,m.member_skill_evaluation,m.member_leave_remark,p1.proj_name as distribution_proj_name,
+        DATE_FORMAT(m.create_time,'%Y-%m-%d %H:%i:%S') as create_time,e3.employee_name as leave_approval_name from member_leave as m left join project as p on m.fk_project_id=p.id
+		left join employee as e on m.fk_employee_gh=e.employee_gh
+		left join employee as e2 on m.member_leave_gh=e2.employee_gh
+		left join employee as e3 on m.leave_approval_gh=e3.employee_gh
+        left join project as p1 on p1.id=m.distribution_proj
+        <if test="sort == null">
+            order by FIELD(m.member_leave_status,"待审批") DESC,m.create_time DESC
+        </if>
+        <if test="sort != null">
+            order by m.member_leave_status ${sort}
+        </if>
+    </select>
+
+    <select id="listPmMemberLeave" resultType="com.harmonycloud.view.MemberLeaveListView">
+        select m.id,p.id as project_id,p.proj_name,e.employee_name as leave_apply_name,e2.employee_gh,e2.employee_name as member_leave_name,m.member_leave_time,
+        m.member_leave_status as leave_status,m.member_skill_evaluation,m.member_leave_remark,p1.proj_name as distribution_proj_name,
+        DATE_FORMAT(m.create_time,'%Y-%m-%d %H:%i:%S') as create_time,e3.employee_name as leave_approval_name from member_leave as m left join project as p on m.fk_project_id=p.id
+		left join employee as e on m.fk_employee_gh=e.employee_gh
+		left join employee as e2 on m.member_leave_gh=e2.employee_gh
+		left join employee as e3 on m.leave_approval_gh=e3.employee_gh
+        left join project as p1 on p1.id=m.distribution_proj where m.member_leave_status!="PMO调离" and e.employee_gh=#{employeeGh}
+        <if test="sort == null">
+            order by FIELD(m.member_leave_status,"待审批") DESC,m.create_time DESC
+        </if>
+        <if test="sort != null">
+            order by m.create_time ${sort}
+        </if>
+    </select>
+
+    <update id="updateMemberLeave">
+        update member_leave
+        set leave_approval_gh=#{leaveApprovalGh},
+        member_leave_status=#{memberLeaveStatus},
+        <if test="projectId!=null">
+            distribution_proj=#{projectId},
+        </if>
+        update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        where id=#{id}
+    </update>
+
+    <insert id="insertMemberLeave">
+        insert into member_leave
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                fk_project_id,
+                fk_employee_gh,
+                member_leave_gh,
+            <if test="memberSkillEvaluation != null">
+                member_skill_evaluation,
+            </if>
+            <if test="memberLeaveTime != null">
+                member_leave_time,
+            </if>
+            <if test="memberLeaveRemark != null">
+                member_leave_remark,
+            </if>
+                member_leave_status
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                #{fkProjectId,jdbcType=BIGINT},
+                #{fkEmployeeGh,jdbcType=VARCHAR},
+                #{memberLeaveGh,jdbcType=VARCHAR},
+            <if test="memberSkillEvaluation != null">
+                #{memberSkillEvaluation,jdbcType=VARCHAR},
+            </if>
+            <if test="memberLeaveTime != null">
+                #{memberLeaveTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="memberLeaveRemark != null">
+                #{memberLeaveRemark,jdbcType=VARCHAR},
+            </if>
+                '待审批'
+        </trim>
+    </insert>
+
+    <select id="selectIfLeave" resultType="com.harmonycloud.view.MemberLeaveListView">
+        select id,member_leave_gh,fk_project_id as project_id,member_leave_time,member_leave_remark from member_leave where
+        member_leave_status="审批通过" and member_is_leave=0 and DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')>=member_leave_time
+    </select>
+
+    <update id="leaveMember">
+        update member set
+        <if test="memberRemarks!=null">
+            member_remarks=#{memberRemarks},
+        </if>
+        update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),
+        is_quit=1,
+        estimate_end_time=#{realEndTime},
+        real_end_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        where fk_employee_gh=#{employeeGh} and fk_project_id=#{projectId} and is_quit=0
+    </update>
+
+    <update id="updateMemberIsLeave">
+        update member_leave set member_is_leave=1 where id=#{id}
+    </update>
+
+    <insert id="distributeProject">
+        insert into member(fk_employee_gh,fk_project_id,estimate_start_time,estimate_end_time,member_job,member_sup,member_type,member_func,is_quit)
+        value((SELECT distinct member_leave_gh FROM member_leave where id=#{id}),#{projectId},#{estimateStartTime},#{estimateEndTime},#{memberJob},#{memberSup},#{memberType},#{memberFunc},3)
+    </insert>
+
+    <select id="ifHadMemberLeave" resultType="java.lang.Integer">
+        select id from member_leave where fk_project_id=#{projectId} and member_leave_gh=#{employeeGh} and member_leave_status!="审批驳回" and member_is_leave=0
+    </select>
+
+    <select id="countProjName" resultType="java.lang.String">
+        SELECT GROUP_CONCAT(p.proj_name SEPARATOR ';') as proj_name FROM member as m left join project as p
+        on p.id=m.fk_project_id where m.fk_employee_gh=#{employeeGh} and is_quit=0;
+    </select>
+
+    <select id="findMemberLeaveGh" resultType="java.lang.String">
+        SELECT distinct member_leave_gh FROM member_leave where id=#{id}
+    </select>
+
+    <select id="selectLeaveTime" resultType="com.harmonycloud.view.MemberLeaveListView">
+        select member_leave_gh,fk_project_id as project_id,member_leave_remark,DATE_FORMAT(member_leave_time,'%Y-%m-%d %H:%i:%S') as member_leave_time from member_leave where id=#{id}
+    </select>
+
+    <insert id="insertMemberByLeaveApply">
+        insert into member(fk_employee_gh,fk_project_id,estimate_start_time,estimate_end_time,real_start_time,member_job,member_sup,member_type,member_func,is_quit)
+        value((SELECT distinct member_leave_gh FROM member_leave where id=#{id}),#{projectId},#{estimateStartTime},#{estimateEndTime},#{estimateStartTime},#{memberJob},#{memberSup},#{memberType},#{memberFunc},0)
+    </insert>
+</mapper>

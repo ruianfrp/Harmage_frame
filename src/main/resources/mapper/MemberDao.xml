@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.MemberDao">
+
+    <select id="listMember" resultType="com.harmonycloud.view.MemberView">
+     select member.id,fk_employee_gh,employee_name as member_name,member_job,member_sup,member_type,member_func,member_bonus,
+     member_job_band,DATE_FORMAT(real_start_time,'%Y-%m-%d %H:%i:%S') as real_start_time,
+     DATE_FORMAT(estimate_end_time,'%Y-%m-%d %H:%i:%S') as estimate_end_time,member.is_quit,member_remarks from member,employee where
+     employee_gh = fk_employee_gh and member.is_quit=0 and employee.is_quit=0 and fk_project_id=#{projectId} GROUP BY fk_employee_gh
+    </select>
+
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.harmonycloud.entity.Member">
+        update member
+        <set>
+            <if test="fkEmployeeGh != null">
+                fk_employee_gh = #{fkEmployeeGh},
+            </if>
+            <if test="fkProjectId != null">
+                fk_project_id = #{fkProjectId},
+            </if>
+            <if test="estimateStartTime != null">
+                estimate_start_time = #{estimateStartTime},
+            </if>
+            <if test="estimateEndTime != null">
+                estimate_end_time = #{estimateEndTime},
+            </if>
+            <if test="realStartTime != null">
+                real_start_time = #{realStartTime},
+            </if>
+            <if test="realEndTime != null">
+                real_end_time = #{realEndTime},
+            </if>
+            <if test="memberJob != null">
+                member_job = #{memberJob},
+            </if>
+            <if test="memberSup != null">
+                member_sup = #{memberSup},
+            </if>
+            <if test="memberType != null">
+                member_type = #{memberType},
+            </if>
+            <if test="memberFunc != null">
+                member_func = #{memberFunc},
+            </if>
+            <if test="memberBonus != null">
+                member_bonus = #{memberBonus},
+            </if>
+            <if test="memberJobBand != null">
+                member_job_band = #{memberJobBand},
+            </if>
+            <if test="isQuit != null">
+                is_quit = #{isQuit},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="memberRemarks != null">
+                member_remarks = #{memberRemarks},
+            </if>
+                update_time = DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insertSelective">
+        insert into member(
+                fk_employee_gh,
+                fk_project_id,
+                member_job,
+                member_sup,
+                member_type,
+                member_func,
+            <if test="memberBonus != null">
+                member_bonus,
+            </if>
+            <if test="memberJobBand != null">
+                member_job_band,
+            </if>
+            <if test="memberRemarks != null">
+                member_remarks,
+            </if>
+            <if test="estimateStartTime != null">
+                estimate_start_time,
+            </if>
+            <if test="estimateEndTime != null">
+                estimate_end_time,
+            </if>
+            <if test="realStartTime != null">
+                real_start_time,
+            </if>
+            <if test="realEndTime != null">
+                real_end_time,
+            </if>
+                is_quit)
+        value(
+                #{fkEmployeeGh},
+                #{fkProjectId},
+                #{memberJob},
+                #{memberSup},
+                #{memberType},
+                #{memberFunc},
+            <if test="memberBonus != null">
+                #{memberBonus},
+            </if>
+            <if test="memberJobBand != null">
+                #{memberJobBand},
+            </if>
+            <if test="memberRemarks != null">
+                #{memberRemarks},
+            </if>
+            <if test="estimateStartTime != null">
+                #{estimateStartTime},
+            </if>
+            <if test="estimateEndTime != null">
+                #{estimateEndTime},
+            </if>
+            <if test="realStartTime != null">
+                #{realStartTime},
+            </if>
+            <if test="realEndTime != null">
+                #{realEndTime},
+            </if>
+                #{isQuit})
+    </insert>
+
+    <update id="updateMember">
+        update member
+        set is_quit=1,real_end_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        where id=#{memberId}
+    </update>
+
+    <select id="listMemberJob" resultType="java.lang.String">
+        select distinct member_job from member where fk_project_id=#{projectId} and is_quit=0
+    </select>
+
+    <insert id="insertPMOMemberLeave">
+        insert into member_leave(fk_project_id, fk_employee_gh, member_leave_gh, leave_approval_gh,
+        member_leave_time, member_leave_remark, member_leave_status, member_is_leave)
+        value (#{projectId},#{employeeGh},#{memberLeaveGh},#{leaveApprovalGh},#{leaveDate},#{memberLeaveRemark},"PMO调离",0)
+    </insert>
+
+    <select id="selectPmGh" resultType="java.lang.String">
+        select proj_PM_gh from project where id=#{projectId}
+    </select>
+
+    <update id="updateMemberQuit">
+        update member
+        set is_quit=1,real_end_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        where fk_employee_gh={employeeGh} and member.is_quit=0
+    </update>
+    
+    <insert id="insertIntoMemberApply">
+        insert into member_apply(fk_project_id, fk_employee_gh, member_recommend_gh, apply_approval_gh, distribution_gh,
+        member_join_sup, member_join_type, member_start_time, member_end_time, member_application_status,
+        owner_is_agree, applicant_is_agree, is_done) value(#{fkProjectId},#{fkEmployeeGh},#{memberRecommendGh},#{applyApprovalGh},
+        #{distributionGh},#{memberJoinSup},#{memberJoinType},#{memberStartTime},#{memberEndTime},"PMO添加",1,1,1)
+    </insert>
+
+    <select id="findPmByProjId" resultType="java.lang.String">
+        select proj_PM_gh from project where id=#{fkProjectId}
+    </select>
+</mapper>

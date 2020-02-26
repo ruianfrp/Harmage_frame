@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.AdminDao">
+
+    <insert id="insert" parameterType="com.harmonycloud.entity.Admin">
+        insert into admin (account, password)
+        values (#{account}, #{password})
+  </insert>
+
+</mapper>

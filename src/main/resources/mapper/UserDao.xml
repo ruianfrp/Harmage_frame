@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.UserDao">
+
+    <select id="listUser" resultType="com.harmonycloud.view.UserListView" >
+        select e.employee_gh,employee_name as user_name,employee_job,
+        GROUP_CONCAT(distinct p.proj_name SEPARATOR ';') as proj_name,
+        GROUP_CONCAT(a.authority_name SEPARATOR ';') as authority,GROUP_CONCAT(a.authority_value SEPARATOR ',') as authority_value,GROUP_CONCAT(distinct aaa1.sales_industry SEPARATOR ',') as sales_industry
+        from user as u left join employee as e on u.fk_employee_gh=e.employee_gh left join member as m on
+        e.employee_gh=m.fk_employee_gh and m.is_quit=0 left join project as p on m.fk_project_id=p.id left join authority as a on a.id=u.user_authority_id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as sales_industry from (select s.id as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.sales_industry,',',b.help_topic_id+1),',',-1) shopid from user as a
+        join mysql.help_topic b on (length(a.sales_industry)-length(replace(a.sales_industry,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa1 on aaa1.id=u.id
+        <if test="selectEmployeeGh != null">
+            where e.employee_gh like "%"#{selectEmployeeGh}"%"
+        </if>
+        group by e.employee_gh
+        <if test="selectEmployeeName != null">
+            having GROUP_CONCAT("|",e.employee_name,"|",to_pinyin(e.employee_name),"|",pinyin(e.employee_name),"|") like "%"#{selectEmployeeName}"%"
+        </if>
+        order by e.employee_gh
+    </select>
+
+    <update id="update_user_authority">
+        update user
+        <set>
+            <if test="authority != null">
+                user_authority_id=(SELECT id FROM authority where authority_name=#{authority}),
+            </if>
+            <if test="salesIndustry != null">
+                sales_industry=#{salesIndustry},
+            </if>
+            update_time=#{updateTime}
+        </set>
+        where fk_employee_gh=#{employeeGh}
+    </update>
+    
+    <delete id="deleteUser">
+        delete from user where fk_employee_gh=#{employeeGh}
+    </delete>
+
+    <select id="selectByfkEmployeeGhInEmployee" resultType="java.lang.String">
+        select employee_name from employee where employee_gh=#{fkEmployeeGh}
+    </select>
+
+    <insert id="insertUser">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            fk_employee_gh,
+            user_authority_id,
+            <if test="salesIndustry != null">sales_industry,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{employeeGh},
+            (SELECT id FROM authority where authority_name=#{authority}),
+            <if test="salesIndustry != null">#{salesIndustry,jdbcType=VARCHAR},</if>
+        </trim>
+    </insert>
+
+    <select id="selectIdByEmployeeGh" resultType="java.lang.Integer">
+        SELECT id from user where fk_employee_gh=#{employeeGh}
+    </select>
+    
+    <select id="selectAuthority" resultType="com.harmonycloud.entity.Authority">
+        select * from authority;
+    </select>
+
+</mapper>

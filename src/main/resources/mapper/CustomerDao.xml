@@ -1,0 +1,754 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.CustomerDao">
+
+
+    <select id="selectByName" resultType="java.lang.Long" parameterType="java.lang.String">
+        select id from customer where customer_name=#{customerName}
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.harmonycloud.entity.Customer">
+        update customer
+        <set>
+            <if test="customerName != null">
+                customer_name = #{customerName,jdbcType=VARCHAR},
+            </if>
+            <if test="customerType != null">
+                customer_type = #{customerType,jdbcType=BIGINT},
+            </if>
+            <if test="customerProvince != null">
+                customer_province={customerProvince},
+            </if>
+            <if test="customerCity != null">
+                customer_city={customerCity},
+            </if>
+            <if test="customerPlace != null">
+                customer_place={customerPlace},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="pageCustomer" resultType="com.harmonycloud.view.CustomerListView">
+        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM harmage.customer as c left join customer_contacts
+        as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
+        left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position
+        <trim prefix="where " suffixOverrides="and">
+            <if test="selectCustomerName != null">
+                c.customer_name like "%"#{selectCustomerName}"%" and
+            </if>
+            <if test="selectCustomerSource != null">
+                cdd1.dic_data_sort=#{selectCustomerSource} and
+            </if>
+            <if test="selectCustomerIndustry != null">
+                cdd2.dic_data_sort=#{selectCustomerIndustry} and
+            </if>
+            <if test="beginTime != null">
+                c.create_time>=#{beginTime} and
+            </if>
+            <if test="endTime != null">
+                #{endTime}>=c.create_time and
+            </if>
+        </trim>
+        group by c.id
+        <if test="selectEmployeeName != null">
+            having GROUP_CONCAT("|",e.employee_name,"|",to_pinyin(e.employee_name),"|",pinyin(e.employee_name),"|") like "%"#{selectEmployeeName}"%"
+        </if>
+        <if test="sort != null">
+            order by c.create_time ${sort}
+        </if>
+    </select>
+
+    <select id="listCustomer" resultType="com.harmonycloud.view.CustomerListView">
+        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM harmage.customer as c left join customer_contacts
+        as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
+        left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position
+    </select>
+
+    <select id="pagePartCustomer" resultType="com.harmonycloud.view.CustomerListView">
+        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM harmage.customer as c left join customer_contacts
+        as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
+        left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position left join customer_salesman as cs on
+        c.id=cs.fk_customer_id where cs.employee_gh=#{employeeGh}
+        <if test="selectCustomerName != null">
+            and c.customer_name like "%"#{selectCustomerName}"%"
+        </if>
+        <if test="selectCustomerSource != null">
+            and cdd1.dic_data_sort=#{selectCustomerSource}
+        </if>
+        <if test="selectCustomerIndustry != null">
+            and cdd2.dic_data_sort=#{selectCustomerIndustry}
+        </if>
+        <if test="beginTime != null">
+            and c.create_time>=#{beginTime}
+        </if>
+        <if test="endTime != null">
+            and #{endTime}>=c.create_time
+        </if>
+        group by c.id
+        <if test="selectEmployeeName != null">
+            having GROUP_CONCAT("|",e.empllistSalemanoyee_name,"|",to_pinyin(e.employee_name),"|",pinyin(e.employee_name),"|") like "%"#{selectEmployeeName}"%"
+        </if>
+        <if test="sort != null">
+            order by c.create_time ${sort}
+        </if>
+    </select>
+
+    <select id="listPartCustomer" resultType="com.harmonycloud.view.CustomerListView">
+        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM harmage.customer as c left join customer_contacts
+        as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
+        left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position left join customer_salesman as cs on
+        c.id=cs.fk_customer_id where cs.employee_gh=#{employeeGh}
+    </select>
+    
+    <select id="selectCustomerDetails" resultType="com.harmonycloud.view.CustomerDetailView">
+        select c.id,c.customer_name,c.customer_province,c.customer_city,c.customer_place,c.customer_code,c.customer_web,c.customer_email,cc.contacts_name,
+        cdd1.dic_data_sort as contacts_position,cc.contacts_specific_position,cc.contacts_tel,cc.contacts_wechat,cdd2.dic_data_sort as customer_prod_sort,
+        cdd2.dic_data_text as customer_prod_text,cdd3.dic_data_sort as customer_source_sort,c.customer_source_text,cdd4.dic_data_sort as customer_industry,
+        cdd5.dic_data_sort as customer_type,cdd6.dic_data_sort as team_total,cdd7.dic_data_sort as team_outsource,cdd8.dic_data_sort as server_count,
+        cdd9.dic_data_sort as server_type,cdd10.dic_data_sort as server_network,cdd11.dic_data_sort as operation_stage,cdd12.dic_data_sort as sorft_stage,
+        cdd13.dic_data_sort as technology_stage,cdd14.dic_data_sort as monitor_stage,aaa1.existing_pain,aaa2.petition,aaa3.direction,aaa4.follow_point,
+        c.wages,cdd19.dic_data_sort as budget_total,cdd20.dic_data_sort as transformation,aaa5.middleware,c.customer_remark,
+        DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(c.update_time,'%Y-%m-%d %H:%i:%S') as update_time
+        from (SELECT * FROM harmage.customer where id=#{id}) as c left join customer_contacts as cc on c.default_contact_id=cc.id
+        left join customer_dic_data as cdd1 on cdd1.id=cc.contacts_position left join customer_dic_data as cdd2 on c.customer_prod_sort=cdd2.id
+        left join customer_dic_data as cdd3 on cdd3.id=c.customer_source left join customer_dic_data as cdd4 on c.customer_industry=cdd4.id
+        left join customer_dic_data as cdd5 on c.customer_type=cdd5.id left join customer_dic_data as cdd6 on c.team_total=cdd6.id
+        left join customer_dic_data as cdd7 on cdd7.id=c.team_outsource left join customer_dic_data as cdd8 on c.server_count=cdd8.id
+        left join customer_dic_data as cdd9 on cdd9.id=c.server_type left join customer_dic_data as cdd10 on c.server_network=cdd10.id
+        left join customer_dic_data as cdd11 on cdd11.id=c.operation_stage left join customer_dic_data as cdd12 on c.sorft_stage=cdd12.id
+        left join customer_dic_data as cdd13 on cdd13.id=c.technology_stage left join customer_dic_data as cdd14 on c.monitor_stage=cdd14.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as existing_pain from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.existing_pain,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.existing_pain)-length(replace(a.existing_pain,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa1 on aaa1.id=c.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as petition from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.petition,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.petition)-length(replace(a.petition,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa2 on aaa2.id=c.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as direction from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.direction,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.direction)-length(replace(a.direction,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa3 on aaa3.id=c.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as follow_point from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.follow_point,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.follow_point)-length(replace(a.follow_point,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa4 on aaa4.id=c.id left join customer_dic_data as cdd19 on c.budget_total=cdd19.id
+        left join customer_dic_data as cdd20 on c.transformation=cdd20.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as middleware from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.middleware,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.middleware)-length(replace(a.middleware,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa5 on aaa5.id=c.id group by c.id;
+    </select>
+
+    <select id="selectCustomerAfterUpdate" resultType="com.harmonycloud.entity.Customer">
+        select c.*,cc.contacts_name,cc.contacts_position,cc.contacts_specific_position,cc.contacts_tel,cc.contacts_wechat from
+        (SELECT * FROM harmage.customer where id=#{id}) as c left join customer_contacts as cc on c.default_contact_id=cc.id;
+    </select>
+
+    <insert id="insertCustomer">
+        insert into customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerName != null">customer_name,</if>
+            <if test="customerProvince != null">customer_province,</if>
+            <if test="customerCity != null">customer_city,</if>
+            <if test="customerPlace != null">customer_place,</if>
+            <if test="customerCode != null">customer_code,</if>
+            <if test="customerWeb != null">customer_web,</if>
+            <if test="customerEmail != null">customer_email,</if>
+            <if test="defaultContactId != null">default_contact_id,</if>
+            <if test="customerProdSort != null">customer_prod_sort,</if>
+            <if test="customerSource != null">customer_source,</if>
+            <if test="customerSourceText != null">customer_source_text,</if>
+            <if test="customerIndustry != null">customer_industry,</if>
+            <if test="customerType != null">customer_type,</if>
+            <if test="teamTotal != null">team_total,</if>
+            <if test="teamOutsource != null">team_outsource,</if>
+            <if test="serverCount != null">server_count,</if>
+            <if test="serverType != null">server_type,</if>
+            <if test="serverNetwork != null">server_network,</if>
+            <if test="operationStage != null">operation_stage,</if>
+            <if test="sorftStage != null">sorft_stage,</if>
+            <if test="technologyStage != null">technology_stage,</if>
+            <if test="monitorStage != null">monitor_stage,</if>
+            <if test="existingPain != null">existing_pain,</if>
+            <if test="petition != null">petition,</if>
+            <if test="direction != null">direction,</if>
+            <if test="followPoint != null">follow_point,</if>
+            <if test="wages != null">wages,</if>
+            <if test="budgetTotal != null">budget_total,</if>
+            <if test="transformation != null">transformation,</if>
+            <if test="middleware !=null">middleware,</if>
+            <if test="customerRemark != null">customer_remark,</if>
+            <if test="defaultEmployeeGh != null">default_employee_gh,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerName != null">#{customerName,jdbcType=VARCHAR},</if>
+            <if test="customerProvince != null">#{customerProvince,jdbcType=VARCHAR},</if>
+            <if test="customerCity != null">#{customerCity,jdbcType=VARCHAR},</if>
+            <if test="customerPlace != null">#{customerPlace,jdbcType=VARCHAR},</if>
+            <if test="customerCode != null">#{customerCode,jdbcType=VARCHAR},</if>
+            <if test="customerWeb != null">#{customerWeb,jdbcType=VARCHAR},</if>
+            <if test="customerEmail != null">#{customerEmail,jdbcType=VARCHAR},</if>
+            <if test="defaultContactId != null">#{defaultContactId,jdbcType=BIGINT},</if>
+            <if test="customerProdSort != null">#{customerProdSort,jdbcType=BIGINT},</if>
+            <if test="customerSource != null">#{customerSource,jdbcType=BIGINT},</if>
+            <if test="customerSourceText != null">#{customerSourceText,jdbcType=VARCHAR},</if>
+            <if test="customerIndustry != null">#{customerIndustry,jdbcType=BIGINT},</if>
+            <if test="customerType != null">#{customerType,jdbcType=BIGINT},</if>
+            <if test="teamTotal != null">#{teamTotal,jdbcType=BIGINT},</if>
+            <if test="teamOutsource != null">#{teamOutsource,jdbcType=BIGINT},</if>
+            <if test="serverCount != null">#{serverCount,jdbcType=BIGINT},</if>
+            <if test="serverType != null">#{serverType,jdbcType=BIGINT},</if>
+            <if test="serverNetwork != null">#{serverNetwork,jdbcType=BIGINT},</if>
+            <if test="operationStage != null">#{operationStage,jdbcType=BIGINT},</if>
+            <if test="sorftStage != null">#{sorftStage,jdbcType=BIGINT},</if>
+            <if test="technologyStage != null">#{technologyStage,jdbcType=BIGINT},</if>
+            <if test="monitorStage != null">#{monitorStage,jdbcType=BIGINT},</if>
+            <if test="existingPain != null">#{existingPain,jdbcType=VARCHAR},</if>
+            <if test="petition != null">#{petition,jdbcType=VARCHAR},</if>
+            <if test="direction != null">#{direction,jdbcType=VARCHAR},</if>
+            <if test="followPoint != null">#{followPoint,jdbcType=VARCHAR},</if>
+            <if test="wages != null">#{wages,jdbcType=VARCHAR},</if>
+            <if test="budgetTotal != null">#{budgetTotal,jdbcType=BIGINT},</if>
+            <if test="transformation != null">#{transformation,jdbcType=BIGINT},</if>
+            <if test="middleware !=null">#{middleware,jdbcType=VARCHAR},</if>
+            <if test="customerRemark != null">#{customerRemark,jdbcType=VARCHAR},</if>
+            <if test="defaultEmployeeGh != null">#{defaultEmployeeGh,jdbcType=VARCHAR},</if>
+        </trim>
+    </insert>
+    
+    <insert id="insertCustomerContact">
+        insert into customer_contacts
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fkCustomerId != null">fk_customer_id,</if>
+            <if test="contactsName != null">contacts_name,</if>
+            <if test="contactsSex != null">contacts_sex,</if>
+            <if test="contactsPosition != null">contacts_position,</if>
+            <if test="contactsSpecificPosition != null">contacts_specific_position,</if>
+            <if test="contactsBirthday != null">contacts_birthday,</if>
+            <if test="contactsTel != null">contacts_tel,</if>
+            <if test="contactsWechat != null">contacts_wechat,</if>
+            <if test="contactsQq != null">contacts_qq,</if>
+            <if test="contactsEmail != null">contacts_email,</if>
+            <if test="contactsMsn != null">contacts_msn,</if>
+            <if test="contactsRemark != null">contacts_remark,</if>
+            <if test="contactsAli != null">contacts_ali,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fkCustomerId != null">#{fkCustomerId,jdbcType=BIGINT},</if>
+            <if test="contactsName != null">#{contactsName,jdbcType=VARCHAR},</if>
+            <if test="contactsSex != null">#{contactsSex,jdbcType=CHAR},</if>
+            <if test="contactsPosition != null">#{contactsPosition,jdbcType=BIGINT},</if>
+            <if test="contactsSpecificPosition != null">#{contactsSpecificPosition,jdbcType=VARCHAR},</if>
+            <if test="contactsBirthday != null">#{contactsBirthday,jdbcType=TIMESTAMP},</if>
+            <if test="contactsTel != null">#{contactsTel,jdbcType=VARCHAR},</if>
+            <if test="contactsWechat != null">#{contactsWechat,jdbcType=VARCHAR},</if>
+            <if test="contactsQq != null">#{contactsQq,jdbcType=VARCHAR},</if>
+            <if test="contactsEmail != null">#{contactsEmail,jdbcType=VARCHAR},</if>
+            <if test="contactsMsn != null">#{contactsMsn,jdbcType=VARCHAR},</if>
+            <if test="contactsRemark != null">#{contactsRemark,jdbcType=VARCHAR},</if>
+            <if test="contactsAli != null">#{contactsAli,jdbcType=VARCHAR},</if>
+        </trim>
+    </insert>
+
+    <select id="selectCustomerContactId" resultType="java.lang.Integer">
+        select id from customer_contacts where contacts_name=#{contactsName} and contacts_position=#{contactsPosition} and contacts_tel=#{contactsTel}
+    </select>
+    
+    <update id="updateFkCustomerId">
+        update customer_contacts set fk_customer_id=#{fkCustomerId} where id=#{id}
+    </update>
+
+    <select id="selectCustomerId" resultType="java.lang.Integer">
+        select id from customer where customer_name=#{customerName}
+    </select>
+    
+    <insert id="insertCustomerSalesman">
+        insert into customer_salesman(employee_gh,fk_customer_id) value(#{employeeGh},#{fkCustomerId})
+    </insert>
+    
+    <select id="listCustomerContacts" resultType="com.harmonycloud.view.CustomerContactsListView">
+        select cc.id,cc.fk_customer_id,cc.contacts_name,cc.contacts_sex,cdd.dic_data_sort as contacts_position,cc.contacts_specific_position,
+        cc.contacts_birthday,cc.contacts_tel,cc.contacts_wechat,cc.contacts_qq,cc.contacts_email,cc.contacts_msn,cc.contacts_remark,cc.contacts_ali,
+        DATE_FORMAT(cc.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cc.update_time,'%Y-%m-%d %H:%i:%S') as update_time
+        from customer_contacts as cc left join customer_dic_data as cdd on cc.contacts_position=cdd.id where cc.fk_customer_id=#{customerId}
+    </select>
+    
+    <select id="selectDefaultContactId" resultType="java.lang.Integer">
+        select default_contact_id from customer where id=#{customerId}
+    </select>
+
+    <update id="updateCustomer">
+        update customer
+        <set>
+            <if test="customerName != null">customer_name=#{customerName},</if>
+            <if test="customerProvince != null">customer_province=#{customerProvince},</if>
+            <if test="customerCity != null">customer_city=#{customerCity},</if>
+            <if test="customerPlace != null">customer_place=#{customerPlace},</if>
+            <if test="customerCode != null">customer_code=#{customerCode},</if>
+            <if test="customerWeb != null">customer_web=#{customerWeb},</if>
+            <if test="customerEmail != null">customer_email=#{customerEmail},</if>
+            <if test="defaultContactId != null">default_contact_id=#{defaultContactId},</if>
+            <if test="customerProdSort != null">customer_prod_sort=#{customerProdSort},</if>
+            <if test="customerSource != null">customer_source=#{customerSource},</if>
+            <if test="customerSourceText != null">customer_source_text=#{customerSourceText},</if>
+            <if test="customerIndustry != null">customer_industry=#{customerIndustry},</if>
+            <if test="customerType != null">customer_type=#{customerType},</if>
+            <if test="teamTotal != null">team_total=#{teamTotal},</if>
+            <if test="teamOutsource != null">team_outsource=#{teamOutsource},</if>
+            <if test="serverCount != null">server_count=#{serverCount},</if>
+            <if test="serverType != null">server_type=#{serverType},</if>
+            <if test="serverNetwork != null">server_network=#{serverNetwork},</if>
+            <if test="operationStage != null">operation_stage=#{operationStage},</if>
+            <if test="sorftStage != null">sorft_stage=#{sorftStage},</if>
+            <if test="technologyStage != null">technology_stage=#{technologyStage},</if>
+            <if test="monitorStage != null">monitor_stage=#{monitorStage},</if>
+            <if test="existingPain != null">existing_pain=#{existingPain},</if>
+            <if test="petition != null">petition=#{petition},</if>
+            <if test="direction != null">direction=#{direction},</if>
+            <if test="followPoint != null">follow_point=#{followPoint},</if>
+            <if test="wages != null">wages=#{wages},</if>
+            <if test="budgetTotal != null">budget_total=#{budgetTotal},</if>
+            <if test="transformation !=null">transformation=#{transformation},</if>
+            <if test="middleware !=null">middleware=#{middleware},</if>
+            <if test="customerRemark != null">customer_remark=#{customerRemark},</if>
+            <if test="defaultEmployeeGh != null">default_employee_gh=#{defaultEmployeeGh},</if>
+            update_time = DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="updateCustomerContact">
+        update customer_contacts
+        <set>
+            <if test="fkCustomerId != null">fk_customer_id=#{fkCustomerId},</if>
+            <if test="contactsName != null">contacts_name=#{contactsName},</if>
+            <if test="contactsSex != null">contacts_sex=#{contactsSex},</if>
+            <if test="contactsPosition != null">contacts_position=#{contactsPosition},</if>
+            <if test="contactsSpecificPosition != null">contacts_specific_position=#{contactsSpecificPosition},</if>
+            <if test="contactsBirthday != null">contacts_birthday=#{contactsBirthday},</if>
+            <if test="contactsTel != null">contacts_tel=#{contactsTel},</if>
+            <if test="contactsWechat != null">contacts_wechat=#{contactsWechat},</if>
+            <if test="contactsQq != null">contacts_qq=#{contactsQq},</if>
+            <if test="contactsEmail != null">contacts_email=#{contactsEmail},</if>
+            <if test="contactsMsn != null">contacts_msn=#{contactsMsn},</if>
+            <if test="contactsRemark != null">contacts_remark=#{contactsRemark},</if>
+            <if test="contactsAli != null">contacts_ali=#{contactsAli},</if>
+            update_time = DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="selectContactDetails" resultType="com.harmonycloud.entity.CustomerContacts">
+        select cc.id,cc.fk_customer_id,cc.contacts_name,cc.contacts_sex,cc.contacts_position,cc.contacts_specific_position,
+        cc.contacts_birthday,cc.contacts_tel,cc.contacts_wechat,cc.contacts_qq,cc.contacts_email,cc.contacts_msn,cc.contacts_remark,cc.contacts_ali,
+        DATE_FORMAT(cc.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cc.update_time,'%Y-%m-%d %H:%i:%S') as update_time from customer_contacts as cc where cc.id=#{id}
+    </select>
+
+    <delete id="deleteCustomerContact">
+        delete from customer_contacts where id=#{id}
+    </delete>
+
+    <delete id="deleteCustomer">
+        delete from customer where id=#{id}
+    </delete>
+
+    <select id="selectDicData" resultType="com.harmonycloud.view.CustomerDicView">
+        SELECT cdd.id,cdt.dic_name as dic_type,cdd.dic_data_sort,cdd.dic_data_text FROM customer_dic_data as cdd
+        left join customer_dic_type as cdt on cdd.type_id=cdt.id where cdt.dic_name=#{dicName}
+    </select>
+
+    <select id="listDocumentRecord" resultType="com.harmonycloud.view.DocumentRecordListView">
+        SELECT cdr.id,c.id as customer_id,c.customer_name,cc.id as contacts_id,cc.contacts_name,cdd1.dic_data_sort as document_type,cdr.document_contact_time,cdr.document_next_contact_time,
+        aaa1.exchange_theme,aaa2.exchange_person,cdd2.dic_data_sort as exchange_reason,cdd3.dic_data_sort as next_plan,cdr.detailed_content,e.employee_name,
+        DATE_FORMAT(cdr.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdr.update_time,'%Y-%m-%d %H:%i:%S') as update_time
+        FROM customer_document_record as cdr left join customer as c on c.id=cdr.fk_customer_id
+        left join customer_contacts as cc on cc.id=cdr.fk_contacts_id
+        left join customer_dic_data as cdd1 on cdd1.id=cdr.document_type left join
+        (select id,GROUP_CONCAT(shopname SEPARATOR';') as exchange_theme from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.exchange_theme,',',b.help_topic_id+1),',',-1) shopid from customer_document_record as a
+        join mysql.help_topic b on (length(a.exchange_theme)-length(replace(a.exchange_theme,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa1 on aaa1.id=cdr.id left join
+        (select id,GROUP_CONCAT(shopname SEPARATOR';') as exchange_person from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.exchange_person,',',b.help_topic_id+1),',',-1) shopid from customer_document_record as a
+        join mysql.help_topic b on (length(a.exchange_person)-length(replace(a.exchange_person,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa2 on aaa2.id=cdr.id left join
+        customer_dic_data as cdd2 on cdd2.id=cdr.exchange_reason left join customer_dic_data as cdd3 on cdd3.id=cdr.next_plan
+        left join employee as e on e.employee_gh=cdr.salesman_employee_gh
+        <trim prefix="where " suffixOverrides="and">
+            <if test="selectCustomerName != null">
+                c.customer_name like "%"#{selectCustomerName}"%" and
+            </if>
+            <if test="selectDocumentType != null">
+                cdd1.dic_data_sort=#{selectDocumentType} and
+            </if>
+            <if test="beginTime != null">
+                c.create_time>=#{beginTime} and
+            </if>
+            <if test="endTime != null">
+                #{endTime}>=c.create_time and
+            </if>
+        </trim>
+        group by cdr.id
+        <if test="selectEmployeeName != null">
+            having GROUP_CONCAT("|",e.employee_name,"|",to_pinyin(e.employee_name),"|",pinyin(e.employee_name),"|") like "%"#{selectEmployeeName}"%"
+        </if>
+        <if test="sort != null">
+            order by cdr.id ${sort}
+        </if>
+    </select>
+
+    <select id="listPartDocumentRecord" resultType="com.harmonycloud.view.DocumentRecordListView">
+        SELECT cdr.id,c.id as customer_id,c.customer_name,cc.id as contacts_id,cc.contacts_name,cdd1.dic_data_sort as document_type,cdr.document_contact_time,cdr.document_next_contact_time,
+        aaa1.exchange_theme,aaa2.exchange_person,cdd2.dic_data_sort as exchange_reason,cdd3.dic_data_sort as next_plan,cdr.detailed_content,e.employee_name,
+        DATE_FORMAT(cdr.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdr.update_time,'%Y-%m-%d %H:%i:%S') as update_time
+        FROM customer_document_record as cdr left join customer as c on c.id=cdr.fk_customer_id
+        left join customer_contacts as cc on cc.id=cdr.fk_contacts_id
+        left join customer_dic_data as cdd1 on cdd1.id=cdr.document_type left join
+        (select id,GROUP_CONCAT(shopname SEPARATOR';') as exchange_theme from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.exchange_theme,',',b.help_topic_id+1),',',-1) shopid from customer_document_record as a
+        join mysql.help_topic b on (length(a.exchange_theme)-length(replace(a.exchange_theme,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa1 on aaa1.id=cdr.id left join
+        (select id,GROUP_CONCAT(shopname SEPARATOR';') as exchange_person from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.exchange_person,',',b.help_topic_id+1),',',-1) shopid from customer_document_record as a
+        join mysql.help_topic b on (length(a.exchange_person)-length(replace(a.exchange_person,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa2 on aaa2.id=cdr.id left join
+        customer_dic_data as cdd2 on cdd2.id=cdr.exchange_reason left join customer_dic_data as cdd3 on cdd3.id=cdr.next_plan
+        left join employee as e on e.employee_gh=cdr.salesman_employee_gh where cdr.fk_customer_id=#{customerId}
+    </select>
+
+    <select id="selectPartDocumentRecord" resultType="com.harmonycloud.view.DocumentRecordListView">
+        SELECT cdr.id,c.id as customer_id,c.customer_name,cc.id as contacts_id,cc.contacts_name,cdd1.dic_data_sort as document_type,cdr.document_contact_time,cdr.document_next_contact_time,
+        aaa1.exchange_theme,aaa2.exchange_person,cdd2.dic_data_sort as exchange_reason,cdd3.dic_data_sort as next_plan,cdr.detailed_content,e.employee_name,
+        DATE_FORMAT(cdr.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdr.update_time,'%Y-%m-%d %H:%i:%S') as update_time
+        FROM customer_document_record as cdr left join customer as c on c.id=cdr.fk_customer_id
+        left join customer_contacts as cc on cc.id=cdr.fk_contacts_id
+        left join customer_dic_data as cdd1 on cdd1.id=cdr.document_type left join
+        (select id,GROUP_CONCAT(shopname SEPARATOR';') as exchange_theme from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.exchange_theme,',',b.help_topic_id+1),',',-1) shopid from customer_document_record as a
+        join mysql.help_topic b on (length(a.exchange_theme)-length(replace(a.exchange_theme,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa1 on aaa1.id=cdr.id left join
+        (select id,GROUP_CONCAT(shopname SEPARATOR';') as exchange_person from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.exchange_person,',',b.help_topic_id+1),',',-1) shopid from customer_document_record as a
+        join mysql.help_topic b on (length(a.exchange_person)-length(replace(a.exchange_person,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa2 on aaa2.id=cdr.id left join
+        customer_dic_data as cdd2 on cdd2.id=cdr.exchange_reason left join customer_dic_data as cdd3 on cdd3.id=cdr.next_plan
+        left join employee as e on e.employee_gh=cdr.salesman_employee_gh where cdr.salesman_employee_gh=#{employeeGh}
+    </select>
+
+    <insert id="insertDocumentRecord">
+        insert into customer_document_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="fkCustomerId != null">fk_customer_id,</if>
+            <if test="fkContactsId != null">fk_contacts_id,</if>
+            <if test="documentType != null">document_type,</if>
+            <if test="documentContactTime != null">document_contact_time,</if>
+            <if test="documentNextContactTime != null">document_next_contact_time,</if>
+            <if test="exchangeTheme != null">exchange_theme,</if>
+            <if test="exchangePerson != null">exchange_person,</if>
+            <if test="exchangeReason != null">exchange_reason,</if>
+            <if test="nextPlan != null">next_plan,</if>
+            <if test="detailedContent != null">detailed_content,</if>
+            <if test="salesmanEmployeeGh">salesman_employee_gh</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id,jdbcType=BIGINT},</if>
+            <if test="fkCustomerId != null">#{fkCustomerId,jdbcType=BIGINT},</if>
+            <if test="fkContactsId != null">#{fkContactsId,jdbcType=BIGINT},</if>
+            <if test="documentType != null">#{documentType,jdbcType=BIGINT},</if>
+            <if test="documentContactTime != null">#{documentContactTime,jdbcType=TIMESTAMP},</if>
+            <if test="documentNextContactTime != null">#{documentNextContactTime,jdbcType=TIMESTAMP},</if>
+            <if test="exchangeTheme != null">#{exchangeTheme,jdbcType=VARCHAR},</if>
+            <if test="exchangePerson != null">#{exchangePerson,jdbcType=VARCHAR},</if>
+            <if test="exchangeReason != null">#{exchangeReason,jdbcType=BIGINT},</if>
+            <if test="nextPlan != null">#{nextPlan,jdbcType=BIGINT},</if>
+            <if test="detailedContent != null">#{detailedContent,jdbcType=VARCHAR},</if>
+            <if test="salesmanEmployeeGh">#{salesmanEmployeeGh,jdbcType=VARCHAR},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+        </trim>
+    </insert>
+
+    <select id="selectDocumentRecordDetails" resultType="com.harmonycloud.entity.CustomerDocumentRecord">
+        SELECT cdr.id,cdr.fk_customer_id,cdr.fk_contacts_id,cdr.document_type,cdr.document_contact_time,cdr.document_next_contact_time,
+        aaa1.exchange_theme,aaa2.exchange_person,cdr.exchange_reason,cdr.next_plan,cdr.detailed_content,cdr.salesman_employee_gh,
+        DATE_FORMAT(cdr.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdr.update_time,'%Y-%m-%d %H:%i:%S') as update_time
+        FROM customer_document_record as cdr left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as exchange_theme from (select s.id as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.exchange_theme,',',b.help_topic_id+1),',',-1) shopid from customer_document_record as a
+        join mysql.help_topic b on (length(a.exchange_theme)-length(replace(a.exchange_theme,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa1 on aaa1.id=cdr.id left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as exchange_person from (select s.id as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.exchange_person,',',b.help_topic_id+1),',',-1) shopid from customer_document_record as a
+        join mysql.help_topic b on (length(a.exchange_person)-length(replace(a.exchange_person,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa2 on aaa2.id=cdr.id where cdr.id=#{id}
+    </select>
+
+    <delete id="deleteDocumentRecord">
+        delete from customer_document_record where id=#{id}
+    </delete>
+
+    <update id="updateDocumentRecord">
+        update customer_document_record
+        <set>
+            <if test="fkCustomerId != null">fk_customer_id=#{fkCustomerId},</if>
+            <if test="fkContactsId != null">fk_contacts_id=#{fkContactsId},</if>
+            <if test="documentType != null">document_type=#{documentType},</if>
+            <if test="documentContactTime != null">document_contact_time=#{documentContactTime},</if>
+            <if test="documentNextContactTime != null">document_next_contact_time=#{documentNextContactTime},</if>
+            <if test="exchangeTheme != null">exchange_theme=#{exchangeTheme},</if>
+            <if test="exchangePerson != null">exchange_person=#{exchangePerson},</if>
+            <if test="exchangeReason != null">exchange_reason=#{exchangeReason},</if>
+            <if test="nextPlan != null">next_plan=#{nextPlan},</if>
+            <if test="detailedContent != null">detailed_content=#{detailedContent},</if>
+            <if test="salesmanEmployeeGh">salesman_employee_gh=#{salesmanEmployeeGh},</if>
+            update_time = DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="listSales" resultType="com.harmonycloud.view.UserListView">
+        SELECT distinct u.fk_employee_gh as employee_gh,e.employee_name as user_name FROM user as u left join employee as e on
+        e.employee_gh=u.fk_employee_gh where user_authority_id=4 or user_authority_id=5 or user_authority_id=6;
+    </select>
+
+    <select id="selectDocumentPlanne" resultType="com.harmonycloud.entity.CustomerDocumentPlanne">
+        select * from customer_document_planne where fk_customer_id=#{customerId} order by create_time DESC LIMIT 1
+    </select>
+
+    <insert id="insertDocumentPlanne">
+        insert into customer_document_planne
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="fkCustomerId != null">fk_customer_id,</if>
+            <if test="competitor != null">competitor,</if>
+            <if test="customerCommunicate != null">customer_communicate,</if>
+            <if test="nextPlan != null">next_plan,</if>
+            <if test="ifHaveproj != null">if_haveproj,</if>
+            <if test="prodInvolved != null">prod_involved,</if>
+            <if test="projSituation != null">proj_situation,</if>
+            <if test="nextWork != null">next_work,</if>
+            <if test="budget != null">budget,</if>
+            <if test="offer != null">offer,</if>
+            <if test="graspDegree">grasp_degree,</if>
+            <if test="decisionChain != null">decision_chain,</if>
+            <if test="customerStatus">customer_status,</if>
+            <if test="cooperationChannel">cooperation_channel,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id,jdbcType=BIGINT},</if>
+            <if test="fkCustomerId != null">#{fkCustomerId,jdbcType=BIGINT},</if>
+            <if test="competitor != null">#{competitor,jdbcType=VARCHAR},</if>
+            <if test="customerCommunicate != null">#{customerCommunicate,jdbcType=BIGINT},</if>
+            <if test="nextPlan != null">#{nextPlan,jdbcType=VARCHAR},</if>
+            <if test="ifHaveproj != null">#{ifHaveproj,jdbcType=VARCHAR},</if>
+            <if test="prodInvolved != null">#{prodInvolved,jdbcType=VARCHAR},</if>
+            <if test="projSituation != null">#{projSituation,jdbcType=VARCHAR},</if>
+            <if test="nextWork != null">#{nextWork,jdbcType=VARCHAR},</if>
+            <if test="budget != null">#{budget,jdbcType=DECIMAL},</if>
+            <if test="offer != null">#{offer,jdbcType=DECIMAL},</if>
+            <if test="graspDegree">#{graspDegree,jdbcType=VARCHAR},</if>
+            <if test="decisionChain != null">#{decisionChain,jdbcType=VARCHAR},</if>
+            <if test="customerStatus">#{customerStatus,jdbcType=BIGINT},</if>
+            <if test="cooperationChannel">#{cooperationChannel,jdbcType=VARCHAR},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDocumentPlanne">
+        update customer_document_planne
+        <set>
+            <if test="fkCustomerId != null">fk_customer_id=#{fkCustomerId},</if>
+            <if test="competitor != null">competitor=#{competitor},</if>
+            <if test="customerCommunicate != null">customer_communicate=#{customerCommunicate},</if>
+            <if test="nextPlan != null">next_plan=#{nextPlan},</if>
+            <if test="ifHaveproj != null">if_haveproj=#{ifHaveproj},</if>
+            <if test="prodInvolved != null">prod_involved=#{prodInvolved},</if>
+            <if test="projSituation != null">proj_situation=#{projSituation},</if>
+            <if test="nextWork != null">next_work=#{nextWork},</if>
+            <if test="budget != null">budget=#{budget},</if>
+            <if test="offer != null">offer=#{offer},</if>
+            <if test="graspDegree">grasp_degree=#{graspDegree},</if>
+            <if test="decisionChain != null">decision_chain=#{decisionChain},</if>
+            <if test="customerStatus">customer_status=#{customerStatus},</if>
+            <if test="cooperationChannel">cooperation_channel=#{cooperationChannel},</if>
+            update_time = DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        </set>
+        where id=#{id}
+    </update>
+    
+    <select id="selectSalesIndustry" resultType="java.lang.String">
+        select s.dic_data_sort as sales_industry from customer_dic_data s
+        inner JOIN (select a.fk_employee_gh,substring_index(substring_index(a.sales_industry,',',b.help_topic_id+1),',',-1) shopid from user as a
+        join mysql.help_topic b on (length(a.sales_industry)-length(replace(a.sales_industry,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid where a.fk_employee_gh=#{employeeGh}
+    </select>
+    
+    <select id="selectCustomerByIndustry" resultType="com.harmonycloud.view.CustomerListView">
+        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM harmage.customer as c left join customer_contacts
+        as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
+        left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position where cdd2.dic_data_sort=#{sales}
+    </select>
+
+    <select id="selectCustomer" resultType="com.harmonycloud.view.CustomerDetailView">
+        select c.id,c.customer_name,c.customer_province,c.customer_city,c.customer_place,c.customer_code,c.customer_web,c.customer_email,cc.contacts_name,
+        cdd1.dic_data_sort as contacts_position,cc.contacts_specific_position,cc.contacts_tel,cc.contacts_wechat,cdd2.dic_data_sort as customer_prod_sort,
+        cdd2.dic_data_text as customer_prod_text,cdd3.dic_data_sort as customer_source_sort,c.customer_source_text,cdd4.dic_data_sort as customer_industry,
+        cdd5.dic_data_sort as customer_type,cdd6.dic_data_sort as team_total,cdd7.dic_data_sort as team_outsource,cdd8.dic_data_sort as server_count,
+        cdd9.dic_data_sort as server_type,cdd10.dic_data_sort as server_network,cdd11.dic_data_sort as operation_stage,cdd12.dic_data_sort as sorft_stage,
+        cdd13.dic_data_sort as technology_stage,cdd14.dic_data_sort as monitor_stage,aaa1.existing_pain,aaa2.petition,aaa3.direction,aaa4.follow_point,
+        c.wages,cdd19.dic_data_sort as budget_total,cdd20.dic_data_sort as transformation,aaa5.middleware,c.customer_remark,e.employee_name,
+        DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(c.update_time,'%Y-%m-%d %H:%i:%S') as update_time from
+        <if test="customerProvince==null and customerCity==null and customerSource==null and customerProdSort==null and defaultEmployeeGh==null and
+        createBeginTime==null and createEndTime==null and updateBeginTime==null and updateEndTime==null">
+            customer
+        </if>
+        <if test="customerProvince!=null or customerCity!=null or customerSource!=null or customerProdSort!=null or defaultEmployeeGh!=null or
+        createBeginTime!=null or createEndTime!=null or updateBeginTime!=null or updateEndTime!=null">
+            <trim prefix="(" suffix=")" suffixOverrides="and">
+                SELECT * FROM harmage.customer where
+                <if test="customerProvince!=null">customer_province=#{customerProvince} and</if>
+                <if test="customerCity!=null">customer_city=#{customerCity} and</if>
+                <if test="customerSource!=null">customer_source=#{customerSource} and</if>
+                <if test="customerProdSort!=null">customer_prod_sort=#{customerProdSort} and</if>
+                <if test="defaultEmployeeGh!=null">default_employee_gh=#{defaultEmployeeGh} and</if>
+                <if test="createBeginTime!=null">create_time>=#{createBeginTime} and</if>
+                <if test="createEndTime!=null">#{createEndTime}>=create_time and</if>
+                <if test="updateBeginTime!=null">update_time>=#{updateBeginTime} and</if>
+                <if test="updateEndTime!=null">#{updateEndTime}>=update_time and</if>
+            </trim>
+        </if>
+        as c left join customer_contacts as cc on c.default_contact_id=cc.id
+        left join customer_dic_data as cdd1 on cdd1.id=cc.contacts_position left join customer_dic_data as cdd2 on c.customer_prod_sort=cdd2.id
+        left join customer_dic_data as cdd3 on cdd3.id=c.customer_source left join customer_dic_data as cdd4 on c.customer_industry=cdd4.id
+        left join customer_dic_data as cdd5 on c.customer_type=cdd5.id left join customer_dic_data as cdd6 on c.team_total=cdd6.id
+        left join customer_dic_data as cdd7 on cdd7.id=c.team_outsource left join customer_dic_data as cdd8 on c.server_count=cdd8.id
+        left join customer_dic_data as cdd9 on cdd9.id=c.server_type left join customer_dic_data as cdd10 on c.server_network=cdd10.id
+        left join customer_dic_data as cdd11 on cdd11.id=c.operation_stage left join customer_dic_data as cdd12 on c.sorft_stage=cdd12.id
+        left join customer_dic_data as cdd13 on cdd13.id=c.technology_stage left join customer_dic_data as cdd14 on c.monitor_stage=cdd14.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as existing_pain from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.existing_pain,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.existing_pain)-length(replace(a.existing_pain,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa1 on aaa1.id=c.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as petition from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.petition,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.petition)-length(replace(a.petition,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa2 on aaa2.id=c.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as direction from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.direction,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.direction)-length(replace(a.direction,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa3 on aaa3.id=c.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as follow_point from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.follow_point,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.follow_point)-length(replace(a.follow_point,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa4 on aaa4.id=c.id left join customer_dic_data as cdd19 on c.budget_total=cdd19.id
+        left join customer_dic_data as cdd20 on c.transformation=cdd20.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as middleware from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.middleware,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.middleware)-length(replace(a.middleware,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa5 on aaa5.id=c.id
+        left join employee as e on e.employee_gh=c.default_employee_gh group by c.id;
+    </select>
+
+    <select id="selectDocumentRecord" resultType="com.harmonycloud.view.DocumentRecordListView">
+        SELECT cdr.id,c.id as customer_id,c.customer_name,cc.id as contacts_id,cc.contacts_name,cdd1.dic_data_sort as document_type,cdr.document_contact_time,cdr.document_next_contact_time,
+        aaa1.exchange_theme,aaa2.exchange_person,cdd2.dic_data_sort as exchange_reason,cdd3.dic_data_sort as next_plan,cdr.detailed_content,e.employee_name,
+        DATE_FORMAT(cdr.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdr.update_time,'%Y-%m-%d %H:%i:%S') as update_time
+        FROM customer_document_record as cdr left join customer as c on c.id=cdr.fk_customer_id
+        left join customer_contacts as cc on cc.id=cdr.fk_contacts_id
+        left join customer_dic_data as cdd1 on cdd1.id=cdr.document_type left join
+        (select id,GROUP_CONCAT(shopname SEPARATOR';') as exchange_theme from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.exchange_theme,',',b.help_topic_id+1),',',-1) shopid from customer_document_record as a
+        join mysql.help_topic b on (length(a.exchange_theme)-length(replace(a.exchange_theme,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa1 on aaa1.id=cdr.id left join
+        (select id,GROUP_CONCAT(shopname SEPARATOR';') as exchange_person from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.exchange_person,',',b.help_topic_id+1),',',-1) shopid from customer_document_record as a
+        join mysql.help_topic b on (length(a.exchange_person)-length(replace(a.exchange_person,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa2 on aaa2.id=cdr.id left join
+        customer_dic_data as cdd2 on cdd2.id=cdr.exchange_reason left join customer_dic_data as cdd3 on cdd3.id=cdr.next_plan
+        left join employee as e on e.employee_gh=cdr.salesman_employee_gh
+        <if test="documentType!=null or defaultEmployeeGh!=null or createBeginTime!=null or createEndTime!=null">
+            where
+            <trim suffixOverrides="and">
+                <if test="documentType!=null">cdr.document_type=#{documentType} and</if>
+                <if test="defaultEmployeeGh!=null">c.default_employee_gh=#{defaultEmployeeGh} and</if>
+                <if test="createBeginTime!=null">cdr.create_time>=#{createBeginTime} and</if>
+                <if test="createEndTime!=null">#{createEndTime}>=cdr.create_time and</if>
+            </trim>
+        </if>
+    </select>
+
+    <select id="listDocumentPlanne" resultType="com.harmonycloud.view.DocumentPlanneListView">
+        SELECT cdp.id,c.id as customer_id,c.customer_name,cdp.competitor,cdd1.dic_data_sort as customer_communicate,cdp.next_plan,cdp.if_haveproj,cdp.prod_involved,
+        cdp.proj_situation,cdp.next_work,cdp.budget,cdp.offer,cdp.grasp_degree,cdp.decision_chain,cdd2.dic_data_sort as customer_status,cdp.cooperation_channel,e.employee_name,
+        DATE_FORMAT(cdp.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdp.update_time,'%Y-%m-%d %H:%i:%S') as update_time FROM harmage.customer_document_planne as cdp
+        left join customer as c on c.id=cdp.fk_customer_id left join customer_dic_data as cdd1 on cdd1.id=cdp.customer_communicate
+        left join employee as e on c.default_employee_gh=e.employee_gh left join customer_dic_data as cdd2 on cdd2.id=cdp.customer_status;
+    </select>
+
+    <select id="shareToMe" resultType="com.harmonycloud.view.CustomerListView">
+        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM
+        (select fk_customer_id from (select fk_customer_id,count(1) as num from customer_salesman group by fk_customer_id) as c where num>=2) as de left join customer_salesman
+        as cs on cs.fk_customer_id=de.fk_customer_id
+        left join customer as c on c.id=de.fk_customer_id left join customer_contacts as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
+        left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position where cs.employee_gh=#{employeeGh} and c.default_employee_gh!=#{employeeGh} group by c.id
+    </select>
+
+    <select id="myShared" resultType="com.harmonycloud.view.CustomerListView">
+        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM
+        (select fk_customer_id from (select fk_customer_id,count(1) as num from customer_salesman group by fk_customer_id) as c where num>=2) as de
+        left join customer as c on c.id=de.fk_customer_id left join customer_contacts as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
+        left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position where c.default_employee_gh=#{employeeGh} group by c.id
+    </select>
+
+    <select id="selectAllCustomerName" resultType="java.lang.String">
+        select customer_name from customer;
+    </select>
+
+    <select id="listSaleman" resultType="com.harmonycloud.view.UserListView" >
+        SELECT e.employee_gh,e.employee_name as user_name,aaa1.sales_industry FROM harmage.user as u left join
+        employee as e on e.employee_gh=u.fk_employee_gh
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as sales_industry from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select  a.id,substring_index(substring_index(a.sales_industry,',',b.help_topic_id+1),',',-1) shopid from user as a
+        join mysql.help_topic b on (length(a.sales_industry)-length(replace(a.sales_industry,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa1 on aaa1.id=u.id
+        where user_authority_id=4 or user_authority_id=5 or user_authority_id=6;
+    </select>
+
+    <delete id="deleteSalemans">
+        delete from customer_salesman where fk_customer_id=#{fkCustomerId}
+    </delete>
+
+    <insert id="insertIntoCustomerSalesman">
+        insert into customer_salesman(employee_gh,fk_customer_id) value(#{employeeGh},#{fkCustomerId})
+    </insert>
+
+    <select id="getHadShared" resultType="java.lang.String">
+        SELECT employee_gh FROM harmage.customer_salesman where fk_customer_id=#{id}
+    </select>
+</mapper>
