@@ -10,22 +10,18 @@ import com.dingtalk.api.response.OapiGettokenResponse;
 import com.dingtalk.api.response.OapiSnsGetuserinfoBycodeResponse;
 import com.dingtalk.api.response.OapiUserGetResponse;
 import com.dingtalk.api.response.OapiUserGetUseridByUnionidResponse;
-import com.harmonycloud.config.Constant;
+import com.harmonycloud.bean.account.LoginInfoView;
+import com.harmonycloud.config.DingConstant;
 import com.harmonycloud.controller.LoginController;
-import com.harmonycloud.service.LoginInfoService;
 import com.harmonycloud.util.DesEncryptUtil;
-import com.harmonycloud.view.LoginInfoView;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.harmonycloud.config.Constant.*;
 import static com.harmonycloud.config.URLConstant.*;
 import static com.harmonycloud.util.JsonWebToken.CreateToken;
 
@@ -39,8 +35,8 @@ public class LoginMethod {
         try {
             // 获取连接
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:mysql://10.1.11.89:3306/harmage?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai",
-                    "root", "123456");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://47.92.161.179:31036/harmage?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai",
+                    "root", "Ab@123456");
             // 定义sql语句
             String Sql = "select * from employee";
             // 执行sql语句
@@ -71,8 +67,9 @@ public class LoginMethod {
         OapiUserGetResponse responseUser = clientUser.execute(requestUser, getToken());
 
         String employeeGh = responseUser.getJobnumber();
-        Connection con = DriverManager.getConnection("jdbc:mysql://10.1.11.89:3306/harmage?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai",
-                "root", "123456");
+        System.out.println(employeeGh);//年份+原本的工号？？？
+        Connection con = DriverManager.getConnection("jdbc:mysql://47.92.161.179:31036/harmage?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai",
+                "root", "Ab@123456");
         String sql = "select GROUP_CONCAT(a.authority_value SEPARATOR ',') as authority_value from user as u left join authority as a on u.user_authority_id=a.id where fk_employee_gh=?;";
         PreparedStatement st = con.prepareStatement(sql);
         st.setString(1, employeeGh);
@@ -171,7 +168,7 @@ public class LoginMethod {
         Map<String,Object> data =new HashMap<>();
         OapiSnsGetuserinfoBycodeResponse response;
         try {
-            response = client.execute(req,Login_OUT_APP_ID,Login_OUT_APP_SECRET);
+            response = client.execute(req,DingConstant.Login_OUT_APP_ID,DingConstant.Login_OUT_APP_SECRET);
         } catch (ApiException e) {
             e.printStackTrace();
             return null;
@@ -257,8 +254,8 @@ public class LoginMethod {
         DefaultDingTalkClient client = new
                 DefaultDingTalkClient(URL_GET_TOKKEN);
         OapiGettokenRequest request = new OapiGettokenRequest();
-        request.setAppkey(Constant.APP_KEY);
-        request.setAppsecret(Constant.APP_SECRET);
+        request.setAppkey(DingConstant.APP_KEY);
+        request.setAppsecret(DingConstant.APP_SECRET);
         request.setHttpMethod("GET");
         try {
             OapiGettokenResponse response = client.execute(request);

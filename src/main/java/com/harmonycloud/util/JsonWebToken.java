@@ -4,7 +4,7 @@ package com.harmonycloud.util;
 import com.alibaba.fastjson.JSONObject;
 import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
-import com.harmonycloud.view.LoginInfoView;
+import com.harmonycloud.bean.account.LoginInfoView;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.apache.commons.codec.binary.Base64;

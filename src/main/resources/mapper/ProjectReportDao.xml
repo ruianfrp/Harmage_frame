@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.ProjectReportDao">
+
+    <resultMap id="BaseResultMap" type="com.harmonycloud.bean.report.ProjectReport">
+        <result column="start_time" jdbcType="DATE" property="startTime" />
+        <result column="end_time" jdbcType="DATE" property="endTime" />
+        <result column="project_name" jdbcType="VARCHAR" property="projectName" />
+    </resultMap>
+
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.harmonycloud.bean.report.ProjectReport">
+        <result column="report" jdbcType="LONGVARCHAR" property="report" />
+    </resultMap>
+
+    <insert id="insertReportDataBase">
+        insert project_report(start_time, end_time,project_name,report) values
+        <foreach collection="list" index="index" item="projectReport" separator=",">
+            (#{projectReport.startTime},#{projectReport.endTime},#{projectReport.projectName},#{projectReport.report})
+        </foreach>
+    </insert>
+
+    <select id="getProjectReport" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select start_time, end_time, project_name, report from project_report where project_name = #{projectName};
+    </select>
+</mapper>

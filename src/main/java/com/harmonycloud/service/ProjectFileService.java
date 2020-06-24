@@ -1,6 +1,7 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.view.ProjectFileView;
+import com.harmonycloud.bean.project.ProjectFileView;
+import com.harmonycloud.bean.project.ProjectStatusBean;
 
 import java.util.List;
 import java.util.Set;
@@ -20,4 +21,8 @@ public interface ProjectFileService {
     Integer deleteFile(Integer fileId);
 
     Set<String> selectNewName(Integer projectId);
+
+    List<ProjectStatusBean> getStopProjectDay(String status);
+
+    int updateStopStatusForProject(int projectId, String status);
 }

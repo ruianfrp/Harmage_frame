@@ -1,11 +1,11 @@
 package com.harmonycloud.util.ScheduleTask;
 
-import com.harmonycloud.entity.MemberApply;
+import com.harmonycloud.bean.member.MemberApply;
+import com.harmonycloud.bean.member.MemberLeaveListView;
 import com.harmonycloud.service.EmployeeService;
 import com.harmonycloud.service.MemberApplyService;
 import com.harmonycloud.service.MemberLeaveService;
 import com.harmonycloud.service.MemberService;
-import com.harmonycloud.view.MemberLeaveListView;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

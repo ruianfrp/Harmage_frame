@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.harmonycloud.dao.MemberLeaveDao">
 
-    <select id="listMemberLeave" resultType="com.harmonycloud.view.MemberLeaveListView">
+    <select id="listMemberLeave" resultType="com.harmonycloud.bean.member.MemberLeaveListView">
         select m.id,p.id as project_id,p.proj_name,e.employee_name as leave_apply_name,e2.employee_gh,e2.employee_name as member_leave_name,m.member_leave_time,
         m.member_leave_status as leave_status,m.member_skill_evaluation,m.member_leave_remark,p1.proj_name as distribution_proj_name,
         DATE_FORMAT(m.create_time,'%Y-%m-%d %H:%i:%S') as create_time,e3.employee_name as leave_approval_name from member_leave as m left join project as p on m.fk_project_id=p.id
@@ -18,7 +18,7 @@
         </if>
     </select>
 
-    <select id="listPmMemberLeave" resultType="com.harmonycloud.view.MemberLeaveListView">
+    <select id="listPmMemberLeave" resultType="com.harmonycloud.bean.member.MemberLeaveListView">
         select m.id,p.id as project_id,p.proj_name,e.employee_name as leave_apply_name,e2.employee_gh,e2.employee_name as member_leave_name,m.member_leave_time,
         m.member_leave_status as leave_status,m.member_skill_evaluation,m.member_leave_remark,p1.proj_name as distribution_proj_name,
         DATE_FORMAT(m.create_time,'%Y-%m-%d %H:%i:%S') as create_time,e3.employee_name as leave_approval_name from member_leave as m left join project as p on m.fk_project_id=p.id
@@ -79,7 +79,7 @@
         </trim>
     </insert>
 
-    <select id="selectIfLeave" resultType="com.harmonycloud.view.MemberLeaveListView">
+    <select id="selectIfLeave" resultType="com.harmonycloud.bean.member.MemberLeaveListView">
         select id,member_leave_gh,fk_project_id as project_id,member_leave_time,member_leave_remark from member_leave where
         member_leave_status="审批通过" and member_is_leave=0 and DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')>=member_leave_time
     </select>
@@ -118,7 +118,7 @@
         SELECT distinct member_leave_gh FROM member_leave where id=#{id}
     </select>
 
-    <select id="selectLeaveTime" resultType="com.harmonycloud.view.MemberLeaveListView">
+    <select id="selectLeaveTime" resultType="com.harmonycloud.bean.member.MemberLeaveListView">
         select member_leave_gh,fk_project_id as project_id,member_leave_remark,DATE_FORMAT(member_leave_time,'%Y-%m-%d %H:%i:%S') as member_leave_time from member_leave where id=#{id}
     </select>
 

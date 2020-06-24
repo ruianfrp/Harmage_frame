@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.harmonycloud.dao.MilestoneDao">
 
-    <select id="selectMilestones" resultType="com.harmonycloud.entity.Milestone">
+    <select id="selectMilestones" resultType="com.harmonycloud.bean.milestone.Milestone">
         select * from milestone where fk_project_id=#{0}
     </select>
 
-    <select id="selectMilestoneWeekPlan" resultType="com.harmonycloud.entity.MilestoneWeekPlan">
+    <select id="selectMilestoneWeekPlan" resultType="com.harmonycloud.bean.milestone.MilestoneWeekPlan">
         select * from milestone_week_plan where fk_project_id=#{0}
     </select>
 
@@ -56,7 +56,7 @@
         values(#{fkProjectId},#{milestone},#{operation})
     </insert>
 
-    <select id="selectMilestone" resultType="com.harmonycloud.entity.Milestone">
+    <select id="selectMilestone" resultType="com.harmonycloud.bean.milestone.Milestone">
         select * from milestone where fk_project_id=#{projectId} and milestone_index=#{index}
     </select>
 
@@ -68,12 +68,12 @@
     </update>
 
     <update id="updateProjectStatus">
-        UPDATE project SET proj_status=#{flag} WHERE id=#{project_id}
+        UPDATE project SET proj_status=#{projectStatus}, <if test="projectSubState != null">proj_substate = #{projectSubState}</if> WHERE id=#{project_id} and proj_status != 'STOP'
     </update>
 
-    <select id="selectMilestoneInfo" resultType="com.harmonycloud.view.MilestoneStatusView">
+    <select id="selectMilestoneInfo" resultType="com.harmonycloud.bean.milestone.MilestoneStatusView">
         SELECT milestone_index,fk_project_id,milestone_presta_time,milestone_preend_time,TIMESTAMPDIFF(DAY,milestone_presta_time,milestone_preend_time) as require_day,
-        TIMESTAMPDIFF(DAY,milestone_preend_time,DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')) as exceed_day FROM harmage.milestone where DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')>=milestone_preend_time
+        TIMESTAMPDIFF(DAY,milestone_preend_time,DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')) as exceed_day FROM milestone where DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')>=milestone_preend_time
         and milestone_status not like '%完成' and milestone_status not like '未%'
     </select>
     
@@ -81,10 +81,10 @@
         update milestone set milestone_status=#{flag},update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S') where milestone_index=#{milestoneIndex} and fk_project_id=#{fkProjectId}
     </update>
 
-    <select id="projectDelayRanking" resultType="com.harmonycloud.view.ProjectDelayRankingView">
+    <select id="projectDelayRanking" resultType="com.harmonycloud.bean.project.ProjectDelayRankingView">
         select * from (select m.fk_project_id,p.proj_name as project_name,m.milestone_phase,
         if(m.milestone_new_preend_time,TIMESTAMPDIFF(DAY,m.milestone_new_preend_time,DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')),TIMESTAMPDIFF(DAY,m.milestone_preend_time,DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'))) as delay_time
-        from milestone as m left join project as p on m.fk_project_id=p.id
+        from milestone as m inner join (select * from project where proj_status != 'STOP') as p on m.fk_project_id=p.id
         where m.milestone_start_time is not null and m.milestone_end_time is null
         order by m.fk_project_id,delay_time desc) as A where delay_time>0
     </select>

@@ -6,7 +6,7 @@ import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.request.OapiUserGetOrgUserCountRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.dingtalk.api.response.OapiUserGetOrgUserCountResponse;
-import com.harmonycloud.config.Constant;
+import com.harmonycloud.config.DingConstant;
 import com.harmonycloud.util.SyncInfo;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
@@ -29,33 +29,31 @@ public class SynchroThread extends Thread {
 
     @Override
     public void run() {
-        try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://10.1.11.89:3306/harmage?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai",
-                    "root", "123456");
-            String sql = "select count(*) from employee where is_quit=0;";
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(sql);
-            if (rs.next()) {
-                Long num = Long.valueOf(rs.getInt(1));
-                log.info("系统中员工数为： " + (num-2));
-                //System.out.println(num);
-                Long countUser = getCountUser();
-                log.info("钉钉中员工数为： " + countUser);
-                //System.out.println(countUser);
-                if((num-2) >= countUser){
-                    log.info("员工信息已为最新，无需同步");
-                }
-                else {
+//        try {
+//            Connection con = DriverManager.getConnection("jdbc:mysql://47.92.161.179:31036/harmage?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai",
+//                    "root", "Ab@123456");
+//            String sql = "select count(*) from employee where is_quit=0;";
+//            Statement st = con.createStatement();
+//            ResultSet rs = st.executeQuery(sql);
+//            if (rs.next()) {
+//                Long num = Long.valueOf(rs.getInt(1));
+//                log.info("系统中员工数为： " + (num-2));
+//                Long countUser = getCountUser();
+//                log.info("钉钉中员工数为： " + countUser);
+//                if((num-2) >= countUser){
+//                    log.info("员工信息已为最新，无需同步");
+//                }
+//                else {
                     SyncInfo.LoadAllUserInfo();
                     log.info("同步成功");
-                }
-            }
-            rs.close();
-            st.close();
-            con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//                }
+//            }
+//            rs.close();
+//            st.close();
+//            con.close();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private static Long getCountUser(){
@@ -77,8 +75,8 @@ public class SynchroThread extends Thread {
         DefaultDingTalkClient client = new
                 DefaultDingTalkClient(URL_GET_TOKKEN);
         OapiGettokenRequest request = new OapiGettokenRequest();
-        request.setAppkey(Constant.APP_KEY);
-        request.setAppsecret(Constant.APP_SECRET);
+        request.setAppkey(DingConstant.APP_KEY);
+        request.setAppsecret(DingConstant.APP_SECRET);
         request.setHttpMethod("GET");
         try {
             OapiGettokenResponse response = client.execute(request);

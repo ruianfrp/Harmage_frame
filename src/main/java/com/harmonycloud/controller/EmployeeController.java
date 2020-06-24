@@ -10,10 +10,14 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
-import com.harmonycloud.config.Constant;
+import com.harmonycloud.bean.employee.EmployeeCountView;
+import com.harmonycloud.bean.employee.EmployeeListView;
+import com.harmonycloud.bean.employee.EmployeeNumView;
+import com.harmonycloud.bean.employee.EmployeeSkillView;
+import com.harmonycloud.bean.skill.TestSkillListView;
+import com.harmonycloud.config.DingConstant;
 import com.harmonycloud.service.EmployeeService;
 import com.harmonycloud.util.SyncInfo;
-import com.harmonycloud.view.*;
 import com.taobao.api.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -133,7 +137,7 @@ public class EmployeeController {
     }
 
     /**
-     * 返回所有员工的信息
+     * 返回所有员工的信息（分页）
      *
      * @return message
      * @throws Exception
@@ -177,6 +181,51 @@ public class EmployeeController {
             }
             log.info("Employee信息返回成功");
             data.put("pageInfo", pageInfo);
+            res.message.setMessage(200, "数据返回成功", data);
+        } else {
+            log.error("返回错误，Employee数据为空");
+            res.message.setMessage(400, "数据为空");
+        }
+        return res.message;
+    }
+
+    /**
+     * 获取所有员工列表（导出）
+     *
+     * @return message
+     * @throws Exception
+     */
+    @GetMapping("/listAllEmployee")
+    @ApiOperation(value = "获取所有员工列表")
+    public Message listAllEmployee(){
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Map<String, Object> data = new HashMap<>();
+        List<EmployeeListView> list = employeeService.listAllEmployee();
+        if (list.size()>0) {
+            List<EmployeeSkillView> list1 = employeeService.selectEmployeeSkill();
+            List<TestSkillListView> list2 = employeeService.selectEmployeeTestSkill();
+            for (EmployeeListView employeeListView : list) {
+                List<EmployeeSkillView> skillViewList = new ArrayList<>();
+                List<TestSkillListView> testSkillViewList = new ArrayList<>();
+                for(EmployeeSkillView skillView:list1){
+                    if(employeeListView.getEmployeeGh().equals(skillView.getFkEmployeeGh())){
+                        skillViewList.add(skillView);
+                    }
+                }
+                for(TestSkillListView testSkillView:list2){
+                    if(employeeListView.getEmployeeGh().equals(testSkillView.getFkEmployeeGh())){
+                        testSkillViewList.add(testSkillView);
+                    }
+                }
+                employeeListView.setSkillInfo(skillViewList);
+                employeeListView.setSkillTestInfo(testSkillViewList);
+            }
+            log.info("获取所有员工列表成功");
+            data.put("list", list);
             res.message.setMessage(200, "数据返回成功", data);
         } else {
             log.error("返回错误，Employee数据为空");

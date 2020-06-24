@@ -1,8 +1,8 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.view.ProjEndApplyDetailView;
-import com.harmonycloud.view.ProjEndApplyListView;
-import com.harmonycloud.view.ProjectEndMsgView;
+import com.harmonycloud.bean.project.ProjEndApplyDetailView;
+import com.harmonycloud.bean.project.ProjEndApplyListView;
+import com.harmonycloud.bean.project.ProjectEndMsgView;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

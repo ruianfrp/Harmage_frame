@@ -1,7 +1,8 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.entity.Member;
-import com.harmonycloud.view.MemberView;
+import com.harmonycloud.bean.execl.EmployeeReportExecl;
+import com.harmonycloud.bean.member.Member;
+import com.harmonycloud.bean.member.MemberView;
 
 import java.util.Date;
 import java.util.List;
@@ -31,4 +32,6 @@ public interface MemberService {
 
     Integer insertIntoMemberApply(Integer fkProjectId,String fkEmployeeGh,String memberRecommendGh,String applyApprovalGh,
                                   String distributionGh,String memberJoinSup,String memberJoinType,Date memberStartTime,Date memberEndTime);
+
+    List<EmployeeReportExecl> getProjectTimeReport();
 }

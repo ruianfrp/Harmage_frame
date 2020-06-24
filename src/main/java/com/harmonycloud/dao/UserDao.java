@@ -1,7 +1,8 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.entity.Authority;
-import com.harmonycloud.view.UserListView;
+
+import com.harmonycloud.bean.account.Authority;
+import com.harmonycloud.bean.account.UserListView;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface UserDao {
-    List<UserListView> listUser(String selectEmployeeGh,String selectEmployeeName);
+    List<UserListView> listUser(String selectEmployeeGh, String selectEmployeeName);
 
     void deleteUser(String employeeGh);
 

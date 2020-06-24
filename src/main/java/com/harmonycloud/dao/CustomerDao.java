@@ -1,10 +1,10 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.entity.Customer;
-import com.harmonycloud.entity.CustomerContacts;
-import com.harmonycloud.entity.CustomerDocumentPlanne;
-import com.harmonycloud.entity.CustomerDocumentRecord;
-import com.harmonycloud.view.*;
+import com.harmonycloud.bean.account.UserListView;
+import com.harmonycloud.bean.customer.*;
+import com.harmonycloud.bean.document.DocumentPlanneListView;
+import com.harmonycloud.bean.document.DocumentRecordListView;
+import com.harmonycloud.bean.document.SelectDocumentRecordView;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -58,7 +58,7 @@ public interface CustomerDao {
 
     Customer selectCustomerAfterUpdate(Integer id);
 
-    List<DocumentRecordListView> listDocumentRecord(String selectCustomerName,String selectDocumentType,Date beginTime,Date endTime,String selectEmployeeName,String sort);
+    List<DocumentRecordListView> listDocumentRecord(String selectCustomerName, String selectDocumentType, Date beginTime, Date endTime, String selectEmployeeName, String sort);
 
     List<DocumentRecordListView> selectPartDocumentRecord(String employeeGh);
 

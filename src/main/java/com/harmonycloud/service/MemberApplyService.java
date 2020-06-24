@@ -1,10 +1,11 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.entity.MemberApply;
-import com.harmonycloud.view.MatchEmployeeView;
-import com.harmonycloud.view.MemberAgreeApplyList;
-import com.harmonycloud.view.MemberApplyDetailView;
-import com.harmonycloud.view.MemberApplyListView;
+
+import com.harmonycloud.bean.employee.MatchEmployeeView;
+import com.harmonycloud.bean.member.MemberAgreeApplyList;
+import com.harmonycloud.bean.member.MemberApply;
+import com.harmonycloud.bean.member.MemberApplyDetailView;
+import com.harmonycloud.bean.member.MemberApplyListView;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public interface MemberApplyService {
 
-    List<MemberApplyListView> listMemberApply(String startTimeSort,String statusSort);
+    List<MemberApplyListView> listMemberApply(String startTimeSort, String statusSort);
 
     List<String> listSkillName(Integer id);
 
@@ -59,7 +60,7 @@ public interface MemberApplyService {
 
     List<MemberAgreeApplyList> listApplicantAgreeApply(String employeeGh,String sort);
 
-    List<MemberAgreeApplyList> listOwnerAgreeApply(String employeeGh,String sort);
+    List<MemberAgreeApplyList> listOwnerAgreeApply(String employeeGh, String sort);
 
     Integer applicantAgree(Integer ifAgree, Integer id);
 

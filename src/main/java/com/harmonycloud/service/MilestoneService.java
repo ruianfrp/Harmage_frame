@@ -1,14 +1,12 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.entity.Milestone;
-import com.harmonycloud.entity.MilestoneWeekPlan;
-import com.harmonycloud.view.MilestoneStatusView;
-import com.harmonycloud.view.MilestoneView;
-import com.harmonycloud.view.ProjectDelayRankingView;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.harmonycloud.bean.milestone.Milestone;
+import com.harmonycloud.bean.milestone.MilestoneStatusView;
+import com.harmonycloud.bean.milestone.MilestoneWeekPlan;
+import com.harmonycloud.bean.project.ProjectDelayRankingView;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author ：lxl
@@ -25,9 +23,9 @@ public interface MilestoneService {
 
     void addMilestoneAndWeekPlan(List<Milestone> milestones);
 
-    List<String> selectStatus(String project_id);
+    Set<String> selectStatus(String project_id);
 
-    void updateProjectStatus(String flag, Integer project_id);
+    void updateProjectStatus(String projectStatus, String projectSubState, Integer project_id);
 
     void startMilestone(Integer index,Integer fkProjectId,String startTime,String milestoneStatus);
 

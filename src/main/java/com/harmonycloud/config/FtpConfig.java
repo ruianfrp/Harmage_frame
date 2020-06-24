@@ -5,7 +5,7 @@ public class FtpConfig {
     /**
      * 获取IP地址
      */
-    private String FTP_ADDRESS = "10.1.11.89";
+    private String FTP_ADDRESS = "47.92.161.179";
 
     /**
      * 端口号
@@ -30,7 +30,7 @@ public class FtpConfig {
     /**
      * 下载地址地基础url，这个是配置的图片服务器的地址,最后访问图片时候，需要用该基础地址    
      */
-    private String IMAGE_BASE_URL = "http://10.1.11.89/picture";
+    private String IMAGE_BASE_URL = "http://47.92.161.179/picture";
 
 
     public String getFTP_ADDRESS() {

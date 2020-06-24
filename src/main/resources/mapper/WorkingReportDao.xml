@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.WorkingReportDao">
+    <select id="getWorkingTimeReport" resultType="com.harmonycloud.bean.execl.WorkingReportExcel">
+        select utc_date() as working_date,fk_employee_gh as employee_id, employee_name, fk_project_id as project_id ,proj_name as project_name,
+        real_start_time as join_time, real_end_time as leave_time from member,employee,project where member.fk_project_id = project.id and member.fk_employee_gh = employee.employee_gh and project.proj_status != '完成';
+    </select>
+
+    <insert id="insertWorkingReport">
+        insert working_report(working_date, employee_id, employee_name, join_time, leave_time, project_name, working_hours,project_id) values
+        <foreach collection="list" index="index" item="workingReportExcelList" separator=",">
+            (#{workingReportExcelList.workingDate},#{workingReportExcelList.employeeId},#{workingReportExcelList.employeeName},#{workingReportExcelList.joinTime},#{workingReportExcelList.leaveTime},#{workingReportExcelList.projectName},#{workingReportExcelList.workingHours},#{workingReportExcelList.projectId})
+        </foreach>
+    </insert>
+
+    <select id="getTotalWorkingTimeReport" resultType="com.harmonycloud.bean.execl.WorkingReportExcel">
+         select employee_id,employee_name,project_id, project_name,join_time, leave_time ,sum(working_hours) as workingHours, count(working_hours) as totalDays from working_report where working_date between date_format(#{startTime}, '%Y-%m-%d') and date_format(#{endTime}, '%Y-%m-%d')   group by employee_id, project_id;
+    </select>
+</mapper>

@@ -1,10 +1,10 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.entity.MemberApply;
-import com.harmonycloud.view.MatchEmployeeView;
-import com.harmonycloud.view.MemberAgreeApplyList;
-import com.harmonycloud.view.MemberApplyDetailView;
-import com.harmonycloud.view.MemberApplyListView;
+import com.harmonycloud.bean.employee.MatchEmployeeView;
+import com.harmonycloud.bean.member.MemberAgreeApplyList;
+import com.harmonycloud.bean.member.MemberApply;
+import com.harmonycloud.bean.member.MemberApplyDetailView;
+import com.harmonycloud.bean.member.MemberApplyListView;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface MemberApplyDao {
 
-    List<MemberApplyListView> listMemberApply(String startTimeSort,String statusSort);
+    List<MemberApplyListView> listMemberApply(String startTimeSort, String statusSort);
 
     List<String> listSkillName(Integer id);
 
@@ -55,7 +55,7 @@ public interface MemberApplyDao {
 
     List<MatchEmployeeView> matchEndTime(Integer id);
 
-    List<MemberAgreeApplyList> listApplicantAgreeApply(String employeeGh,String sort);
+    List<MemberAgreeApplyList> listApplicantAgreeApply(String employeeGh, String sort);
 
     List<MemberAgreeApplyList> listOwnerAgreeApply(String employeeGh,String sort);
 

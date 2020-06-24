@@ -1,6 +1,7 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.view.MemberLeaveListView;
+
+import com.harmonycloud.bean.member.MemberLeaveListView;
 
 import java.sql.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ public interface MemberLeaveService {
 
     List<MemberLeaveListView> listMemberLeave(String sort);
 
-    List<MemberLeaveListView> listPmMemberLeave(String employeeGh,String sort);
+    List<MemberLeaveListView> listPmMemberLeave(String employeeGh, String sort);
 
     int updateMemberLeave(String leaveApprovalGh,String memberLeaveStatus,Integer projectId,int id);
 

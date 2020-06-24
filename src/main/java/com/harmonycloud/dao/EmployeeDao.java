@@ -1,6 +1,7 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.view.*;
+import com.harmonycloud.bean.employee.*;
+import com.harmonycloud.bean.skill.TestSkillListView;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -8,7 +9,9 @@ import java.util.List;
 
 @Repository
 public interface EmployeeDao {
-    List<EmployeeListView> listEmployee(String selectEmployeeGh,String selectSex,String selectType,String selectEmployeeName,String sort);
+    List<EmployeeListView> listEmployee(String selectEmployeeGh, String selectSex, String selectType, String selectEmployeeName, String sort);
+
+    List<EmployeeListView> listAllEmployee();
 
     List<EmployeeSkillView> selectEmployeeSkill();
 

@@ -1,6 +1,6 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.view.MemberLeaveListView;
+import com.harmonycloud.bean.member.MemberLeaveListView;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;

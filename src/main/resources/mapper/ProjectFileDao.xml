@@ -6,17 +6,17 @@
         select proj_name from project where id=#{id}
     </select>
 
-    <select id="listAllProjectFile" resultType="com.harmonycloud.view.ProjectFileView">
+    <select id="listAllProjectFile" resultType="com.harmonycloud.bean.project.ProjectFileView">
         SELECT pf.file_id, pf.fk_project_id, pf.file_type, pf.file_proj_stage, pf.file_milestone_name, pf.file_old_name, pf.file_new_name, pf.file_save_path, p.proj_name, p.proj_line, pf.file_url
         FROM project_file as pf left join project as p on p.id=pf.fk_project_id where fk_project_id=#{projectId}
     </select>
 
-    <select id="selectByFileId" resultType="com.harmonycloud.view.ProjectFileView">
+    <select id="selectByFileId" resultType="com.harmonycloud.bean.project.ProjectFileView">
         SELECT pf.file_type, pf.file_old_name, pf.file_new_name, pf.file_save_path, pf.file_url
         FROM project_file as pf left join project as p on p.id=pf.fk_project_id where file_id=#{fileId}
     </select>
 
-    <select id="selectByInfo" resultType="com.harmonycloud.view.ProjectFileView">
+    <select id="selectByInfo" resultType="com.harmonycloud.bean.project.ProjectFileView">
         SELECT pf.file_id, pf.fk_project_id, pf.file_type, pf.file_proj_stage, pf.file_milestone_name, pf.file_old_name, pf.file_new_name, pf.file_save_path, pf.file_url
         FROM project_file as pf left join project as p on p.id=pf.fk_project_id where fk_project_id=#{id} and file_new_name=#{newName} and file_old_name=#{oldName}
     </select>

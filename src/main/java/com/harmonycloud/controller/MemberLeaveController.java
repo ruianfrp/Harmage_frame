@@ -9,13 +9,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
-import com.harmonycloud.config.Constant;
+import com.harmonycloud.bean.member.MemberLeaveListView;
+import com.harmonycloud.config.DingConstant;
 import com.harmonycloud.service.EmployeeService;
 import com.harmonycloud.service.LoginInfoService;
 import com.harmonycloud.service.MemberLeaveService;
 import com.harmonycloud.service.MemberService;
 import com.harmonycloud.util.SendMessageUtil;
-import com.harmonycloud.view.MemberLeaveListView;
 import com.taobao.api.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -153,12 +153,13 @@ public class MemberLeaveController {
             log.error("Authorization参数校验失败");
             return res.message;
         }
-        Integer result;
+        Integer result = 0;
         Integer result1 = 0;
         String leaveApprovalGh = res.user.getId();
         Integer projectId = (Integer) map.get("projectId");
         if (map.get("memberLeaveStatus").equals("审批通过")) {
-            result = memberLeaveService.updateMemberLeave(leaveApprovalGh, (String) map.get("memberLeaveStatus"), projectId, (Integer) map.get("id"));
+            memberLeaveService.updateMemberLeave(leaveApprovalGh, (String) map.get("memberLeaveStatus"), projectId, (Integer) map.get("id"));
+            result = 1;
             if (projectId != null && map.get("memberJob") != null && map.get("estimateStartTime") != null) {
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String nowTime = df.format(new Date());
@@ -167,13 +168,14 @@ public class MemberLeaveController {
                 Date estimateStartTime = df.parse(startTime);
                 if(nowDate.before(estimateStartTime)){
                     log.info("加入时间到了进组");
-                    result1 = memberLeaveService.distributeProject((Integer) map.get("id"), projectId, (String) map.get("estimateStartTime"), (String) map.get("estimateEndTime"),
+                    memberLeaveService.distributeProject((Integer) map.get("id"), projectId, (String) map.get("estimateStartTime"), (String) map.get("estimateEndTime"),
                             (String) map.get("memberJob"), (String) map.get("memberSup"), (String) map.get("memberType"), (String) map.get("memberFunc"));
+                    result1 = 1;
                 }else {
                     log.info("立即开始进组");
-                    result1 = memberLeaveService.insertMemberByLeaveApply((Integer) map.get("id"), projectId, (String) map.get("estimateStartTime"), (String) map.get("estimateEndTime"),
+                    memberLeaveService.insertMemberByLeaveApply((Integer) map.get("id"), projectId, (String) map.get("estimateStartTime"), (String) map.get("estimateEndTime"),
                             (String) map.get("memberJob"), (String) map.get("memberSup"), (String) map.get("memberType"), (String) map.get("memberFunc"));
-
+                    result1 = 1;
                 }
                 Integer fkProjectId = projectId;
                 String fkEmployeeGh = memberService.findPmByProjId(fkProjectId);
@@ -225,13 +227,13 @@ public class MemberLeaveController {
                 }
             }
         } else {
-            result = memberLeaveService.updateMemberLeave(leaveApprovalGh, (String) map.get("memberLeaveStatus"), projectId, (Integer) map.get("id"));
+            memberLeaveService.updateMemberLeave(leaveApprovalGh, (String) map.get("memberLeaveStatus"), projectId, (Integer) map.get("id"));
             log.info("审批驳回");
         }
-        if (result > 0 && result1 > 0) {
+        if (result == 1 && result1 == 1) {
             log.info("审批成功，成功安排项目组");
             res.message.setMessage(200, "PMO审批调离申请成功，成功安排项目组");
-        } else if (result > 0 && result1 == 0) {
+        } else if (result == 1 && result1 == 0) {
             log.info("修改成功，审批驳回");
             res.message.setMessage(200, "PMO审批调离修改成功，审批驳回");
         } else {

@@ -1,7 +1,8 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.entity.Project;
-import com.harmonycloud.view.ProjectListView;
+import com.harmonycloud.bean.project.Project;
+import com.harmonycloud.bean.project.ProjectListView;
+import com.harmonycloud.bean.project.ProjectStatusBean;
 
 import java.util.List;
 
@@ -11,6 +12,8 @@ import java.util.List;
  */
 public interface ProjectService {
     List<ProjectListView> listProject();
+
+    List<ProjectListView> listOverViewProject();
 
     int updateByPrimaryKeySelective(Project project);
 
@@ -25,4 +28,12 @@ public interface ProjectService {
     List<String> selectMilestoneStatus(Integer projectId);
 
     ProjectListView selectProjectById(Integer id);
+
+    List<ProjectStatusBean> getStopProjectDay(String status);
+
+    int updateStopStatusForProject(int projectId, String status);
+
+    List<Integer> getProjectId();
+
+    Project getProject(String projectName);
 }

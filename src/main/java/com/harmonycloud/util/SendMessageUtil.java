@@ -5,8 +5,8 @@ import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.request.OapiMessageCorpconversationAsyncsendV2Request;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
-import com.harmonycloud.config.Constant;
-import com.harmonycloud.view.ProjectEndMsgView;
+import com.harmonycloud.bean.project.ProjectEndMsgView;
+import com.harmonycloud.config.DingConstant;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -191,8 +191,8 @@ public class SendMessageUtil {
         DefaultDingTalkClient client = new
                 DefaultDingTalkClient(URL_GET_TOKKEN);
         OapiGettokenRequest request = new OapiGettokenRequest();
-        request.setAppkey(Constant.APP_KEY);
-        request.setAppsecret(Constant.APP_SECRET);
+        request.setAppkey(DingConstant.APP_KEY);
+        request.setAppsecret(DingConstant.APP_SECRET);
         request.setHttpMethod("GET");
         try {
             OapiGettokenResponse response = client.execute(request);

@@ -1,7 +1,7 @@
 package com.harmonycloud.util.ScheduleTask;
 
+import com.harmonycloud.bean.milestone.MilestoneStatusView;
 import com.harmonycloud.service.MilestoneService;
-import com.harmonycloud.view.MilestoneStatusView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

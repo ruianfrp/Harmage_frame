@@ -1,6 +1,6 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.view.*;
+import com.harmonycloud.bean.skill.*;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;

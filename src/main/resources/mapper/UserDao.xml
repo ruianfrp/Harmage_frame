@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.harmonycloud.dao.UserDao">
 
-    <select id="listUser" resultType="com.harmonycloud.view.UserListView" >
+    <select id="listUser" resultType="com.harmonycloud.bean.account.UserListView" >
         select e.employee_gh,employee_name as user_name,employee_job,
         GROUP_CONCAT(distinct p.proj_name SEPARATOR ';') as proj_name,
         GROUP_CONCAT(a.authority_name SEPARATOR ';') as authority,GROUP_CONCAT(a.authority_value SEPARATOR ',') as authority_value,GROUP_CONCAT(distinct aaa1.sales_industry SEPARATOR ',') as sales_industry
@@ -62,7 +62,7 @@
         SELECT id from user where fk_employee_gh=#{employeeGh}
     </select>
     
-    <select id="selectAuthority" resultType="com.harmonycloud.entity.Authority">
+    <select id="selectAuthority" resultType="com.harmonycloud.bean.account.Authority">
         select * from authority;
     </select>
 

@@ -8,8 +8,9 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
+import java.util.Base64.Encoder;
+import java.util.Base64.Decoder;
 
 
 
@@ -73,11 +74,11 @@ public class DesEncryptUtil {
         byte[] byteMi = null;
         byte[] byteMing = null;
         String strMi = "";
-        BASE64Encoder base64en = new BASE64Encoder();
+        Encoder base64en = Base64.getEncoder();
         try {
             byteMing = strMing.getBytes("UTF-8");
             byteMi = getEncCode(byteMing);
-            strMi = base64en.encode(byteMi);
+            strMi = base64en.encodeToString(byteMi);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -95,12 +96,12 @@ public class DesEncryptUtil {
      * @return 解密
      */
     public String getDesString(String strMi) {
-        BASE64Decoder base64De = new BASE64Decoder();
+        Decoder base64De = Base64.getMimeDecoder();
         byte[] byteMing = null;
         byte[] byteMi = null;
         String strMing = "";
         try {
-            byteMi = base64De.decodeBuffer(strMi);
+            byteMi = base64De.decode(strMi);
             byteMing = getDesCode(byteMi);
             strMing = new String(byteMing, "UTF-8");
         } catch (Exception e) {

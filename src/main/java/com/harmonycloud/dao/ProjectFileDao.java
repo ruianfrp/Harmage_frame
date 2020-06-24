@@ -1,6 +1,6 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.view.ProjectFileView;
+import com.harmonycloud.bean.project.ProjectFileView;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

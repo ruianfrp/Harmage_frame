@@ -3,11 +3,11 @@ package com.harmonycloud.controller;
 
 import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
+import com.harmonycloud.bean.skill.SkillListView;
+import com.harmonycloud.bean.skill.SkillTestNameAndLevelAndPassNum;
+import com.harmonycloud.bean.skill.SkillView;
+import com.harmonycloud.bean.skill.TestSkillListView;
 import com.harmonycloud.service.SkillService;
-import com.harmonycloud.view.SkillListView;
-import com.harmonycloud.view.SkillTestNameAndLevelAndPassNum;
-import com.harmonycloud.view.SkillView;
-import com.harmonycloud.view.TestSkillListView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

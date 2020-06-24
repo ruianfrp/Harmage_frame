@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.harmonycloud.dao.SkillDao">
 
-    <select id="selectSkillDirct" resultType="com.harmonycloud.view.SkillListView">
+    <select id="selectSkillDirct" resultType="com.harmonycloud.bean.skill.SkillListView">
         SELECT distinct skill_dirct FROM skill
     </select>
 
-    <select id="listSkill" resultType="com.harmonycloud.view.SkillListView2">
+    <select id="listSkill" resultType="com.harmonycloud.bean.skill.SkillListView2">
         SELECT id,skill_name,create_time,update_time from skill where skill_dirct=#{skillDirct}
     </select>
 
@@ -32,7 +32,7 @@
         select id from skill where skill_dirct=#{skillDirct} and skill_name=#{skillName}
     </select>
 
-    <select id="listTestSkill" resultType="com.harmonycloud.view.TestSkillListView">
+    <select id="listTestSkill" resultType="com.harmonycloud.bean.skill.TestSkillListView">
         select * from skill_test
     </select>
 
@@ -58,7 +58,7 @@
         select skill_test_id from skill_test where skill_test_name=#{skillTestName} and skill_test_lv=#{skillTestLv}
     </select>
 
-    <select id="selectByTestId" resultType="com.harmonycloud.view.TestSkillListView">
+    <select id="selectByTestId" resultType="com.harmonycloud.bean.skill.TestSkillListView">
         select * from skill_test where skill_test_name=#{skillTestName}
     </select>
 
@@ -67,27 +67,27 @@
         select distinct skill_test_name from skill_test
     </select>
     <!--查询对应技术名称，等级，人数-->
-    <select id="selectSkillTestNameAndLevelAndPassNum" resultType="com.harmonycloud.view.SkillTestNameAndLevelAndPassNum">
+    <select id="selectSkillTestNameAndLevelAndPassNum" resultType="com.harmonycloud.bean.skill.SkillTestNameAndLevelAndPassNum">
         select st.skill_test_name, st.skill_test_lv, count(est.id) as pass_num
-        from harmage.employee_skill_test est left join harmage.skill_test st
+        from employee_skill_test est left join skill_test st
         on est.fk_skill_test_id = st.skill_test_id
         where st.skill_test_name = #{skillTestName} and st.skill_test_lv = #{skillTestLevel}
     </select>
     <!---->
     <select id="selectSkillTestPassNum" resultType="java.lang.Long">
         select count(est.id)
-        from harmage.employee_skill_test est left join harmage.skill_test st
+        from employee_skill_test est left join skill_test st
         on est.fk_skill_test_id = st.skill_test_id
         where st.skill_test_name = #{skillTestName} and st.skill_test_lv = #{skillTestLevel}
     </select>
 
-    <select id="selectSkillAndCount" resultType="com.harmonycloud.view.SkillView">
+    <select id="selectSkillAndCount" resultType="com.harmonycloud.bean.skill.SkillView">
         select s.skill_dirct,count(s.skill_dirct) as skill_dirct_count
         from skill as s join employee_skill as e on s.id=e.fk_skill_id
         group by s.skill_dirct
     </select>
 
-    <select id="selectSkillNameAndCount" resultType="com.harmonycloud.view.SkillView">
+    <select id="selectSkillNameAndCount" resultType="com.harmonycloud.bean.skill.SkillView">
         select s.skill_name as skill_dirct,count(s.skill_name) as skill_dirct_count
         from skill as s join employee_skill as e on s.id=e.fk_skill_id
         where s.skill_dirct=#{skillDirct}

@@ -1,12 +1,13 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.entity.Milestone;
-import com.harmonycloud.entity.MilestoneWeekPlan;
-import com.harmonycloud.view.MilestoneStatusView;
-import com.harmonycloud.view.ProjectDelayRankingView;
+import com.harmonycloud.bean.milestone.Milestone;
+import com.harmonycloud.bean.milestone.MilestoneStatusView;
+import com.harmonycloud.bean.milestone.MilestoneWeekPlan;
+import com.harmonycloud.bean.project.ProjectDelayRankingView;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface MilestoneDao {
@@ -26,9 +27,9 @@ public interface MilestoneDao {
 
     void weekPlanBatchInsert(List<MilestoneWeekPlan> list);
 
-    List<String> selectStatus(String project_id);
+    Set<String> selectStatus(String project_id);
 
-    void updateProjectStatus(String flag, Integer project_id);
+    void updateProjectStatus(String projectStatus, String projectSubState, Integer project_id);
 
     void startMilestone(Integer index, Integer fkProjectId, String startTime,String milestoneStatus);
 

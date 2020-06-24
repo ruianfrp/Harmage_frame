@@ -1,6 +1,6 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.entity.Admin;
+import com.harmonycloud.bean.account.Admin;
 
 public interface AdminService {
 

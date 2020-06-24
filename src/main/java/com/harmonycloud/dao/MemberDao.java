@@ -1,7 +1,9 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.entity.Member;
-import com.harmonycloud.view.MemberView;
+import com.harmonycloud.bean.execl.EmployeeReportExecl;
+import com.harmonycloud.bean.member.Member;
+import com.harmonycloud.bean.member.MemberView;
+import com.harmonycloud.bean.report.EmployeeReport;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -29,4 +31,6 @@ public interface MemberDao {
 
     Integer insertIntoMemberApply(Integer fkProjectId,String fkEmployeeGh,String memberRecommendGh,String applyApprovalGh,
                                   String distributionGh,String memberJoinSup,String memberJoinType,Date memberStartTime,Date memberEndTime);
+
+    List<EmployeeReportExecl> getProjectTimeReport();
 }

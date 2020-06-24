@@ -1,6 +1,6 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.view.*;
+import com.harmonycloud.bean.skill.*;
 
 import java.sql.Date;
 import java.util.List;

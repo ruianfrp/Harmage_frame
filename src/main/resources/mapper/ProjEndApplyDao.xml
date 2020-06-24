@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.harmonycloud.dao.ProjEndApplyDao">
 
-    <select id="listPMProjEndApply" resultType="com.harmonycloud.view.ProjEndApplyListView" >
+    <select id="listPMProjEndApply" resultType="com.harmonycloud.bean.project.ProjEndApplyListView" >
         select pe.id,pe.fk_proj_id,p.proj_name,p.proj_end_time as project_end_time,
         pe.proj_end_time as actual_end_time,pe.end_apply_status,e.employee_name as apply_approval_name,
         ee.employee_name as apply_name,pe.proj_end_meeting,pe.proj_end_meeting_time as meeting_time,
@@ -13,7 +13,7 @@
         where p.proj_PM_gh=#{projPMGh}
         order by FIELD(pe.end_apply_status,"待审批") DESC,pe.create_time DESC
     </select>
-    <select id="listPMOProjEndApply" resultType="com.harmonycloud.view.ProjEndApplyListView" >
+    <select id="listPMOProjEndApply" resultType="com.harmonycloud.bean.project.ProjEndApplyListView" >
         select pe.id,pe.fk_proj_id,p.proj_name,p.proj_end_time as project_end_time,
         pe.proj_end_time as actual_end_time,pe.end_apply_status,e.employee_name as apply_name,
         ee.employee_name as apply_approval_name,pe.proj_end_meeting,pe.proj_end_meeting_time as meeting_time,
@@ -24,7 +24,7 @@
         order by FIELD(pe.end_apply_status,"待审批") DESC,pe.create_time DESC
     </select>
 
-    <select id="projEndApplyDetail" resultType="com.harmonycloud.view.ProjEndApplyDetailView">
+    <select id="projEndApplyDetail" resultType="com.harmonycloud.bean.project.ProjEndApplyDetailView">
         select pe.id,pe.fk_proj_id,p.proj_name,ee.employee_name as projSaleman,
         p.proj_preend_time as project_end_time,pe.proj_end_time as actual_end_time,pe.create_time,
         pe.proj_end_remark,pe.end_apply_status,e.employee_name as apply_name,
@@ -78,7 +78,7 @@
     
     <update id="updateProjectStatus">
         update project as p set proj_status=#{status},proj_end_time=(select proj_end_time from proj_end_apply as pea where pea.id=#{id1})
-        where p.id=(select fk_proj_id from proj_end_apply as pea1 where pea1.id=#{id2})
+        where p.id=(select fk_proj_id from proj_end_apply as pea1 where pea1.id=#{id2}) and proj_status != 'STOP'
     </update>
 
     <select id="selectProjectEndTime" resultType="java.lang.String">
@@ -105,9 +105,9 @@
         SELECT proj_end_meeting_time FROM proj_end_apply where fk_proj_id=#{fkProjectId} and proj_end_meeting="否" and end_apply_status="审批通过"
     </select>
 
-    <select id="selectProjEndMsgInfo" resultType="com.harmonycloud.view.ProjectEndMsgView">
+    <select id="selectProjEndMsgInfo" resultType="com.harmonycloud.bean.project.ProjectEndMsgView">
         SELECT e.employee_name,p.proj_name,p.proj_preend_time,p.create_time
-        FROM harmage.project as p left join employee as e on p.proj_PM_gh=e.employee_gh where id=#{fkProjectId}
+        FROM project as p left join employee as e on p.proj_PM_gh=e.employee_gh where id=#{fkProjectId}
     </select>
 
     <select id="selectFileNum" resultType="java.lang.Integer">
@@ -115,7 +115,7 @@
     </select>
 
     <select id="selectProjectEndFilePath" resultType="java.lang.String">
-        SELECT distinct file_save_path FROM harmage.project_file where fk_project_id=(select fk_proj_id from proj_end_apply where id=#{id}) and file_proj_stage="终验报告";
+        SELECT distinct file_save_path FROM project_file where fk_project_id=(select fk_proj_id from proj_end_apply where id=#{id}) and file_proj_stage="终验报告";
     </select>
     
     <delete id="deleteProjectEndFiles">

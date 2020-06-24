@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.harmonycloud.dao.MemberApplyDao">
 
-    <select id="listMemberApply" resultType="com.harmonycloud.view.MemberApplyListView" >
+    <select id="listMemberApply" resultType="com.harmonycloud.bean.member.MemberApplyListView" >
         select m.id,p.id as project_id,p.proj_name,m.member_start_time,
         TIMESTAMPDIFF(DAY,m.member_start_time,m.member_end_time) as last_time,m.member_application_status as apply_status,
         e.employee_name as member_recommend_name,DATE_FORMAT(m.create_time,'%Y-%m-%d %H:%i:%S') as create_time from member_apply as m left join project as p on m.fk_project_id=p.id
@@ -28,7 +28,7 @@
         SELECT apply_skill_id FROM member_apply_skill where member_apply_id=#{id}
     </select>
 
-    <select id="selectSkillMatchEmployee" resultType="com.harmonycloud.view.MatchEmployeeView">
+    <select id="selectSkillMatchEmployee" resultType="com.harmonycloud.bean.employee.MatchEmployeeView">
         SELECT e.employee_gh,e.employee_name,e.employee_dep,GROUP_CONCAT(p.proj_name SEPARATOR ',') as proj_name,m.member_type,count(p.proj_name) as proj_count,
         e.employee_job,e.employee_type,e.employee_workplace from
         employee as e left join member as m on
@@ -40,7 +40,7 @@
         SELECT apply_skill_test_id FROM member_apply_skill_test where member_apply_id=#{id}
     </select>
 
-    <select id="selectSkillTestMatchEmployee" resultType="com.harmonycloud.view.MatchEmployeeView">
+    <select id="selectSkillTestMatchEmployee" resultType="com.harmonycloud.bean.employee.MatchEmployeeView">
         SELECT e.employee_gh,e.employee_name,e.employee_dep,GROUP_CONCAT(p.proj_name SEPARATOR ',') as proj_name,m.member_type,count(p.proj_name) as proj_count,
         e.employee_job,e.employee_type,e.employee_workplace from
         employee as e left join member as m on
@@ -54,14 +54,14 @@
         st.skill_test_id=mast.apply_skill_test_id where ma.id = #{id}
     </select>
 
-    <select id="selectById" resultType="com.harmonycloud.view.MemberApplyDetailView">
+    <select id="selectById" resultType="com.harmonycloud.bean.member.MemberApplyDetailView">
         select m.id,p.id as proj_id,p.proj_name,p.proj_place,e2.employee_name,DATE_FORMAT(m.member_start_time,'%Y-%m-%d') as member_start_time,DATE_FORMAT(m.member_end_time,'%Y-%m-%d') as member_end_time,m.member_join_sup,m.member_join_type,
         TIMESTAMPDIFF(DAY,m.member_start_time,m.member_end_time) as last_time,m.member_application_status as apply_status,
         e.employee_name as member_recommend_name,m.create_time,m.member_application_reason from member_apply as m left join project as p on m.fk_project_id=p.id
 		left join employee as e2 on m.fk_employee_gh=e2.employee_gh left join employee as e on m.member_recommend_gh=e.employee_gh where m.id=#{id}
     </select>
 
-    <insert id="insertMemberApply" parameterType="com.harmonycloud.entity.MemberApply">
+    <insert id="insertMemberApply" parameterType="com.harmonycloud.bean.member.MemberApply">
         insert into member_apply
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -158,7 +158,7 @@
         and member_join_sup=#{memberJoinSup} and member_join_type=#{memberJoinType} and member_start_time=#{memberStartTime}
     </select>
     
-    <select id="listPmMemberApply" resultType="com.harmonycloud.view.MemberApplyListView" >
+    <select id="listPmMemberApply" resultType="com.harmonycloud.bean.member.MemberApplyListView" >
         select m.id,p.id as project_id,p.proj_name,m.member_start_time,
         TIMESTAMPDIFF(DAY,m.member_start_time,m.member_end_time) as last_time,m.member_application_status as apply_status,
         e.employee_name as member_recommend_name,DATE_FORMAT(m.create_time,'%Y-%m-%d %H:%i:%S') as create_time from member_apply as m left join project as p on m.fk_project_id=p.id
@@ -204,7 +204,7 @@
         update member set is_quit=1,update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S') where real_end_time is not null and DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')>=real_end_time and is_quit=0
     </update>
     
-    <select id="projectLessThanTwo" resultType="com.harmonycloud.view.MatchEmployeeView">
+    <select id="projectLessThanTwo" resultType="com.harmonycloud.bean.employee.MatchEmployeeView">
         SELECT e.employee_gh,e.employee_name,e.employee_dep,GROUP_CONCAT(p.proj_name SEPARATOR ',') as proj_name,m.member_type,count(p.proj_name) as proj_count,
         e.employee_job,e.employee_type,e.employee_workplace from
         employee as e left join member as m on
@@ -213,7 +213,7 @@
         having 3>count(p.proj_name)
     </select>
     
-    <select id="matchStartTime" resultType="com.harmonycloud.view.MatchEmployeeView">
+    <select id="matchStartTime" resultType="com.harmonycloud.bean.employee.MatchEmployeeView">
         SELECT e.employee_gh,e.employee_name,e.employee_dep,GROUP_CONCAT(p.proj_name SEPARATOR ',') as proj_name,m.member_type,count(p.proj_name) as proj_count,
         e.employee_job,e.employee_type,e.employee_workplace from
         employee as e left join member as m on e.employee_gh=m.fk_employee_gh
@@ -221,7 +221,7 @@
         p.id=m.fk_project_id where m.estimate_end_time is not null GROUP BY e.employee_gh
     </select>
 
-    <select id="matchEndTime" resultType="com.harmonycloud.view.MatchEmployeeView">
+    <select id="matchEndTime" resultType="com.harmonycloud.bean.employee.MatchEmployeeView">
         SELECT e.employee_gh,e.employee_name,e.employee_dep,GROUP_CONCAT(p.proj_name SEPARATOR ',') as proj_name,m.member_type,count(p.proj_name) as proj_count,
         e.employee_job,e.employee_type,e.employee_workplace from
         employee as e left join member as m on e.employee_gh=m.fk_employee_gh
@@ -229,7 +229,7 @@
         p.id=m.fk_project_id GROUP BY e.employee_gh
     </select>
 
-    <select id="listApplicantAgreeApply" resultType="com.harmonycloud.view.MemberAgreeApplyList">
+    <select id="listApplicantAgreeApply" resultType="com.harmonycloud.bean.member.MemberAgreeApplyList">
         select distinct ma.id,e1.employee_gh,e1.employee_name,p.proj_name as applicant_proj_name,p.proj_place as applicant_proj_place,e3.employee_name as applicant_proj_pm,ma.member_join_type,ma.member_start_time,ma.member_end_time,
         ma.member_application_status,e2.employee_name as apply_approval_name,ma.applicant_is_agree from member_apply_agree as maa
         left join member_apply as ma on ma.id=maa.member_apply_id
@@ -245,7 +245,7 @@
         </if>
     </select>
 
-    <select id="listOwnerAgreeApply" resultType="com.harmonycloud.view.MemberAgreeApplyList">
+    <select id="listOwnerAgreeApply" resultType="com.harmonycloud.bean.member.MemberAgreeApplyList">
         select distinct ma.id,e1.employee_gh,e1.employee_name,p.proj_name as applicant_proj_name,p.proj_place as applicant_proj_place,e3.employee_name as applicant_proj_pm,ma.member_join_type,ma.member_start_time,ma.member_end_time,
         ma.member_application_status,e2.employee_name as apply_approval_name,maa.is_agree as owner_is_agree from member_apply_agree as maa
         left join member_apply as ma on ma.id=maa.member_apply_id
@@ -277,7 +277,7 @@
         update member_apply_agree set is_agree=#{ifAgree},update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S') where member_apply_id=#{id} and agree_type=2 and fk_employee_gh=#{employeeGh}
     </update>
 
-    <select id="selectAllAgreeMemberApply" resultType="com.harmonycloud.entity.MemberApply">
+    <select id="selectAllAgreeMemberApply" resultType="com.harmonycloud.bean.member.MemberApply">
         select id,distribution_gh,fk_project_id,member_start_time,member_end_time,
         member_join_sup,member_join_type from member_apply where owner_is_agree=1 and applicant_is_agree=1 and is_done=0 and member_application_status="审批通过"
     </select>
@@ -286,14 +286,14 @@
         update member_apply set is_done=1 where id=#{id}
     </update>
     
-    <select id="selectRecommendEmployee" resultType="com.harmonycloud.view.MatchEmployeeView">
+    <select id="selectRecommendEmployee" resultType="com.harmonycloud.bean.employee.MatchEmployeeView">
         SELECT e.employee_gh,e.employee_name,e.employee_dep,GROUP_CONCAT(p.proj_name SEPARATOR ',') as proj_name,m.member_type,count(p.proj_name) as proj_count,
         e.employee_job,e.employee_type,e.employee_workplace from member_apply as ma
 		left join employee as e on ma.member_recommend_gh=e.employee_gh left join member as m on e.employee_gh=m.fk_employee_gh and m.is_quit=0
 		left join project as p on p.id=m.fk_project_id where ma.id=#{id}
     </select>
     
-    <select id="selectDistributionEmployee" resultType="com.harmonycloud.view.MatchEmployeeView">
+    <select id="selectDistributionEmployee" resultType="com.harmonycloud.bean.employee.MatchEmployeeView">
         SELECT e.employee_gh,e.employee_name,e.employee_dep,GROUP_CONCAT(p.proj_name SEPARATOR ',') as proj_name,m.member_type,count(p.proj_name) as proj_count,
         e.employee_job,e.employee_type,e.employee_workplace from member_apply as ma
 		left join employee as e on ma.distribution_gh=e.employee_gh left join member as m on e.employee_gh=m.fk_employee_gh and m.is_quit=0
@@ -317,22 +317,22 @@
         select dingding_user_id from employee where employee_gh=#{list}
     </select>
     
-    <select id="selectDistributionGh" resultType="com.harmonycloud.entity.MemberApply">
+    <select id="selectDistributionGh" resultType="com.harmonycloud.bean.member.MemberApply">
         select id,distribution_gh,fk_project_id,member_start_time,member_end_time,
-        member_join_sup,member_join_type FROM harmage.member_apply where is_done=0 and applicant_is_agree=1 and owner_is_agree=0 and member_application_status="审批通过";
+        member_join_sup,member_join_type FROM member_apply where is_done=0 and applicant_is_agree=1 and owner_is_agree=0 and member_application_status="审批通过";
     </select>
 
     <select id="selectIfHaveProj" resultType="java.lang.Integer">
-        SELECT id FROM harmage.member where fk_employee_gh=#{fkEmployeeGh} and is_quit=0
+        SELECT id FROM member where fk_employee_gh=#{fkEmployeeGh} and is_quit=0
     </select>
     
-    <select id="selectIfOwnerIsAgree" resultType="com.harmonycloud.entity.MemberApply">
+    <select id="selectIfOwnerIsAgree" resultType="com.harmonycloud.bean.member.MemberApply">
         select id,distribution_gh,fk_project_id,member_start_time,member_end_time,member_join_sup,member_join_type,
         owner_is_agree,applicant_is_agree,is_done,member_application_status from member_apply where id=#{id}
     </select>
 
     <select id="selectIfHaveProj2" resultType="java.lang.Integer">
-        SELECT m.id FROM harmage.member as m where fk_employee_gh=(select distribution_gh from member_apply as ma where ma.id=#{id}) and is_quit=0
+        SELECT m.id FROM member as m where fk_employee_gh=(select distribution_gh from member_apply as ma where ma.id=#{id}) and is_quit=0
     </select>
 
     <update id="updateQuitMember">

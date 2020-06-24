@@ -1,6 +1,8 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.view.*;
+
+import com.harmonycloud.bean.employee.*;
+import com.harmonycloud.bean.skill.TestSkillListView;
 
 import java.util.Date;
 import java.util.List;
@@ -10,7 +12,9 @@ import java.util.List;
  * @date ：Created in 2019/8/1 20:29
  */
 public interface EmployeeService {
-    List<EmployeeListView> listEmployee(String selectEmployeeGh,String selectSex,String selectType,String selectEmployeeName,String sort);
+    List<EmployeeListView> listEmployee(String selectEmployeeGh, String selectSex, String selectType, String selectEmployeeName, String sort);
+
+    List<EmployeeListView> listAllEmployee();
 
     List<EmployeeSkillView> selectEmployeeSkill();
 

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.harmonycloud.dao.EmployeeDao">
 
-    <select id="listEmployee" resultType="com.harmonycloud.view.EmployeeListView" >
+    <select id="listEmployee" resultType="com.harmonycloud.bean.employee.EmployeeListView" >
         select e.employee_gh,e.employee_name,e.employee_sex,e.employee_dep,GROUP_CONCAT(distinct p.proj_name SEPARATOR ',') as proj_name,
         e.employee_job,e.employee_type,e.employee_workplace,DATE_FORMAT(e.create_time,'%Y-%m-%d') as create_time,e.is_quit from
         employee as e left join member as m on
@@ -28,25 +28,33 @@
         </if>
     </select>
 
-    <select id="selectEmployeeSkill" resultType="com.harmonycloud.view.EmployeeSkillView" >
+    <select id="listAllEmployee" resultType="com.harmonycloud.bean.employee.EmployeeListView" >
+        select e.employee_gh,e.employee_name,e.employee_sex,e.employee_dep,GROUP_CONCAT(distinct p.proj_name SEPARATOR ',') as proj_name,
+        e.employee_job,e.employee_type,e.employee_workplace,DATE_FORMAT(e.create_time,'%Y-%m-%d') as create_time,e.is_quit from
+        employee as e left join member as m on
+        e.employee_gh=m.fk_employee_gh and m.is_quit=0 left join project as p on
+        p.id=m.fk_project_id where e.employee_gh!=01 and e.employee_gh!=02 GROUP BY e.employee_gh
+    </select>
+
+    <select id="selectEmployeeSkill" resultType="com.harmonycloud.bean.employee.EmployeeSkillView" >
         select s.id,es.fk_employee_gh,s.skill_dirct,s.skill_name from employee_skill as es left join employee as e on
         e.employee_gh=es.fk_employee_gh left join skill as s on
         s.id=es.fk_skill_id
     </select>
 
-    <select id="selectEmployeeTestSkill" resultType="com.harmonycloud.view.TestSkillListView" >
+    <select id="selectEmployeeTestSkill" resultType="com.harmonycloud.bean.skill.TestSkillListView" >
         select st.skill_test_id,est.fk_employee_gh,st.skill_test_name,st.skill_test_lv from employee_skill_test as est left join employee as e on
         e.employee_gh=est.fk_employee_gh left join skill_test as st on
         st.skill_test_id=est.fk_skill_test_id
     </select>
 
-    <select id="listEmployeeSkill" resultType="com.harmonycloud.view.EmployeeSkillView" >
+    <select id="listEmployeeSkill" resultType="com.harmonycloud.bean.employee.EmployeeSkillView" >
         select s.id,s.skill_dirct,s.skill_name from employee_skill as es left join employee as e on
         e.employee_gh=es.fk_employee_gh left join skill as s on
         s.id=es.fk_skill_id where e.employee_gh=#{employeeGh}
     </select>
 
-    <select id="listEmployeeTestSkill" resultType="com.harmonycloud.view.TestSkillListView" >
+    <select id="listEmployeeTestSkill" resultType="com.harmonycloud.bean.skill.TestSkillListView" >
         select st.skill_test_id,st.skill_test_name,st.skill_test_lv from employee_skill_test as est left join employee as e on
         e.employee_gh=est.fk_employee_gh left join skill_test as st on
         st.skill_test_id=est.fk_skill_test_id where e.employee_gh=#{employeeGh}
@@ -64,7 +72,7 @@
         select employee_gh from employee where employee_name = #{employeeName}
     </select>
 
-    <select id="selectByEmployeeName" resultType="com.harmonycloud.view.EmployeeListView">
+    <select id="selectByEmployeeName" resultType="com.harmonycloud.bean.employee.EmployeeListView">
         select e.employee_gh,e.employee_name,e.employee_sex,e.employee_dep,GROUP_CONCAT(p.proj_name SEPARATOR ',') as proj_name,
         e.employee_job,e.employee_type,e.employee_workplace,DATE_FORMAT(e.create_time,'%Y-%m-%d') as create_time,
         DATE_FORMAT(e.update_time,'%Y-%m-%d') as update_time,e.is_quit from
@@ -89,7 +97,7 @@
         where employee_gh=#{employeeGh}
     </update>
     
-    <select id="selectByEmployeeGh" resultType="com.harmonycloud.view.EmployeeListView">
+    <select id="selectByEmployeeGh" resultType="com.harmonycloud.bean.employee.EmployeeListView">
         select e.employee_gh,e.employee_name,e.employee_sex,e.employee_dep,GROUP_CONCAT(p.proj_name SEPARATOR ',') as proj_name,
         e.employee_job,e.employee_type,e.employee_workplace,DATE_FORMAT(e.create_time,'%Y-%m-%d') as create_time,
         DATE_FORMAT(e.update_time,'%Y-%m-%d') as update_time,e.is_quit from
@@ -129,16 +137,16 @@
         insert into employee_skill_test(fk_employee_gh,fk_skill_test_id) value(#{employeeGh},#{skillTestId})
     </insert>
 
-    <select id="listEmployeeExperience" resultType="com.harmonycloud.view.EmployeeExperienceView">
+    <select id="listEmployeeExperience" resultType="com.harmonycloud.bean.employee.EmployeeExperienceView">
         select m.fk_employee_gh,e.employee_name,p.proj_name,m.real_start_time as member_start_time,m.real_end_time as member_end_time,
         m.member_job,m.member_sup,m.member_func,p.proj_place from member as m left join project as p
         on m.fk_project_id=p.id left join employee as e on m.fk_employee_gh=e.employee_gh where m.fk_employee_gh=#{employeeGh} and m.is_quit!=3
     </select>
     
-    <select id="MonthInsertPerson" resultType="com.harmonycloud.view.EmployeeCountView">
+    <select id="MonthInsertPerson" resultType="com.harmonycloud.bean.employee.EmployeeCountView">
         SELECT count(*) as insert_num_person,(select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
         interval extract(day from now()) - 1 day),interval (#{num}+1) month)) as month_start_time,(select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
-        interval extract(day from now()) day),interval #{num} month)) as month_end_time FROM harmage.employee where (select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
+        interval extract(day from now()) day),interval #{num} month)) as month_end_time FROM employee where (select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
                          interval extract(day from now()) - 1 day),
                 interval (#{num}) month) as start_time)>create_time and
         create_time>=(select date_sub(date_sub(date_format(now(),'%Y-%m-%d 00:00:00'),
@@ -146,7 +154,7 @@
     </select>
     
     <select id="MonthQuitPerson" resultType="java.lang.Integer">
-        SELECT count(*) as quit_num_person FROM harmage.employee where (select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
+        SELECT count(*) as quit_num_person FROM employee where (select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
                          interval extract(day from now()) - 1 day),
                 interval (#{num}) month))>update_time and
         update_time>=(select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
@@ -154,7 +162,7 @@
     </select>
 
     <select id="MonthStartPerson" resultType="java.lang.Integer">
-        select distinct ((SELECT count(*) FROM harmage.employee where
+        select distinct ((SELECT count(*) FROM employee where
         (select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
         interval extract(day from now()) - 1 day),interval (#{num}+1) month))>create_time)-(SELECT count(*) FROM employee where
         (select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
@@ -162,14 +170,14 @@
     </select>
 
     <select id="MonthEndPerson" resultType="java.lang.Integer">
-        select distinct ((SELECT count(*) FROM harmage.employee where
+        select distinct ((SELECT count(*) FROM employee where
         (select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
-        interval extract(day from now()) - 1 day),interval (#{num}) month))>create_time)-(SELECT count(*) FROM harmage.employee where
+        interval extract(day from now()) - 1 day),interval (#{num}) month))>create_time)-(SELECT count(*) FROM employee where
         (select date_sub(date_sub(date_format(now(), '%Y-%m-%d 00:00:00'),
         interval extract(day from now()) - 1 day),interval (#{num}) month))>update_time and is_quit=1)) as end_count_person from employee
     </select>
 
-    <select id="selectProjectName" resultType="com.harmonycloud.view.EmployeeListView">
+    <select id="selectProjectName" resultType="com.harmonycloud.bean.employee.EmployeeListView">
         select e.employee_gh,e.employee_name,e.employee_sex,e.employee_dep,GROUP_CONCAT(distinct p.proj_name SEPARATOR ',') as proj_name,
         e.employee_job,e.employee_type,e.employee_workplace,DATE_FORMAT(e.create_time,'%Y-%m-%d') as create_time,e.is_quit from
         employee as e left join member as m on
@@ -181,7 +189,7 @@
         select employee_gh from employee where is_quit=1
     </select>
 
-    <select id="selectAllEmployee" resultType="com.harmonycloud.view.EmployeeListView">
+    <select id="selectAllEmployee" resultType="com.harmonycloud.bean.employee.EmployeeListView">
         select e.employee_gh,e.employee_name,e.employee_sex,e.employee_dep,GROUP_CONCAT(distinct p.proj_name SEPARATOR ',') as proj_name,
         e.employee_job,e.employee_type,e.employee_workplace,DATE_FORMAT(e.create_time,'%Y-%m-%d') as create_time,e.is_quit from
         employee as e left join member as m on
@@ -190,7 +198,7 @@
         GROUP BY e.employee_gh
     </select>
 
-    <select id="selectEmployeeNum" resultType="com.harmonycloud.view.EmployeeNumView">
+    <select id="selectEmployeeNum" resultType="com.harmonycloud.bean.employee.EmployeeNumView">
         SELECT employee_type,count(*) num FROM employee where employee_gh!="01" and employee_gh!="02" GROUP BY employee_type
     </select>
 

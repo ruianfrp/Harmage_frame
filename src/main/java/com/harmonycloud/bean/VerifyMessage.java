@@ -1,6 +1,6 @@
 package com.harmonycloud.bean;
 
-import com.harmonycloud.view.LoginInfoView;
+import com.harmonycloud.bean.account.LoginInfoView;
 
 public class VerifyMessage {
 	public Message message;

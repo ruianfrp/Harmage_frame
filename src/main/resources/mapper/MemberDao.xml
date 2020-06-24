@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.harmonycloud.dao.MemberDao">
 
-    <select id="listMember" resultType="com.harmonycloud.view.MemberView">
+    <select id="listMember" resultType="com.harmonycloud.bean.member.MemberView">
      select member.id,fk_employee_gh,employee_name as member_name,member_job,member_sup,member_type,member_func,member_bonus,
      member_job_band,DATE_FORMAT(real_start_time,'%Y-%m-%d %H:%i:%S') as real_start_time,
      DATE_FORMAT(estimate_end_time,'%Y-%m-%d %H:%i:%S') as estimate_end_time,member.is_quit,member_remarks from member,employee where
@@ -10,7 +10,7 @@
     </select>
 
 
-    <update id="updateByPrimaryKeySelective" parameterType="com.harmonycloud.entity.Member">
+    <update id="updateByPrimaryKeySelective" parameterType="com.harmonycloud.bean.member.Member">
         update member
         <set>
             <if test="fkEmployeeGh != null">
@@ -159,5 +159,15 @@
 
     <select id="findPmByProjId" resultType="java.lang.String">
         select proj_PM_gh from project where id=#{fkProjectId}
+    </select>
+
+    <select id="getProjectTimeReport" resultType="com.harmonycloud.bean.execl.EmployeeReportExecl">
+        select fk_employee_gh as employee_id, employee_name, fk_project_id as project_id ,proj_name as project_name,
+        IFNULL(TIMESTAMPDIFF(DAY,real_start_time,now()),-1) + 1 as input_days,  TIMESTAMPDIFF(day,CURDATE(),(DATE_add(CURDATE(),INTERVAL 1 month))) as total_days from member,employee,project where member.fk_project_id = project.id and member.fk_employee_gh = employee.employee_gh;
+    </select>
+
+    <select id="getWorkingTimeReport" resultType="com.harmonycloud.bean.execl.WorkingReportExcel">
+        select utc_date() as working_date,fk_employee_gh as employee_id, employee_name, fk_project_id as project_id ,proj_name as project_name,
+        real_start_time as join_time, real_end_time as leave_time from member,employee,project where member.fk_project_id = project.id and member.fk_employee_gh = employee.employee_gh;
     </select>
 </mapper>

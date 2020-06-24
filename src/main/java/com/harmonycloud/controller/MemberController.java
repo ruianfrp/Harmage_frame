@@ -3,9 +3,9 @@ package com.harmonycloud.controller;
 
 import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
-import com.harmonycloud.entity.Member;
+import com.harmonycloud.bean.member.Member;
+import com.harmonycloud.bean.member.MemberView;
 import com.harmonycloud.service.MemberService;
-import com.harmonycloud.view.MemberView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

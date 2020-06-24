@@ -1,10 +1,10 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.entity.Customer;
-import com.harmonycloud.entity.CustomerContacts;
-import com.harmonycloud.entity.CustomerDocumentPlanne;
-import com.harmonycloud.entity.CustomerDocumentRecord;
-import com.harmonycloud.view.*;
+import com.harmonycloud.bean.account.UserListView;
+import com.harmonycloud.bean.customer.*;
+import com.harmonycloud.bean.document.DocumentPlanneListView;
+import com.harmonycloud.bean.document.DocumentRecordListView;
+import com.harmonycloud.bean.document.SelectDocumentRecordView;
 
 import java.util.Date;
 import java.util.List;

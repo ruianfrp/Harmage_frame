@@ -11,14 +11,14 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
-import com.harmonycloud.config.Constant;
+import com.harmonycloud.bean.project.ProjEndApplyDetailView;
+import com.harmonycloud.bean.project.ProjEndApplyListView;
+import com.harmonycloud.bean.project.ProjectEndMsgView;
+import com.harmonycloud.bean.project.ProjectFileView;
+import com.harmonycloud.config.DingConstant;
 import com.harmonycloud.service.ProjEndApplyService;
 import com.harmonycloud.service.ProjectFileService;
 import com.harmonycloud.util.SendMessageUtil;
-import com.harmonycloud.view.ProjEndApplyDetailView;
-import com.harmonycloud.view.ProjEndApplyListView;
-import com.harmonycloud.view.ProjectEndMsgView;
-import com.harmonycloud.view.ProjectFileView;
 import com.taobao.api.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -198,9 +198,9 @@ public class ProjEndApplyController {
                         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         int comp = formatter.parse(projPreendTime).compareTo(formatter.parse(projEndTime));
                         if (comp >= 0) {
-                            status = "顺利完成";
+                            status = "完成";
                         } else {
-                            status = "延期完成";
+                            status = "完成";
                         }
                         Integer result1 = projEndApplyService.updateProjectStatus(status, id1, id2);
                         if (result1 > 0) {

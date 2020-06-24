@@ -12,13 +12,13 @@ import com.dingtalk.api.response.OapiUserGetResponse;
 import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
 import com.harmonycloud.bean.*;
 import com.harmonycloud.bean.Threads.LoginThread;
-import com.harmonycloud.config.Constant;
+import com.harmonycloud.bean.account.LoginInfoView;
+import com.harmonycloud.config.DingConstant;
 import com.harmonycloud.service.EmployeeService;
 import com.harmonycloud.service.LoginInfoService;
 import com.harmonycloud.util.DesEncryptUtil;
 import com.harmonycloud.util.SendMessageUtil;
-import com.harmonycloud.view.AdminLoginView;
-import com.harmonycloud.view.LoginInfoView;
+import com.harmonycloud.bean.account.AdminLoginView;
 import com.taobao.api.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -309,8 +309,8 @@ public class LoginController {
         DefaultDingTalkClient client = new
                 DefaultDingTalkClient(URL_GET_TOKKEN);
         OapiGettokenRequest request = new OapiGettokenRequest();
-        request.setAppkey(Constant.APP_KEY);
-        request.setAppsecret(Constant.APP_SECRET);
+        request.setAppkey(DingConstant.APP_KEY);
+        request.setAppsecret(DingConstant.APP_SECRET);
         request.setHttpMethod("GET");
         try {
             OapiGettokenResponse response = client.execute(request);

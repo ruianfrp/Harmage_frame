@@ -1,9 +1,7 @@
 package com.harmonycloud.service;
 
-import com.harmonycloud.entity.Authority;
-import com.harmonycloud.view.UserListView;
-
-import java.util.Date;
+import com.harmonycloud.bean.account.Authority;
+import com.harmonycloud.bean.account.UserListView;
 import java.util.List;
 
 /**
@@ -12,7 +10,7 @@ import java.util.List;
  */
 public interface UserService {
 
-    List<UserListView> listUser(String selectEmployeeGh,String selectEmployeeName);
+    List<UserListView> listUser(String selectEmployeeGh, String selectEmployeeName);
 
     void deleteUser(String employeeGh);
 

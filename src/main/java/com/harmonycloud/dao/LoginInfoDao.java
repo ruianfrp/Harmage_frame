@@ -1,7 +1,7 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.view.AdminLoginView;
-import com.harmonycloud.view.LoginInfoView;
+import com.harmonycloud.bean.account.AdminLoginView;
+import com.harmonycloud.bean.account.LoginInfoView;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

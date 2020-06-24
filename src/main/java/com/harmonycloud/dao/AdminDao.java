@@ -1,6 +1,6 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.entity.Admin;
+import com.harmonycloud.bean.account.Admin;
 import org.springframework.stereotype.Repository;
 
 @Repository

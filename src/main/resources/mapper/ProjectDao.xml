@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.harmonycloud.dao.ProjectDao">
 
-    <select id="listProject" resultType="com.harmonycloud.view.ProjectListView" >
+    <select id="listProject" resultType="com.harmonycloud.bean.project.ProjectListView" >
    select project.id,proj_name,customer_name,customer_place,proj_place,employee.employee_name as proj_PM_name,e.employee_name as proj_Saleman,DATE_FORMAT(proj_presta_time,'%Y-%m-%d') as proj_presta_time,DATE_FORMAT(proj_preend_time,'%Y-%m-%d') as proj_preend_time,
 DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_time,'%Y-%m-%d') as proj_end_time,count(member.fk_employee_gh) as proj_num_of_people,
-      proj_status,proj_type,proj_line,proj_money,proj_all_cost,proj_current_cost,proj_cooperation_model,proj_dev_model,proj_description,proj_end_type from project LEFT JOIN customer on
+      proj_status,proj_substate,proj_type,proj_line,proj_money,proj_all_cost,proj_current_cost,proj_cooperation_model,proj_dev_model,proj_description,proj_end_type from project LEFT JOIN customer on
       project.fk_customer_id=customer.id LEFT JOIN employee on project.proj_PM_gh=employee.employee_gh LEFT JOIN employee as e on project.proj_Saleman=e.employee_gh
       LEFT JOIN member on member.fk_project_id=project.id and member.is_quit=0 LEFT JOIN milestone on
       project.id = milestone.fk_project_id and
@@ -20,10 +20,28 @@ DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_
 				from milestone group by milestone.fk_project_id limit 1) group by project.id
     </select>
 
-    <select id="listPmProject" resultType="com.harmonycloud.view.ProjectListView">
+    <select id="listOverViewProject" resultType="com.harmonycloud.bean.project.ProjectListView" >
+   select project.id,proj_name,customer_name,customer_place,proj_place,employee.employee_name as proj_PM_name,e.employee_name as proj_Saleman,DATE_FORMAT(proj_presta_time,'%Y-%m-%d') as proj_presta_time,DATE_FORMAT(proj_preend_time,'%Y-%m-%d') as proj_preend_time,
+DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_time,'%Y-%m-%d') as proj_end_time,count(member.fk_employee_gh) as proj_num_of_people,
+      proj_status,proj_substate,proj_type,proj_line,proj_money,proj_all_cost,proj_current_cost,proj_cooperation_model,proj_dev_model,proj_description,proj_end_type from project LEFT JOIN customer on
+      project.fk_customer_id=customer.id LEFT JOIN employee on project.proj_PM_gh=employee.employee_gh LEFT JOIN employee as e on project.proj_Saleman=e.employee_gh
+      LEFT JOIN member on member.fk_project_id=project.id and member.is_quit=0 LEFT JOIN milestone on
+      project.id = milestone.fk_project_id and
+			milestone.milestone_status=(
+			select
+				case
+				when ((select count(*) from milestone where milestone.milestone_status="严重延后") > 0) then "严重延后"
+				when ((select count(*) from milestone where milestone.milestone_status="延后中") > 0) then "延后中"
+				when ((select count(*) from milestone where milestone.milestone_status="正常进行") > 0) then "进行中"
+				else null
+				end milestone_status
+				from milestone group by milestone.fk_project_id limit 1) where proj_status="进行中" group by project.id
+    </select>
+
+    <select id="listPmProject" resultType="com.harmonycloud.bean.project.ProjectListView">
         select project.id,proj_name,customer_name,customer_place,proj_place,employee.employee_name as proj_PM_name,e.employee_name as proj_Saleman,DATE_FORMAT(proj_presta_time,'%Y-%m-%d') as proj_presta_time,DATE_FORMAT(proj_preend_time,'%Y-%m-%d') as proj_preend_time
 ,DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_time,'%Y-%m-%d') as proj_end_time,count(member.fk_employee_gh) as proj_num_of_people,
-      proj_status,proj_type,proj_line,proj_cooperation_model,proj_dev_model,proj_description,proj_end_type from project LEFT JOIN customer on
+      proj_status,proj_substate,proj_type,proj_line,proj_cooperation_model,proj_dev_model,proj_description,proj_end_type from project LEFT JOIN customer on
       project.fk_customer_id=customer.id LEFT JOIN employee on project.proj_PM_gh=employee.employee_gh LEFT JOIN employee as e on project.proj_Saleman=e.employee_gh
       LEFT JOIN member on member.fk_project_id=project.id and member.is_quit=0 LEFT JOIN milestone on
       project.id = milestone.fk_project_id and
@@ -46,7 +64,7 @@ DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_
         select id from project where proj_name = #{0}
     </select>
 
-    <update id="updateByPrimaryKeySelective" parameterType="com.harmonycloud.entity.Project">
+    <update id="updateByPrimaryKeySelective" parameterType="com.harmonycloud.bean.project.Project">
         update project
         <set>
             <if test="fkCustomerId != null">
@@ -112,17 +130,24 @@ DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_
     </update>
 
     <select id="selectProjectIdInMilestone" resultType="java.lang.Integer">
-        SELECT distinct fk_project_id from milestone where milestone_status not like '%完成' and milestone_status not like '未%'
+        SELECT distinct fk_project_id from milestone
+    </select>
+
+    <select id="getProjectId" resultType="java.lang.Integer">
+        SELECT distinct id from project
     </select>
     
     <select id="selectMilestoneStatus" resultType="java.lang.String">
-        SELECT milestone_status from milestone where fk_project_id=#{project_id} and milestone_status not like '%完成' and milestone_status not like '未%'
+        SELECT milestone_status from milestone where fk_project_id=#{projectId}
     </select>
-
-    <select id="selectProjectById" resultType="com.harmonycloud.view.ProjectListView">
+    <!--<select id="selectMilestoneStatus" resultType="java.lang.String">-->
+        <!--SELECT milestone_status from milestone where fk_project_id=#{project_id} and milestone_status not like '%完成' and milestone_status not like '未%'-->
+        <!--SELECT milestone_status from milestone where fk_project_id=#{projectId}-->
+    <!--</select>-->
+    <select id="selectProjectById" resultType="com.harmonycloud.bean.project.ProjectListView">
         select project.id,proj_name,customer_name,customer_province,customer_city,customer_place,proj_place,employee.employee_name as proj_PM_name,e.employee_name as proj_Saleman,DATE_FORMAT(proj_presta_time,'%Y-%m-%d') as proj_presta_time,DATE_FORMAT(proj_preend_time,'%Y-%m-%d') as proj_preend_time
 ,DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_time,'%Y-%m-%d') as proj_end_time,count(member.fk_employee_gh) as proj_num_of_people,
-      proj_status,proj_type,proj_line,proj_money,proj_all_cost,proj_current_cost,proj_cooperation_model,proj_dev_model,proj_description,proj_end_type from project LEFT JOIN customer on
+      proj_status,proj_substate,proj_type,proj_line,proj_money,proj_all_cost,proj_current_cost,proj_cooperation_model,proj_dev_model,proj_description,proj_end_type from project LEFT JOIN customer on
       project.fk_customer_id=customer.id LEFT JOIN employee on project.proj_PM_gh=employee.employee_gh LEFT JOIN employee as e on project.proj_Saleman=e.employee_gh
       LEFT JOIN member on member.fk_project_id=project.id and member.is_quit=0 LEFT JOIN milestone on
       project.id = milestone.fk_project_id and
@@ -136,4 +161,28 @@ DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_
 				end milestone_status
 				from milestone group by milestone.fk_project_id limit 1) where project.id=#{id} group by project.id
     </select>
+
+    <select id="getStopProjectDay" resultType="com.harmonycloud.bean.project.ProjectStatusBean">
+        select proj_name, TIMESTAMPDIFF(day,proj_stop_time, now()) as days from project where proj_status = #{status};
+    </select>
+
+    <update id="updateStopStatusForProject">
+        update project
+        <set>
+            <if test="status != null">
+                proj_status = #{status},
+            </if>
+            proj_substate = null,
+            proj_stop_time = (select start_time from project_status_cache where project_id = #{projectId}  and flag = 1 order by id desc limit 0,1)
+        </set>
+        where id = #{projectId}
+    </update>
+
+    <select id="getProject" resultType="com.harmonycloud.bean.project.Project">
+        select proj_start_time, proj_end_time from project where proj_name = #{projectName}
+    </select>
+
+    <insert id="insertProject">
+        insert into project() values
+    </insert>
 </mapper>

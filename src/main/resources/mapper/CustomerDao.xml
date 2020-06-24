@@ -7,7 +7,7 @@
         select id from customer where customer_name=#{customerName}
     </select>
 
-    <update id="updateByPrimaryKeySelective" parameterType="com.harmonycloud.entity.Customer">
+    <update id="updateByPrimaryKeySelective" parameterType="com.harmonycloud.bean.customer.Customer">
         update customer
         <set>
             <if test="customerName != null">
@@ -35,9 +35,9 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <select id="pageCustomer" resultType="com.harmonycloud.view.CustomerListView">
+    <select id="pageCustomer" resultType="com.harmonycloud.bean.customer.CustomerListView">
         SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
-        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM harmage.customer as c left join customer_contacts
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM customer as c left join customer_contacts
         as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
         left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
         left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position
@@ -67,20 +67,20 @@
         </if>
     </select>
 
-    <select id="listCustomer" resultType="com.harmonycloud.view.CustomerListView">
-        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
-        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM harmage.customer as c left join customer_contacts
+    <select id="listCustomer" resultType="com.harmonycloud.bean.customer.CustomerListView">
+        SELECT c.id,DATE_FORMAT(max(cdr.document_contact_time),'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM customer as c left join customer_contacts
         as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
         left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
-        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position left join customer_document_record as cdr on cdr.fk_customer_id=c.id group by c.id
     </select>
 
-    <select id="pagePartCustomer" resultType="com.harmonycloud.view.CustomerListView">
-        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
-        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM harmage.customer as c left join customer_contacts
+    <select id="pagePartCustomer" resultType="com.harmonycloud.bean.customer.CustomerListView">
+        SELECT c.id,DATE_FORMAT(max(cdr.document_contact_time),'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM customer as c left join customer_contacts
         as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
         left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
-        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position left join customer_salesman as cs on
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position left join customer_document_record as cdr on cdr.fk_customer_id=c.id left join customer_salesman as cs on
         c.id=cs.fk_customer_id where cs.employee_gh=#{employeeGh}
         <if test="selectCustomerName != null">
             and c.customer_name like "%"#{selectCustomerName}"%"
@@ -106,16 +106,16 @@
         </if>
     </select>
 
-    <select id="listPartCustomer" resultType="com.harmonycloud.view.CustomerListView">
-        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
-        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM harmage.customer as c left join customer_contacts
+    <select id="listPartCustomer" resultType="com.harmonycloud.bean.customer.CustomerListView">
+        SELECT c.id,DATE_FORMAT(max(cdr.document_contact_time),'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM customer as c left join customer_contacts
         as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
         left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
-        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position left join customer_salesman as cs on
-        c.id=cs.fk_customer_id where cs.employee_gh=#{employeeGh}
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position left join customer_document_record as cdr on cdr.fk_customer_id=c.id left join customer_salesman as cs on
+        c.id=cs.fk_customer_id where cs.employee_gh=#{employeeGh} group by c.id
     </select>
     
-    <select id="selectCustomerDetails" resultType="com.harmonycloud.view.CustomerDetailView">
+    <select id="selectCustomerDetails" resultType="com.harmonycloud.bean.customer.CustomerDetailView">
         select c.id,c.customer_name,c.customer_province,c.customer_city,c.customer_place,c.customer_code,c.customer_web,c.customer_email,cc.contacts_name,
         cdd1.dic_data_sort as contacts_position,cc.contacts_specific_position,cc.contacts_tel,cc.contacts_wechat,cdd2.dic_data_sort as customer_prod_sort,
         cdd2.dic_data_text as customer_prod_text,cdd3.dic_data_sort as customer_source_sort,c.customer_source_text,cdd4.dic_data_sort as customer_industry,
@@ -124,7 +124,7 @@
         cdd13.dic_data_sort as technology_stage,cdd14.dic_data_sort as monitor_stage,aaa1.existing_pain,aaa2.petition,aaa3.direction,aaa4.follow_point,
         c.wages,cdd19.dic_data_sort as budget_total,cdd20.dic_data_sort as transformation,aaa5.middleware,c.customer_remark,
         DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(c.update_time,'%Y-%m-%d %H:%i:%S') as update_time
-        from (SELECT * FROM harmage.customer where id=#{id}) as c left join customer_contacts as cc on c.default_contact_id=cc.id
+        from (SELECT * FROM customer where id=#{id}) as c left join customer_contacts as cc on c.default_contact_id=cc.id
         left join customer_dic_data as cdd1 on cdd1.id=cc.contacts_position left join customer_dic_data as cdd2 on c.customer_prod_sort=cdd2.id
         left join customer_dic_data as cdd3 on cdd3.id=c.customer_source left join customer_dic_data as cdd4 on c.customer_industry=cdd4.id
         left join customer_dic_data as cdd5 on c.customer_type=cdd5.id left join customer_dic_data as cdd6 on c.team_total=cdd6.id
@@ -155,9 +155,9 @@
         order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa5 on aaa5.id=c.id group by c.id;
     </select>
 
-    <select id="selectCustomerAfterUpdate" resultType="com.harmonycloud.entity.Customer">
+    <select id="selectCustomerAfterUpdate" resultType="com.harmonycloud.bean.customer.Customer">
         select c.*,cc.contacts_name,cc.contacts_position,cc.contacts_specific_position,cc.contacts_tel,cc.contacts_wechat from
-        (SELECT * FROM harmage.customer where id=#{id}) as c left join customer_contacts as cc on c.default_contact_id=cc.id;
+        (SELECT * FROM customer where id=#{id}) as c left join customer_contacts as cc on c.default_contact_id=cc.id;
     </select>
 
     <insert id="insertCustomer">
@@ -282,7 +282,7 @@
         insert into customer_salesman(employee_gh,fk_customer_id) value(#{employeeGh},#{fkCustomerId})
     </insert>
     
-    <select id="listCustomerContacts" resultType="com.harmonycloud.view.CustomerContactsListView">
+    <select id="listCustomerContacts" resultType="com.harmonycloud.bean.customer.CustomerContactsListView">
         select cc.id,cc.fk_customer_id,cc.contacts_name,cc.contacts_sex,cdd.dic_data_sort as contacts_position,cc.contacts_specific_position,
         cc.contacts_birthday,cc.contacts_tel,cc.contacts_wechat,cc.contacts_qq,cc.contacts_email,cc.contacts_msn,cc.contacts_remark,cc.contacts_ali,
         DATE_FORMAT(cc.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cc.update_time,'%Y-%m-%d %H:%i:%S') as update_time
@@ -354,7 +354,7 @@
         where id=#{id}
     </update>
 
-    <select id="selectContactDetails" resultType="com.harmonycloud.entity.CustomerContacts">
+    <select id="selectContactDetails" resultType="com.harmonycloud.bean.customer.CustomerContacts">
         select cc.id,cc.fk_customer_id,cc.contacts_name,cc.contacts_sex,cc.contacts_position,cc.contacts_specific_position,
         cc.contacts_birthday,cc.contacts_tel,cc.contacts_wechat,cc.contacts_qq,cc.contacts_email,cc.contacts_msn,cc.contacts_remark,cc.contacts_ali,
         DATE_FORMAT(cc.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cc.update_time,'%Y-%m-%d %H:%i:%S') as update_time from customer_contacts as cc where cc.id=#{id}
@@ -368,12 +368,12 @@
         delete from customer where id=#{id}
     </delete>
 
-    <select id="selectDicData" resultType="com.harmonycloud.view.CustomerDicView">
+    <select id="selectDicData" resultType="com.harmonycloud.bean.customer.CustomerDicView">
         SELECT cdd.id,cdt.dic_name as dic_type,cdd.dic_data_sort,cdd.dic_data_text FROM customer_dic_data as cdd
         left join customer_dic_type as cdt on cdd.type_id=cdt.id where cdt.dic_name=#{dicName}
     </select>
 
-    <select id="listDocumentRecord" resultType="com.harmonycloud.view.DocumentRecordListView">
+    <select id="listDocumentRecord" resultType="com.harmonycloud.bean.document.DocumentRecordListView">
         SELECT cdr.id,c.id as customer_id,c.customer_name,cc.id as contacts_id,cc.contacts_name,cdd1.dic_data_sort as document_type,cdr.document_contact_time,cdr.document_next_contact_time,
         aaa1.exchange_theme,aaa2.exchange_person,cdd2.dic_data_sort as exchange_reason,cdd3.dic_data_sort as next_plan,cdr.detailed_content,e.employee_name,
         DATE_FORMAT(cdr.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdr.update_time,'%Y-%m-%d %H:%i:%S') as update_time
@@ -413,7 +413,7 @@
         </if>
     </select>
 
-    <select id="listPartDocumentRecord" resultType="com.harmonycloud.view.DocumentRecordListView">
+    <select id="listPartDocumentRecord" resultType="com.harmonycloud.bean.document.DocumentRecordListView">
         SELECT cdr.id,c.id as customer_id,c.customer_name,cc.id as contacts_id,cc.contacts_name,cdd1.dic_data_sort as document_type,cdr.document_contact_time,cdr.document_next_contact_time,
         aaa1.exchange_theme,aaa2.exchange_person,cdd2.dic_data_sort as exchange_reason,cdd3.dic_data_sort as next_plan,cdr.detailed_content,e.employee_name,
         DATE_FORMAT(cdr.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdr.update_time,'%Y-%m-%d %H:%i:%S') as update_time
@@ -432,7 +432,7 @@
         left join employee as e on e.employee_gh=cdr.salesman_employee_gh where cdr.fk_customer_id=#{customerId}
     </select>
 
-    <select id="selectPartDocumentRecord" resultType="com.harmonycloud.view.DocumentRecordListView">
+    <select id="selectPartDocumentRecord" resultType="com.harmonycloud.bean.document.DocumentRecordListView">
         SELECT cdr.id,c.id as customer_id,c.customer_name,cc.id as contacts_id,cc.contacts_name,cdd1.dic_data_sort as document_type,cdr.document_contact_time,cdr.document_next_contact_time,
         aaa1.exchange_theme,aaa2.exchange_person,cdd2.dic_data_sort as exchange_reason,cdd3.dic_data_sort as next_plan,cdr.detailed_content,e.employee_name,
         DATE_FORMAT(cdr.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdr.update_time,'%Y-%m-%d %H:%i:%S') as update_time
@@ -465,7 +465,7 @@
             <if test="exchangeReason != null">exchange_reason,</if>
             <if test="nextPlan != null">next_plan,</if>
             <if test="detailedContent != null">detailed_content,</if>
-            <if test="salesmanEmployeeGh">salesman_employee_gh</if>
+            <if test="salesmanEmployeeGh != null">salesman_employee_gh,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
         </trim>
@@ -481,13 +481,13 @@
             <if test="exchangeReason != null">#{exchangeReason,jdbcType=BIGINT},</if>
             <if test="nextPlan != null">#{nextPlan,jdbcType=BIGINT},</if>
             <if test="detailedContent != null">#{detailedContent,jdbcType=VARCHAR},</if>
-            <if test="salesmanEmployeeGh">#{salesmanEmployeeGh,jdbcType=VARCHAR},</if>
+            <if test="salesmanEmployeeGh != null">#{salesmanEmployeeGh,jdbcType=VARCHAR},</if>
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
             <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
 
-    <select id="selectDocumentRecordDetails" resultType="com.harmonycloud.entity.CustomerDocumentRecord">
+    <select id="selectDocumentRecordDetails" resultType="com.harmonycloud.bean.customer.CustomerDocumentRecord">
         SELECT cdr.id,cdr.fk_customer_id,cdr.fk_contacts_id,cdr.document_type,cdr.document_contact_time,cdr.document_next_contact_time,
         aaa1.exchange_theme,aaa2.exchange_person,cdr.exchange_reason,cdr.next_plan,cdr.detailed_content,cdr.salesman_employee_gh,
         DATE_FORMAT(cdr.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdr.update_time,'%Y-%m-%d %H:%i:%S') as update_time
@@ -523,12 +523,12 @@
         where id=#{id}
     </update>
 
-    <select id="listSales" resultType="com.harmonycloud.view.UserListView">
+    <select id="listSales" resultType="com.harmonycloud.bean.account.UserListView">
         SELECT distinct u.fk_employee_gh as employee_gh,e.employee_name as user_name FROM user as u left join employee as e on
         e.employee_gh=u.fk_employee_gh where user_authority_id=4 or user_authority_id=5 or user_authority_id=6;
     </select>
 
-    <select id="selectDocumentPlanne" resultType="com.harmonycloud.entity.CustomerDocumentPlanne">
+    <select id="selectDocumentPlanne" resultType="com.harmonycloud.bean.customer.CustomerDocumentPlanne">
         select * from customer_document_planne where fk_customer_id=#{customerId} order by create_time DESC LIMIT 1
     </select>
 
@@ -603,15 +603,15 @@
         order by a.id) as a on s.id=a.shopid where a.fk_employee_gh=#{employeeGh}
     </select>
     
-    <select id="selectCustomerByIndustry" resultType="com.harmonycloud.view.CustomerListView">
+    <select id="selectCustomerByIndustry" resultType="com.harmonycloud.bean.customer.CustomerListView">
         SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
-        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM harmage.customer as c left join customer_contacts
+        cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM customer as c left join customer_contacts
         as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
         left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
         left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position where cdd2.dic_data_sort=#{sales}
     </select>
 
-    <select id="selectCustomer" resultType="com.harmonycloud.view.CustomerDetailView">
+    <select id="selectCustomer" resultType="com.harmonycloud.bean.customer.CustomerDetailView">
         select c.id,c.customer_name,c.customer_province,c.customer_city,c.customer_place,c.customer_code,c.customer_web,c.customer_email,cc.contacts_name,
         cdd1.dic_data_sort as contacts_position,cc.contacts_specific_position,cc.contacts_tel,cc.contacts_wechat,cdd2.dic_data_sort as customer_prod_sort,
         cdd2.dic_data_text as customer_prod_text,cdd3.dic_data_sort as customer_source_sort,c.customer_source_text,cdd4.dic_data_sort as customer_industry,
@@ -627,7 +627,7 @@
         <if test="customerProvince!=null or customerCity!=null or customerSource!=null or customerProdSort!=null or defaultEmployeeGh!=null or
         createBeginTime!=null or createEndTime!=null or updateBeginTime!=null or updateEndTime!=null">
             <trim prefix="(" suffix=")" suffixOverrides="and">
-                SELECT * FROM harmage.customer where
+                SELECT * FROM customer where
                 <if test="customerProvince!=null">customer_province=#{customerProvince} and</if>
                 <if test="customerCity!=null">customer_city=#{customerCity} and</if>
                 <if test="customerSource!=null">customer_source=#{customerSource} and</if>
@@ -671,7 +671,7 @@
         left join employee as e on e.employee_gh=c.default_employee_gh group by c.id;
     </select>
 
-    <select id="selectDocumentRecord" resultType="com.harmonycloud.view.DocumentRecordListView">
+    <select id="selectDocumentRecord" resultType="com.harmonycloud.bean.document.DocumentRecordListView">
         SELECT cdr.id,c.id as customer_id,c.customer_name,cc.id as contacts_id,cc.contacts_name,cdd1.dic_data_sort as document_type,cdr.document_contact_time,cdr.document_next_contact_time,
         aaa1.exchange_theme,aaa2.exchange_person,cdd2.dic_data_sort as exchange_reason,cdd3.dic_data_sort as next_plan,cdr.detailed_content,e.employee_name,
         DATE_FORMAT(cdr.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdr.update_time,'%Y-%m-%d %H:%i:%S') as update_time
@@ -699,15 +699,15 @@
         </if>
     </select>
 
-    <select id="listDocumentPlanne" resultType="com.harmonycloud.view.DocumentPlanneListView">
+    <select id="listDocumentPlanne" resultType="com.harmonycloud.bean.document.DocumentPlanneListView">
         SELECT cdp.id,c.id as customer_id,c.customer_name,cdp.competitor,cdd1.dic_data_sort as customer_communicate,cdp.next_plan,cdp.if_haveproj,cdp.prod_involved,
         cdp.proj_situation,cdp.next_work,cdp.budget,cdp.offer,cdp.grasp_degree,cdp.decision_chain,cdd2.dic_data_sort as customer_status,cdp.cooperation_channel,e.employee_name,
-        DATE_FORMAT(cdp.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdp.update_time,'%Y-%m-%d %H:%i:%S') as update_time FROM harmage.customer_document_planne as cdp
+        DATE_FORMAT(cdp.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(cdp.update_time,'%Y-%m-%d %H:%i:%S') as update_time FROM customer_document_planne as cdp
         left join customer as c on c.id=cdp.fk_customer_id left join customer_dic_data as cdd1 on cdd1.id=cdp.customer_communicate
         left join employee as e on c.default_employee_gh=e.employee_gh left join customer_dic_data as cdd2 on cdd2.id=cdp.customer_status;
     </select>
 
-    <select id="shareToMe" resultType="com.harmonycloud.view.CustomerListView">
+    <select id="shareToMe" resultType="com.harmonycloud.bean.customer.CustomerListView">
         SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
         cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM
         (select fk_customer_id from (select fk_customer_id,count(1) as num from customer_salesman group by fk_customer_id) as c where num>=2) as de left join customer_salesman
@@ -717,7 +717,7 @@
         left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position where cs.employee_gh=#{employeeGh} and c.default_employee_gh!=#{employeeGh} group by c.id
     </select>
 
-    <select id="myShared" resultType="com.harmonycloud.view.CustomerListView">
+    <select id="myShared" resultType="com.harmonycloud.bean.customer.CustomerListView">
         SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
         cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM
         (select fk_customer_id from (select fk_customer_id,count(1) as num from customer_salesman group by fk_customer_id) as c where num>=2) as de
@@ -730,8 +730,8 @@
         select customer_name from customer;
     </select>
 
-    <select id="listSaleman" resultType="com.harmonycloud.view.UserListView" >
-        SELECT e.employee_gh,e.employee_name as user_name,aaa1.sales_industry FROM harmage.user as u left join
+    <select id="listSaleman" resultType="com.harmonycloud.bean.account.UserListView" >
+        SELECT e.employee_gh,e.employee_name as user_name,aaa1.sales_industry FROM user as u left join
         employee as e on e.employee_gh=u.fk_employee_gh
         left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as sales_industry from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
         inner JOIN (select  a.id,substring_index(substring_index(a.sales_industry,',',b.help_topic_id+1),',',-1) shopid from user as a
@@ -749,6 +749,6 @@
     </insert>
 
     <select id="getHadShared" resultType="java.lang.String">
-        SELECT employee_gh FROM harmage.customer_salesman where fk_customer_id=#{id}
+        SELECT employee_gh FROM customer_salesman where fk_customer_id=#{id}
     </select>
 </mapper>
