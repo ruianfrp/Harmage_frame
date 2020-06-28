@@ -59,6 +59,8 @@ public interface CustomerService {
 
     List<CustomerDicView> selectDicData(String dicName);
 
+    List<CustomerDicView> selectAllDicData();
+
     Customer selectCustomerAfterUpdate(Integer id);
 
     List<DocumentRecordListView> listDocumentRecord(String selectCustomerName,String selectDocumentType,Date beginTime,Date endTime,String selectEmployeeName,String sort);

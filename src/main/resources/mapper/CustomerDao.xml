@@ -373,6 +373,11 @@
         left join customer_dic_type as cdt on cdd.type_id=cdt.id where cdt.dic_name=#{dicName}
     </select>
 
+    <select id="selectAllDicData" resultType="com.harmonycloud.bean.customer.CustomerDicView">
+        SELECT cdd.id,cdt.dic_name as dic_type,cdd.dic_data_sort,cdd.dic_data_text FROM customer_dic_data as cdd
+        left join customer_dic_type as cdt on cdd.type_id=cdt.id where cdt.dic_name=#{dicName}
+    </select>
+
     <select id="listDocumentRecord" resultType="com.harmonycloud.bean.document.DocumentRecordListView">
         SELECT cdr.id,c.id as customer_id,c.customer_name,cc.id as contacts_id,cc.contacts_name,cdd1.dic_data_sort as document_type,cdr.document_contact_time,cdr.document_next_contact_time,
         aaa1.exchange_theme,aaa2.exchange_person,cdd2.dic_data_sort as exchange_reason,cdd3.dic_data_sort as next_plan,cdr.detailed_content,e.employee_name,

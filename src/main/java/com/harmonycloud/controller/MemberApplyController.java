@@ -103,7 +103,7 @@ public class MemberApplyController {
             res.message.setMessage(200, "申请项目成员列表返回成功", data);
         } else {
             log.error("返回错误，成员信息数据为空");
-            res.message.setMessage(400, "返回错误，成员信息数据为空");
+            res.message.setMessage(200, "返回错误，成员信息数据为空");
         }
         return res.message;
     }
@@ -328,7 +328,7 @@ public class MemberApplyController {
             res.message.setMessage(200, "Pm申请项目成员列表返回成功", data);
         } else {
             log.error("返回错误，成员信息数据为空");
-            res.message.setMessage(400, "返回错误，成员信息数据为空");
+            res.message.setMessage(200, "返回错误，成员信息数据为空");
         }
         return res.message;
     }

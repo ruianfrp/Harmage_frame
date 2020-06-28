@@ -476,6 +476,31 @@ public class CustomerController {
     }
 
     /**
+     * 所有客户字段查询
+     * @return message
+     */
+    @PostMapping("/selectAllDicData")
+    @ApiOperation(value = "所有客户字段查询")
+    public Message selectAllDicData() {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Map<String, Object> data = new HashMap<>();
+        List<CustomerDicView> list = customerService.selectAllDicData();
+        if (list != null) {
+            log.info("客户字段返回成功");
+            data.put("list", list);
+            res.message.setMessage(200, "客户字段返回成功", data);
+        } else {
+            log.error("客户字段返回为空");
+            res.message.setMessage(400, "客户字段返回为空");
+        }
+        return res.message;
+    }
+
+    /**
      * 获取所有销售业务员信息
      * @return message
      */

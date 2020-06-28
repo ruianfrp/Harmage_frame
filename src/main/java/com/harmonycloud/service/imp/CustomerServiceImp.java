@@ -133,6 +133,11 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
+    public List<CustomerDicView> selectAllDicData(){
+        return customerDao.selectAllDicData();
+    }
+
+    @Override
     public Customer selectCustomerAfterUpdate(Integer id){
         return customerDao.selectCustomerAfterUpdate(id);
     }
