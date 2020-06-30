@@ -14,7 +14,7 @@ public class DeployData {
 
     public void deployUserInfoData() {
         try {
-            new ExportExcel(fileOut, "employee", Object.class, "Sheet1");
+            new ExportExcel(fileOut, "customer_salesman", Object.class, "Sheet5");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

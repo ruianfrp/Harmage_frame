@@ -21,7 +21,7 @@ import java.util.*;
 
 
 @Slf4j
-@Component
+//@Component
 @Order(value = 1)
 public class DingUtils {
     @Autowired

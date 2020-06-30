@@ -163,7 +163,7 @@ DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_
     </select>
 
     <select id="getStopProjectDay" resultType="com.harmonycloud.bean.project.ProjectStatusBean">
-        select proj_name, TIMESTAMPDIFF(day,proj_stop_time, now()) as days from project where proj_status = #{status};
+        select id, proj_name, TIMESTAMPDIFF(day,proj_stop_time, now()) as days from project where proj_status = #{status};
     </select>
 
     <update id="updateStopStatusForProject">

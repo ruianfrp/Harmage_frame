@@ -364,23 +364,44 @@ public class MilestoneController {
     @GetMapping("/projectDelayRanking")
     @ApiOperation(value = "返回问题项目排行榜")
     public Message projectDelayRanking() throws Exception {
-//		VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-//		if (res.message.getCode() == 401) {
-//			log.error("Authorization参数校验失败");
-//			return res.message;
-//		}
+		VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+		if (res.message.getCode() == 401) {
+			log.error("Authorization参数校验失败");
+			return res.message;
+		}
         Map<String, Object> data = new HashMap<>();
-        List<ProjectDelayRankingView> list = null;
-        List<ProjectStatusBean> projectStatusBeanList = null;
-        list = milestoneService.projectDelayRanking();
-        list = list.stream().sorted(comparing(ProjectDelayRankingView::getDelayTime).reversed()).collect(Collectors.toList());
-        projectStatusBeanList = projectService.getStopProjectDay(ProjectStatus.STOP.getStatus());
+        List<ProjectDelayRankingView> list = milestoneService.projectDelayRanking();
+        if(list.size()>0){
+            list = list.stream().sorted(comparing(ProjectDelayRankingView::getDelayTime).reversed()).collect(Collectors.toList());
+        }else {
+            log.warn("无延期项目返回");
+        }
+        List<ProjectStatusBean> projectStatusBeanList = projectService.getStopProjectDay(ProjectStatus.STOP.getStatus());
         HashMap hashMap = new HashMap();
-        hashMap.put("stopWeek", projectStatusBeanList.stream().filter(projectStatusBean -> projectStatusBean.getDays() < 7)
-                .sorted(comparing(ProjectStatusBean::getDays).reversed()).collect(Collectors.toList()));
+        List<ProjectStatusBean> stopWeek = new ArrayList<>();
+        List<ProjectStatusBean> stopWeekMore = new ArrayList<>();
+
+        if(projectStatusBeanList.size()>0){
+            for(ProjectStatusBean psbl : projectStatusBeanList){
+                if(psbl.getDays() == null){
+                    log.warn("天数不存在");
+                }else if(psbl.getDays()>0 && psbl.getDays() < 7){
+                    stopWeek.add(psbl);
+                }else if(psbl.getDays()>=7) {
+                    stopWeekMore.add(psbl);
+                }
+            }
+        }
+        if(stopWeek.size() > 0){
+            stopWeek.stream().sorted(Comparator.comparing(ProjectStatusBean::getDays));
+        }
+        if(stopWeekMore.size() > 0){
+            stopWeekMore.stream().sorted(Comparator.comparing(ProjectStatusBean::getDays));
+        }
+
+        hashMap.put("stopWeek", stopWeek);
         hashMap.put("delay", list);
-        hashMap.put("stopWeekMore", projectStatusBeanList.stream().filter(projectStatusBean -> projectStatusBean.getDays() >= 7)
-                .sorted(comparing(ProjectStatusBean::getDays).reversed()).collect(Collectors.toList()));
+        hashMap.put("stopWeekMore", stopWeekMore);
         Message message = new Message();
         if (Objects.nonNull(hashMap)) {
             log.info("问题项目排行榜返回成功");

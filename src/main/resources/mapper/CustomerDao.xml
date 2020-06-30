@@ -36,11 +36,11 @@
     </update>
 
     <select id="pageCustomer" resultType="com.harmonycloud.bean.customer.CustomerListView">
-        SELECT c.id,DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
+        SELECT c.id,DATE_FORMAT(max(cdr.document_contact_time),'%Y-%m-%d %H:%i:%S') as create_time,c.customer_name,c.customer_province,cdd1.dic_data_sort as customer_source,cdd2.dic_data_sort as customer_industry,
         cc.contacts_name,cdd3.dic_data_sort as contacts_position,cc.contacts_tel,e.employee_name FROM customer as c left join customer_contacts
         as cc on c.default_contact_id=cc.id left join employee as e on e.employee_gh=c.default_employee_gh
         left join customer_dic_data as cdd1 on cdd1.id=c.customer_source left join customer_dic_data as cdd2 on cdd2.id=c.customer_industry
-        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position
+        left join customer_dic_data as cdd3 on cdd3.id=cc.contacts_position left join customer_document_record as cdr on cdr.fk_customer_id=c.id
         <trim prefix="where " suffixOverrides="and">
             <if test="selectCustomerName != null">
                 c.customer_name like "%"#{selectCustomerName}"%" and

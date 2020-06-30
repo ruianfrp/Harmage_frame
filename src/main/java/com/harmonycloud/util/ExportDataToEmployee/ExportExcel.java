@@ -7,6 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,10 +98,8 @@ public class ExportExcel<T extends Serializable> {
                     // 获得指定单元格中数据
                     Object cellStr = this.getCellString(cell);
                     TableCell TableCell = new TableCell();
-                    TableCell.set_name(getCellString(
-                            sheet.getRow(0).getCell(columnIndex)).toString());
-                    TableCell.set_value(cellStr == null ? "" : cellStr
-                            .toString());
+                    TableCell.set_name(getCellString(sheet.getRow(0).getCell(columnIndex)).toString());
+                    TableCell.set_value(cellStr == null ? "" : cellStr.toString());
                     rowData.add(TableCell);
                 }
                 result.add(rowData);
@@ -151,12 +150,12 @@ public class ExportExcel<T extends Serializable> {
         String colName = excelElement.get_name();
         String colValue = excelElement.get_value();
         String retValue = "";
-        if (colName.equals("create_time") && colValue.equals("/")) {
+        if (colValue.equals("")) {
             return null;
         }
-        if (colName.equals("is_quit")) {
-            Integer re = 0;
-            return "'" + re + "'";
+        if(colName.equals("contacts_tel")){
+            BigDecimal bd = new BigDecimal(colValue);
+            colValue = bd.toPlainString();
         }
         retValue = "'" + colValue + "'";
         return retValue;

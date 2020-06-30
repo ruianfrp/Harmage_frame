@@ -9,7 +9,7 @@ public class DBUtils {
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://47.92.161.179:31036/harmage?useUnicode=true&characterEncoding=UTF-8","root","Ab@123456");
+            conn = DriverManager.getConnection("jdbc:mysql://47.92.161.179:31036/harmage_test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai","root","Ab@123456");
         } catch (Exception e) {
             e.printStackTrace();
         }

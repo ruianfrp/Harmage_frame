@@ -237,7 +237,7 @@ public class MemberController {
             res.message.setMessage(200, "memberJob列表返回成功", data);
         } else {
             log.warn("memberJob列表返回失败");
-            res.message.setMessage(403, "memberJob列表返回失败");
+            res.message.setMessage(200, "memberJob列表返回失败");
         }
         return res.message;
     }
