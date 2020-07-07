@@ -1186,22 +1186,17 @@ public class CustomerController {
         String[] split = listEmployeeGh.split(";");
         if(!listEmployeeGh.equals("")){
             Integer result1 = customerService.deleteSalemans(fkCustomerId);
-            if(result1>0){
-                log.info("共享业务员删除成功");
-                for(String employeeGh:split){
-                    Integer result = customerService.insertIntoCustomerSalesman(employeeGh,fkCustomerId);
-                    if(result>0){
-                        log.info("客户共享成功");
-                        res.message.setMessage(200,"客户共享成功");
-                    }else {
-                        log.error("客户共享失败");
-                        res.message.setMessage(403,"客户共享失败");
-                    }
+            for(String employeeGh:split){
+                Integer result = customerService.insertIntoCustomerSalesman(employeeGh,fkCustomerId);
+                if(result>0){
+                    log.info("客户共享成功");
+                    res.message.setMessage(200,"客户共享成功");
+                }else {
+                    log.error("客户共享失败");
+                    res.message.setMessage(400,"客户共享失败");
                 }
-            }else {
-                log.error("共享业务员删除失败");
-                res.message.setMessage(403,"客户共享失败");
             }
+            
         }
         return res.message;
     }

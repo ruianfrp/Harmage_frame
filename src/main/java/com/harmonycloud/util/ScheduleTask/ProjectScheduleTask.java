@@ -45,13 +45,14 @@ public class ProjectScheduleTask {
                     } else if (listStatus.contains("顺利进行")) {
                         System.out.println(ProjectMilestoneStatus.getProjectMilestoneStatus("顺利进行").getProjectStatus());
                         milestoneService.updateProjectStatus(ProjectMilestoneStatus.getProjectMilestoneStatus("顺利进行").getProjectStatus(), ProjectMilestoneStatus.getProjectMilestoneStatus("顺利进行").getProjectSubState(), project_id);
+                    } else if (listStatus.contains("未开始")){
+                        milestoneService.updateProjectStatus(ProjectMilestoneStatus.SMOOTHLY.getProjectStatus(), ProjectMilestoneStatus.SMOOTHLY.getProjectSubState(), project_id);
                     } else {
                         System.out.println("完成");
                         milestoneService.updateProjectStatus("完成", "完成", project_id);
                     }
                 } else {
                     log.error("项目 " + project_id + " 里程碑状态返回为空,项目未开始");
-                    System.out.println("未開始");
                     milestoneService.updateProjectStatus(ProjectMilestoneStatus.SMOOTHLY.getProjectStatus(), ProjectMilestoneStatus.SMOOTHLY.getProjectSubState(), project_id);
                 }
 //                if(listStatus.size()>0){
