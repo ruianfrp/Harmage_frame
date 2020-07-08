@@ -89,6 +89,10 @@ public class SyncInfo {
 					if (ps.executeUpdate() > 0) {
 						log.info(employeeGh + "离职成功!");
 						ps.close();
+						String sql2 = "update member set is_quit=1 where fk_employee_gh=?;";
+						PreparedStatement aa = con.prepareStatement(sql2);
+						aa.setString(1, employeeGh);
+						aa.close();
 					}
 				}
 			}
@@ -163,41 +167,31 @@ public class SyncInfo {
 		try {
 			Connection con = DriverManager.getConnection("jdbc:mysql://47.92.161.179:31036/harmage?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai",
 					"root", "Ab@123456");
-//			String sql = "select employee_gh FROM employee where employee_gh=?;";
-//			PreparedStatement st = con.prepareStatement(sql);
-//			st.setString(1, user.getJobnumber());
-//			ResultSet rs = st.executeQuery();
 
 			String sql2 = "insert into employee(employee_gh, employee_name, employee_dep, employee_job, employee_workplace, " +
 					"employee_sex, employee_type, create_time, dingding_user_id) select ?,?,'/',?,?,'无','/',?,? from dual where " +
 					"not EXISTS (select employee_gh from employee where employee_gh=?);";
 
-//			if (!rs.next()) {
-				if (user.getJobnumber() != null) {
-					PreparedStatement st2 = con.prepareStatement(sql2);
-//					System.out.println(user.getJobnumber());
-					st2.setString(1, user.getJobnumber());
-					st2.setString(2, user.getName());
-					st2.setString(3, user.getPosition());
-					st2.setString(4, user.getWorkPlace());
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					if (user.getHiredDate() != null) {
-						String creatTime = formatter.format(user.getHiredDate());
-						st2.setString(5, creatTime);
-					} else {
-						st2.setString(5, null);
-					}
-					st2.setString(6, user.getUserid());
-					st2.setString(7, user.getJobnumber());
-					st2.execute();
-					log.info(user.getJobnumber() + "已添加至Employee表");
-					st2.close();
+			if (user.getJobnumber() != null) {
+				PreparedStatement st2 = con.prepareStatement(sql2);
+//				System.out.println(user.getJobnumber());
+				st2.setString(1, user.getJobnumber());
+				st2.setString(2, user.getName());
+				st2.setString(3, user.getPosition());
+				st2.setString(4, user.getWorkPlace());
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				if (user.getHiredDate() != null) {
+					String creatTime = formatter.format(user.getHiredDate());
+					st2.setString(5, creatTime);
+				} else {
+					st2.setString(5, null);
 				}
-//			}else {
-//				log.warn(user.getJobnumber() + "在Employee表中已存在");
-//			}
-//			rs.close();
-//			st.close();
+				st2.setString(6, user.getUserid());
+				st2.setString(7, user.getJobnumber());
+				st2.execute();
+				log.info(user.getJobnumber() + "已添加至Employee表");
+				st2.close();
+			}
 			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
