@@ -98,6 +98,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.belerweb</groupId>
+            <artifactId>pinyin4j</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.taobao.top</groupId>
             <artifactId>top-api-sdk-dev</artifactId>
             <version>ding-open-mc-SNAPSHOT</version>
