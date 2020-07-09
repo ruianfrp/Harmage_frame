@@ -195,14 +195,7 @@ public class ProjEndApplyController {
                     String projPreendTime = projEndApplyService.selectProjectPreendTime(id);
                     if (projEndTime != null && projPreendTime != null) {
                         log.info("项目预计完成时间与实际结束时间返回正常");
-                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        int comp = formatter.parse(projPreendTime).compareTo(formatter.parse(projEndTime));
-                        if (comp >= 0) {
-                            status = "完成";
-                        } else {
-                            status = "完成";
-                        }
-                        Integer result1 = projEndApplyService.updateProjectStatus(status, id1, id2);
+                        Integer result1 = projEndApplyService.updateProjectStatus("完成", id1, id2);
                         if (result1 > 0) {
                             log.info("项目状态修改成功");
                         } else {

@@ -172,7 +172,7 @@ DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_
             <if test="status != null">
                 proj_status = #{status},
             </if>
-            proj_substate = '维保期',
+            proj_substate = '暂停',
             proj_stop_time = (select start_time from project_status_cache where project_id = #{projectId} and flag = 1 order by id desc limit 0,1)
         </set>
         where id = #{projectId}

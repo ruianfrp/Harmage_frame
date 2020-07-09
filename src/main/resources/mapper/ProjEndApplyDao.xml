@@ -77,7 +77,7 @@
     </insert>
     
     <update id="updateProjectStatus">
-        update project as p set proj_status=#{status},proj_end_time=(select proj_end_time from proj_end_apply as pea where pea.id=#{id1})
+        update project as p set proj_status=#{status},proj_substate="维保期",proj_end_time=(select proj_end_time from proj_end_apply as pea where pea.id=#{id1})
         where p.id=(select fk_proj_id from proj_end_apply as pea1 where pea1.id=#{id2}) and proj_status != 'STOP'
     </update>
 
