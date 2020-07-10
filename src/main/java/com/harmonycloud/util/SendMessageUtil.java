@@ -25,7 +25,7 @@ public class SendMessageUtil {
 
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
         request.setAgentId(305862497L);
-        request.setUseridList("manager179");
+        request.setUseridList("15848927472119248");
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setActionCard(new OapiMessageCorpconversationAsyncsendV2Request.ActionCard());
@@ -110,7 +110,7 @@ public class SendMessageUtil {
 
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
         request.setAgentId(305862497L);
-        request.setUseridList("manager179");
+        request.setUseridList("15848927472119248");
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
@@ -162,7 +162,7 @@ public class SendMessageUtil {
 
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
         request.setAgentId(305862497L);
-        request.setUseridList("manager179");
+        request.setUseridList("15848927472119248");
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());

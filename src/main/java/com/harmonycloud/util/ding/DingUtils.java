@@ -16,6 +16,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,16 +32,18 @@ public class DingUtils {
     //暂时不考虑重命名情况
     private static HashMap<String, String> userIdHashMap = new HashMap<>(300);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         getToken();
 //        getUserIdMapByDepartment(getDepartment());
 //        List<String> stringList = getInstanceList();
 //        stringList.stream().forEach(a -> System.out.println(a));
 //        stringList.stream().forEach();
-        List<ProjectReport> projectReportList = insertReportDataBase("项目周报（项目经理填写）");
-        projectReportList.stream().forEach(aa -> {System.out.println(aa.getStartTime() + ":::" + aa.getProjectName() + ":::" + aa.getReport());});
-
-
+//        List<ProjectReport> projectReportList = insertReportDataBase("项目周报（项目经理填写）");
+//        projectReportList.stream().forEach(aa -> {System.out.println(aa.getStartTime() + ":::" + aa.getProjectName() + ":::" + aa.getReport());});
+        List<String> instanceList = getInstanceList();
+        for(String s:instanceList){
+            System.out.println(getDeliverTheProject(s));
+        }
     }
 
     @PostConstruct
@@ -254,29 +257,42 @@ public class DingUtils {
     }
 
     public static List<String> getInstanceList() {
+        getToken();
         List<String> instanceList = new ArrayList<>();
         try {
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/listids");
             OapiProcessinstanceListRequest req = new OapiProcessinstanceListRequest();
             req.setProcessCode("PROC-F2883F47-184A-48FC-9B20-781CFE9C3F39");
-            req.setStartTime(1576793867970L);
+            Date day2 = new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String yesterday = simpleDateFormat.format(day2);//获取昨天日期
+            System.out.println(yesterday);
+            Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(yesterday + " 00:00:00");
+
+            long yesterdaytamp = date1.getTime();
+            System.out.println(yesterdaytamp);
+            req.setStartTime(yesterdaytamp);
             OapiProcessinstanceListResponse rsp = client.execute(req, accessToken);
-            JSONObject data = JSONObject.parseObject(rsp.getBody());
-            JSONArray instanceArray = data.getJSONObject("result").getJSONArray("list");
-            instanceArray.stream().forEach(instance -> instanceList.add(instance.toString()));
-        } catch (ApiException e) {
+            if(rsp.isSuccess()){
+                for (int i = 0;i<rsp.getResult().getList().size();i++){
+                    instanceList.add(String.valueOf(rsp.getResult().getList().get(i)));
+                }
+            }
+        } catch (ApiException | ParseException e) {
             e.printStackTrace();
         }
         return instanceList;
     }
 
-    public static List<ProjectReport> getDeliverTheProject(String instanceId) {
+    public static OapiProcessinstanceGetResponse getDeliverTheProject(String instanceId) {
         try {
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/get");
-            OapiProcessinstanceGetRequest oapiProcessinstanceGetRequest = new OapiProcessinstanceGetRequest();
-            oapiProcessinstanceGetRequest.setProcessInstanceId(instanceId);
-            OapiProcessinstanceGetResponse oapiProcessinstanceGetResponse = client.execute(oapiProcessinstanceGetRequest, accessToken);
-            System.out.println(oapiProcessinstanceGetResponse.getBody());
+            OapiProcessinstanceGetRequest request = new OapiProcessinstanceGetRequest();
+            request.setProcessInstanceId(instanceId);
+            OapiProcessinstanceGetResponse response = client.execute(request,accessToken);
+            if(response.isSuccess()){
+                return response;
+            }
         } catch (ApiException e) {
             e.printStackTrace();
         }

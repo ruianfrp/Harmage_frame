@@ -32,7 +32,10 @@ public class ProjectReportTask {
     public void insertReportDatabase() {
         DingUtils.getToken();
         List<ProjectReport> projectReportList = DingUtils.insertReportDataBase("项目周报（项目经理填写）");
-        projectReportList.stream().forEach(aa -> {System.out.println(aa.getStartTime() + ":::" + aa.getProjectName() + ":::" + aa.getReport());});
+        projectReportList.stream().forEach(aa -> {
+            System.out.println(aa.getStartTime() + ":::" + aa.getProjectName() + ":::" + aa.getReport());
+        });
+
         int insertNumber = projectReportService.insertReportDataBase(projectReportList);
         System.out.println(insertNumber);
     }
