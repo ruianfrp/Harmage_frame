@@ -16,6 +16,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -41,7 +45,7 @@ public class DingUtils {
 //        List<ProjectReport> projectReportList = insertReportDataBase("项目周报（项目经理填写）");
 //        projectReportList.stream().forEach(aa -> {System.out.println(aa.getStartTime() + ":::" + aa.getProjectName() + ":::" + aa.getReport());});
         List<String> instanceList = getInstanceList();
-        for(String s:instanceList){
+        for (String s : instanceList) {
             System.out.println(getDeliverTheProject(s));
         }
     }
@@ -75,6 +79,7 @@ public class DingUtils {
 
     /**
      * 根据角色获取用户名id信息
+     *
      * @param roles
      */
     public static void getUserIdMap(Set<Long> roles) {
@@ -93,6 +98,7 @@ public class DingUtils {
 
     /**
      * 获取公司部门信息
+     *
      * @return
      */
     public static Set<Long> getDepartment() {
@@ -115,6 +121,7 @@ public class DingUtils {
 
     /**
      * 通过部门获取用户名id信息
+     *
      * @param departmentSet
      */
     public static void getUserIdMapByDepartment(Set<Long> departmentSet) {
@@ -158,6 +165,7 @@ public class DingUtils {
 
     /**
      * 通过用户名，项目名，报表类型获取报表信息
+     *
      * @param userName
      * @param projectName
      * @param reportType
@@ -167,8 +175,8 @@ public class DingUtils {
         DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
         OapiReportListRequest request = new OapiReportListRequest();
         request.setTemplateName(reportType);
-        request.setStartTime(System.currentTimeMillis() - 1000L * 60 * 60 * 24 *( 30 * 6 -1));
-        System.out.println(System.currentTimeMillis() - 1000L * 60 * 60 *24 * 30 * 6);
+        request.setStartTime(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * (30 * 6 - 1));
+        System.out.println(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30 * 6);
         request.setEndTime(System.currentTimeMillis() + 1000L * 60 * 60 * 24);
         System.out.println(System.currentTimeMillis());
         request.setCursor(0L);
@@ -191,11 +199,11 @@ public class DingUtils {
                         String createTime = jsonObject1.getString("create_time");
                         Calendar cal = Calendar.getInstance();
                         cal.setTimeInMillis(Long.valueOf(createTime));
-                        cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
+                        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
                         String monday = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
                         cal.add(Calendar.DAY_OF_MONTH, 5);
                         String friday = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
-                        resultJsonObject.put(monday+ "~"+friday, jsonObject1);
+                        resultJsonObject.put(monday + "~" + friday, jsonObject1);
                         break;
                     }
                 }
@@ -209,6 +217,7 @@ public class DingUtils {
 
     /**
      * 获取报表信息，并将信息存入数据库中
+     *
      * @param reportType
      * @return
      */
@@ -266,15 +275,14 @@ public class DingUtils {
             Date day2 = new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String yesterday = simpleDateFormat.format(day2);//获取昨天日期
-            System.out.println(yesterday);
+//            System.out.println(yesterday);
             Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(yesterday + " 00:00:00");
-
             long yesterdaytamp = date1.getTime();
-            System.out.println(yesterdaytamp);
+//            System.out.println(yesterdaytamp);
             req.setStartTime(yesterdaytamp);
             OapiProcessinstanceListResponse rsp = client.execute(req, accessToken);
-            if(rsp.isSuccess()){
-                for (int i = 0;i<rsp.getResult().getList().size();i++){
+            if (rsp.isSuccess()) {
+                for (int i = 0; i < rsp.getResult().getList().size(); i++) {
                     instanceList.add(String.valueOf(rsp.getResult().getList().get(i)));
                 }
             }
@@ -289,13 +297,61 @@ public class DingUtils {
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/get");
             OapiProcessinstanceGetRequest request = new OapiProcessinstanceGetRequest();
             request.setProcessInstanceId(instanceId);
-            OapiProcessinstanceGetResponse response = client.execute(request,accessToken);
-            if(response.isSuccess()){
+            OapiProcessinstanceGetResponse response = client.execute(request, accessToken);
+            if (response.isSuccess() && response.getProcessInstance().getResult().equals("agree") && response.getProcessInstance().getStatus().equals("COMPLETED")) {
+//                duplicateCharacters(response.getProcessInstance().getFormComponentValues().get(2).getValue());
+//                duplicateCharacters(response.getProcessInstance().getFormComponentValues().get(3).getValue());
+//                Connection con = DriverManager.getConnection("jdbc:mysql://47.92.161.179:31036/harmage?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai",
+//                        "root", "Ab@123456");
+//                String sql2 = "insert into project(proj_PM_gh, proj_Saleman, proj_name, proj_type, proj_line, proj_place," +
+//                        "proj_presta_time, proj_preend_time, proj_establish_time, proj_money, proj_all_cost, proj_current_cost, proj_status," +
+//                        "proj_remark, create_time, proj_end_type, proj_substate) select (select employee_gh from employee where employee_name=?)," +
+//                        "(select employee_gh from employee where employee_name=?),?,?,?,'-',?,?,?,?,0,0,'已立项',?,?,'未申请','正常' from dual" +
+//                        "where not EXISTS (select proj_name from project where proj_name=?);";
+//                PreparedStatement st5 = con.prepareStatement(sql2);
+//                st5.setString(1, "冯锐鹏");
+//                st5.setString(2, "冯锐鹏");
+//                st5.setString(3, response.getProcessInstance().getFormComponentValues().get(0).getValue());
+//                st5.setString(4, response.getProcessInstance().getFormComponentValues().get(0).getValue());
+//                st5.setString(5, response.getProcessInstance().getFormComponentValues().get(0).getValue());
+//                st5.setString(6, response.getProcessInstance().getFormComponentValues().get(0).getValue());
+//                st5.setString(7, response.getProcessInstance().getFormComponentValues().get(0).getValue());
+//                st5.setString(8, response.getProcessInstance().getFormComponentValues().get(0).getValue());
+//                st5.setString(9, response.getProcessInstance().getFormComponentValues().get(0).getValue());
+//                st5.setString(10, response.getProcessInstance().getFormComponentValues().get(0).getValue());
+//                st5.setString(11, response.getProcessInstance().getFormComponentValues().get(0).getValue());
+//                st5.setString(12, response.getProcessInstance().getFormComponentValues().get(0).getValue());
+//                int rs5 = st5.executeUpdate();
+//                if (rs5 > 0) {
+//                    log.info("成功添加账号密码");
+//                }
+//                st5.close();
+//                con.close();
                 return response;
             }
         } catch (ApiException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    //获取字符串中相同值（名字）
+    private static void duplicateCharacters(String word) {
+        char[] charaters = word.toCharArray();
+        Map<Character, Integer> charMap = new HashMap<Character, Integer>();
+        for (Character ch : charaters) {
+            if (charMap.containsKey(ch)) {
+                charMap.put(ch, charMap.get(ch) + 1);
+            } else {
+                charMap.put(ch, 1);
+            }
+        }
+        Set<Map.Entry<Character, Integer>> entrySet = charMap.entrySet();
+        System.out.printf("List of duplicate characters in Strng '%s' %n", word);
+        for (Map.Entry<Character, Integer> entry : entrySet) {
+            if (entry.getValue() > 1) {
+                System.out.printf("%s:%d:%n", entry.getKey(), entry.getValue());
+            }
+        }
     }
 }

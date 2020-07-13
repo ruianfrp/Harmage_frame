@@ -3,6 +3,7 @@ package com.harmonycloud.util.ScheduleTask;
 import com.harmonycloud.bean.enumeration.ProjectMilestoneStatus;
 import com.harmonycloud.service.MilestoneService;
 import com.harmonycloud.service.ProjectService;
+import com.harmonycloud.util.ding.DingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -45,7 +46,7 @@ public class ProjectScheduleTask {
                     } else if (listStatus.contains("顺利进行")) {
                         System.out.println(ProjectMilestoneStatus.getProjectMilestoneStatus("顺利进行").getProjectStatus());
                         milestoneService.updateProjectStatus(ProjectMilestoneStatus.getProjectMilestoneStatus("顺利进行").getProjectStatus(), ProjectMilestoneStatus.getProjectMilestoneStatus("顺利进行").getProjectSubState(), project_id);
-                    } else if (listStatus.contains("未开始")){
+                    } else if (listStatus.contains("未开始")) {
                         milestoneService.updateProjectStatus(ProjectMilestoneStatus.SMOOTHLY.getProjectStatus(), ProjectMilestoneStatus.SMOOTHLY.getProjectSubState(), project_id);
                     } else {
                         System.out.println("完成");
@@ -75,6 +76,15 @@ public class ProjectScheduleTask {
             }
         } else {
             log.error("里程碑返回项目id为空");
+        }
+    }
+
+    @Async
+    @Scheduled(cron = "0 30 2 * * ?")
+    public void projectApplication() {
+        List<String> instanceList = DingUtils.getInstanceList();
+        for (String s : instanceList) {
+            DingUtils.getDeliverTheProject(s);
         }
     }
 }
