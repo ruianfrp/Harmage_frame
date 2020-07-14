@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.harmonycloud.config.URLConstant.*;
+import static com.harmonycloud.util.LDAPUtil.*;
 
 /**
  * @author ：wz
@@ -177,7 +178,11 @@ public class SyncInfo {
 //				System.out.println(user.getJobnumber());
 				st2.setString(1, user.getJobnumber());
 				st2.setString(2, user.getName());
-				st2.setString(3, user.getPosition());
+				if(user.getPosition() != null){
+					st2.setString(3, user.getPosition());
+				}else {
+					st2.setString(3, "-");
+				}
 				st2.setString(4, user.getWorkPlace());
 				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				if (user.getHiredDate() != null) {
@@ -188,8 +193,19 @@ public class SyncInfo {
 				}
 				st2.setString(6, user.getUserid());
 				st2.setString(7, user.getJobnumber());
-				st2.execute();
-				log.info(user.getJobnumber() + "已添加至Employee表");
+				int number = st2.executeUpdate();
+				if (number > 0) {
+					log.info(user.getJobnumber() + "已添加至Employee表");
+					//添加用户到LDAP服务器，并赋予Confluence+Jira权限
+					String people_dn = "ou=devops,ou=People,dc=harmonycloud,dc=com";
+					String jira_dn = "cn=jira-software-users,ou=devops,ou=People,dc=harmonycloud,dc=com";
+					String confluence_dn = "cn=confluence-users,ou=devops,ou=People,dc=harmonycloud,dc=com";
+					String name = user.getName();
+					String uid = PinYinUtil.toPinyin(name);
+					createUser(people_dn, uid, name);
+					modifyPermission(jira_dn, uid);
+					modifyPermission(confluence_dn, uid);
+				}
 				st2.close();
 			}
 			con.close();
