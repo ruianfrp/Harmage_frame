@@ -69,11 +69,11 @@ public class ResearchersReportController {
     @GetMapping("/getListReportNew")
     @ApiOperation(value = "返回人员项目信息列表(新：数据库数据获取)")
     public Message getListReportNew(@RequestParam(value = "开始时间") String startTime, @RequestParam(value = "结束时间") String endTime) {
-//        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-//        if (res.message.getCode() == 401) {
-//            log.error("Authorization参数校验失败");
-//            return res.message;
-//        }
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
         List<WorkingReportExcel> data = workingReportService.getTotalWorkingTimeReport(startTime, endTime);
         Message message = new Message();
         System.out.println(data);
@@ -83,10 +83,10 @@ public class ResearchersReportController {
 
     @RequestMapping(value = "/exportExcelNew", method = RequestMethod.GET)
     public void exportExcelNew(HttpServletResponse response, @RequestParam(value = "开始时间") String startTime, @RequestParam(value = "结束时间") String endTime)  throws IOException {
-//        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-//        if (res.message.getCode() == 401) {
-//            log.error("Authorization参数校验失败");
-//        }
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+        }
         List<WorkingReportExcel> data = workingReportService.getTotalWorkingTimeReport(startTime, endTime);
         data.stream().forEach(workingReportExcel -> {
             workingReportExcel.setWorkingHours(Double.valueOf(decimalFormat.format(Double.valueOf(workingReportExcel.getWorkingHours()) / 8)));

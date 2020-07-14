@@ -76,11 +76,11 @@ public class SuspendedAndRestartController {
             @ApiImplicitParam(paramType = "query", name = "projectId", value = "暂停项目ID", required = true)
     })
     public Message agreeToStopTheProject(Integer projectId) {
-//        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-//        if (res.message.getCode() == 401) {
-//            log.error("Authorization参数校验失败");
-//            return res.message;
-//        }
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
         Message message = new Message();
         int updateProjectStatusFlagCount = projectStatusCacheService.updateProjectStatusFlag(projectId, ProjectStatus.STOP.getStatus(), 1);
         if (updateProjectStatusFlagCount > 0) {
@@ -99,11 +99,11 @@ public class SuspendedAndRestartController {
             @ApiImplicitParam(paramType = "query", name = "projectId", value = "重启项目ID", required = true)
     })
     public Message agreeToRestartTheProject(Integer projectId) {
-//        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-//        if (res.message.getCode() == 401) {
-//            log.error("Authorization参数校验失败");
-//            return res.message;
-//        }
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
         int updateProjectStatusFlagCount = projectStatusCacheService.updateProjectStatusFlag(projectId, ProjectStatus.RESTART.getStatus(), 1);
         if (updateProjectStatusFlagCount > 0) {
             projectService.updateStopStatusForProject(projectId, ProjectStatus.RESTART.getStatus());

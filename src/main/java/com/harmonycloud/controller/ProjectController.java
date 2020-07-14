@@ -274,10 +274,6 @@ public class ProjectController {
         }
         String authority = res.user.getRole();
         String employeeGh = res.user.getId();
-        if (res.message.getCode() == 401) {
-            log.error("Authorization参数校验失败");
-            return res.message;
-        }
         Map<String, Object> data = new HashMap<>();
         List<ProjectListView> list;
         if (authority.contains("Project_RW_S")) {

@@ -9,6 +9,7 @@ import com.dingtalk.api.response.OapiGettokenResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.harmonycloud.bean.Message;
+import com.harmonycloud.bean.Threads.SynchroThread;
 import com.harmonycloud.bean.VerifyMessage;
 import com.harmonycloud.bean.employee.EmployeeCountView;
 import com.harmonycloud.bean.employee.EmployeeListView;
@@ -357,26 +358,24 @@ public class EmployeeController {
         return res.message;
     }
 
-    //暂时取消这项功能
-//    /**
-//     * 同步按钮触发同步事件
-//     *
-//     * @return message
-//     * @throws Exception
-//     */
-//    @GetMapping("/synchronization")
-//    @ApiOperation(value = "员工信息同步", notes = "同步时会自动添加用户")
-//    public Message synchronization() throws Exception {
-//        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+    /**
+     * 同步按钮触发同步事件
+     *
+     * @return message
+     */
+    @GetMapping("/synchronization")
+    @ApiOperation(value = "员工信息同步", notes = "同步时会自动添加用户")
+    public Message synchronization(){
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
 //        if (res.message.getCode() == 401) {
 //            log.error("Authorization参数校验失败");
 //            return res.message;
 //        }
-//        SyncInfo.LoadAllUserInfo();
-//        log.info("同步成功");
-//        res.message.setMessage(200, "同步成功");
-//        return res.message;
-//    }
+        SynchroThread synchro = new SynchroThread();
+        synchro.run();
+        res.message.setMessage(200, "同步成功");
+        return res.message;
+    }
 
     /**
      * 按照员工姓名查看员工详情
