@@ -3,10 +3,17 @@
 <mapper namespace="com.harmonycloud.dao.MemberDao">
 
     <select id="listMember" resultType="com.harmonycloud.bean.member.MemberView">
-     select member.id,fk_employee_gh,employee_name as member_name,member_job,member_sup,member_type,member_func,member_bonus,
-     member_job_band,DATE_FORMAT(real_start_time,'%Y-%m-%d %H:%i:%S') as real_start_time,
-     DATE_FORMAT(estimate_end_time,'%Y-%m-%d %H:%i:%S') as estimate_end_time,member.is_quit,member_remarks from member,employee where
-     employee_gh = fk_employee_gh and member.is_quit=0 and employee.is_quit=0 and fk_project_id=#{projectId} GROUP BY fk_employee_gh
+        select member.id,fk_employee_gh,employee_name as member_name,member_job,member_sup,member_type,member_func,member_bonus,
+        member_job_band,DATE_FORMAT(real_start_time,'%Y-%m-%d %H:%i:%S') as real_start_time,
+        DATE_FORMAT(estimate_end_time,'%Y-%m-%d %H:%i:%S') as estimate_end_time,member.is_quit,member_remarks from member,employee where
+        employee_gh = fk_employee_gh and member.is_quit=0 and employee.is_quit=0 and fk_project_id=#{projectId} GROUP BY fk_employee_gh
+    </select>
+
+    <select id="listAllMember" resultType="com.harmonycloud.bean.member.MemberView">
+        select member.id,fk_employee_gh,employee_name as member_name,member_job,member_sup,member_type,member_func,member_bonus,
+        member_job_band,DATE_FORMAT(real_start_time,'%Y-%m-%d %H:%i:%S') as real_start_time,
+        DATE_FORMAT(estimate_end_time,'%Y-%m-%d %H:%i:%S') as estimate_end_time,member.is_quit,member_remarks from member,employee where
+        employee_gh = fk_employee_gh and fk_project_id=#{projectId} GROUP BY fk_employee_gh
     </select>
 
 

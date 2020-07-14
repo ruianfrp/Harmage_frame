@@ -43,13 +43,12 @@ public class MemberController {
     /**
      * 根据项目编号返回成员列表
      *
-     * @param projectId
-     * @return message
-     * @throws Exception
+     * @param projectId 项目id
+     * @return res.message
      */
     @GetMapping("/listMember")
     @ApiOperation(value = "返回成员列表")
-    public Message listMember(@ApiParam(name = "projectId", value = "项目Id", required = true) Long projectId) throws Exception {
+    public Message listMember(@ApiParam(name = "projectId", value = "项目Id", required = true) Long projectId) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -64,7 +63,35 @@ public class MemberController {
             res.message.setMessage(200, "数据返回成功", data);
         } else {
             log.error("返回错误，成员信息数据为空");
-            res.message.setMessage(400, "数据为空");
+            res.message.setMessage(200, "数据为空");
+        }
+        return res.message;
+    }
+
+    /**
+     * 返回历史成员列表
+     *
+     * @param projectId 项目id
+     * @return res.message
+     */
+    @GetMapping("/listAllMember")
+    @ApiOperation(value = "返回历史成员列表")
+    public Message listAllMember(@ApiParam(name = "projectId", value = "项目Id", required = true) Long projectId) {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Map<String, Object> data = new HashMap<>();
+        List<MemberView> list = memberService.listAllMember(projectId);
+        if (list.size() > 0) {
+            log.info("历史成员返回成功");
+            data.put("list", list);
+            data.put("total", list.size());
+            res.message.setMessage(200, "历史成员返回成功", data);
+        } else {
+            log.warn("无历史成员");
+            res.message.setMessage(200, "无历史成员");
         }
         return res.message;
     }
@@ -131,9 +158,9 @@ public class MemberController {
             String applyApprovalGh = res.user.getId();
             Integer fkProjectId = member.getFkProjectId();
             String fkEmployeeGh = memberService.findPmByProjId(fkProjectId);
-            if(fkEmployeeGh==null){
+            if (fkEmployeeGh == null) {
                 log.error("PM工号为空");
-                res.message.setMessage(400,"PM工号为空");
+                res.message.setMessage(400, "PM工号为空");
                 return res.message;
             }
             String memberRecommendGh = member.getFkEmployeeGh();
@@ -142,13 +169,13 @@ public class MemberController {
             String memberJoinType = member.getMemberType();
             Date memberStartTime = member.getEstimateStartTime();
             Date memberEndTime = member.getEstimateEndTime();
-            Integer result = memberService.insertIntoMemberApply(fkProjectId,fkEmployeeGh,memberRecommendGh,applyApprovalGh,
-                    distributionGh,memberJoinSup,memberJoinType,memberStartTime,memberEndTime);
-            if(result>0){
+            Integer result = memberService.insertIntoMemberApply(fkProjectId, fkEmployeeGh, memberRecommendGh, applyApprovalGh,
+                    distributionGh, memberJoinSup, memberJoinType, memberStartTime, memberEndTime);
+            if (result > 0) {
                 log.info("PMO添加成员成功");
-            }else {
+            } else {
                 log.error("PMO添加成员失败");
-                res.message.setMessage(403,"PMO添加成员失败");
+                res.message.setMessage(403, "PMO添加成员失败");
                 return res.message;
             }
         } else {

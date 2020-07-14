@@ -13,6 +13,8 @@ import java.util.List;
 public interface MemberDao {
     List<MemberView> listMember(Long projectId);
 
+    List<MemberView> listAllMember(Long projectId);
+
     int insertSelective(Member member);
 
     int updateByPrimaryKeySelective(Member record);

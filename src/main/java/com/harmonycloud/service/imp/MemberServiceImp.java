@@ -28,6 +28,11 @@ public class MemberServiceImp implements MemberService {
         return memberDao.listMember(projectId);
     }
 
+    @Override
+    public List<MemberView> listAllMember(Long projectId){
+        return memberDao.listAllMember(projectId);
+    }
+
 
     @Override
     public int insertSelective(Member member) {
