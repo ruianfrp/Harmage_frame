@@ -58,7 +58,7 @@ public class DesEncryptUtil {
         String encString = u.getEncString("admin");
         //解密
         String desString = u.getDesString(encString);
-        System.err.println("encString:"+encString+";desString:"+desString+":admin");
+        System.out.println("encString:"+encString+";desString:"+desString+":admin");
         if (!desString.equals("admin")) {
             System.err.println("admin"+":错误：encString:"+encString+";desString:"+desString);
         }
