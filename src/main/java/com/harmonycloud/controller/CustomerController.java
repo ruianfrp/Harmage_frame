@@ -10,8 +10,11 @@ import com.harmonycloud.bean.customer.*;
 import com.harmonycloud.bean.document.DocumentPlanneListView;
 import com.harmonycloud.bean.document.DocumentRecordListView;
 import com.harmonycloud.bean.document.SelectDocumentRecordView;
+import com.harmonycloud.bean.project.ProjectListView;
 import com.harmonycloud.service.CustomerService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,7 @@ public class CustomerController {
 
     /**
      * 返回所有的客户列表（根据权限自动判断）
+     *
      * @return message
      */
     @PostMapping("/listCustomer")
@@ -65,10 +69,10 @@ public class CustomerController {
         Map<String, Object> data = new HashMap<>();
         Date beginTime = null;
         Date endTime = null;
-        if(beginTime1 != null){
+        if (beginTime1 != null) {
             beginTime = df.parse(beginTime1);
         }
-        if(endTime1 != null){
+        if (endTime1 != null) {
             endTime = df.parse(endTime1);
         }
         String employeeGh = res.user.getId();
@@ -76,12 +80,12 @@ public class CustomerController {
         List<CustomerListView> list;
         PageInfo<CustomerListView> pageInfo;
         if (role.contains("Customer_RW_A") || role.contains("Customer_RO")) {
-            PageHelper.startPage(pageNum,10);
-            list = customerService.pageCustomer(selectCustomerName,selectCustomerSource,selectCustomerIndustry,beginTime,endTime,selectEmployeeName,sort);
+            PageHelper.startPage(pageNum, 10);
+            list = customerService.pageCustomer(selectCustomerName, selectCustomerSource, selectCustomerIndustry, beginTime, endTime, selectEmployeeName, sort);
             pageInfo = new PageInfo<>(list);
         } else if (role.contains("Customer_RW_S")) {
-            PageHelper.startPage(pageNum,10);
-            list = customerService.pagePartCustomer(employeeGh,selectCustomerName,selectCustomerSource,selectCustomerIndustry,beginTime,endTime,selectEmployeeName,sort);
+            PageHelper.startPage(pageNum, 10);
+            list = customerService.pagePartCustomer(employeeGh, selectCustomerName, selectCustomerSource, selectCustomerIndustry, beginTime, endTime, selectEmployeeName, sort);
             pageInfo = new PageInfo<>(list);
         } else {
             list = customerService.listPartCustomer(employeeGh);
@@ -90,7 +94,7 @@ public class CustomerController {
                 log.info("行业负责人负责行业返回成功");
                 for (String sales : listSalesIndustry) {
                     List<CustomerListView> list1 = customerService.selectCustomerByIndustry(sales);
-                    if (list1 .size() > 0) {
+                    if (list1.size() > 0) {
                         log.info("行业负责人客户列表返回成功");
                         list.addAll(list1);
                         for (int i = 0; i < list.size(); i++) {
@@ -115,7 +119,7 @@ public class CustomerController {
                 return res.message;
             }
         }
-        if (pageInfo.getTotal()>0) {
+        if (pageInfo.getTotal() > 0) {
             data.put("pageInfo", pageInfo);
             log.info("部分Customer信息返回成功");
             res.message.setMessage(200, "客户数据返回成功", data);
@@ -128,6 +132,7 @@ public class CustomerController {
 
     /**
      * 获取客户详情（单选多选返回字符串）
+     *
      * @param map
      * @return message
      */
@@ -155,6 +160,7 @@ public class CustomerController {
 
     /**
      * 新增客户，同时新增联系人
+     *
      * @param listCustomer
      * @return message
      */
@@ -166,7 +172,7 @@ public class CustomerController {
             log.error("Authorization参数校验失败");
             return res.message;
         }
-        for(Customer customer : listCustomer){
+        for (Customer customer : listCustomer) {
             if (customer.getContactsName() != null) {
                 String contactsName = customer.getContactsName();
                 Integer contactsPosition = customer.getContactsPosition();
@@ -234,6 +240,7 @@ public class CustomerController {
 
     /**
      * 获取客户详情（单选多选返回id）
+     *
      * @param map
      * @return message
      */
@@ -250,7 +257,7 @@ public class CustomerController {
         Customer customer = customerService.selectCustomerAfterUpdate(id);
         if (customer != null) {
             log.info("客户信息返回成功");
-            data.put("customer",customer);
+            data.put("customer", customer);
             res.message.setMessage(200, "客户信息返回成功", data);
         } else {
             log.error("客户信息返回为空");
@@ -261,6 +268,7 @@ public class CustomerController {
 
     /**
      * 修改客户信息
+     *
      * @param customer
      * @return message
      */
@@ -285,6 +293,7 @@ public class CustomerController {
 
     /**
      * 删除客户
+     *
      * @param map
      * @return message
      */
@@ -310,6 +319,7 @@ public class CustomerController {
 
     /**
      * 获取客户联系人列表
+     *
      * @param map
      * @return message
      */
@@ -348,6 +358,7 @@ public class CustomerController {
 
     /**
      * 修改客户联系人信息
+     *
      * @param contact
      * @return message
      */
@@ -372,6 +383,7 @@ public class CustomerController {
 
     /**
      * 新增客户联系人
+     *
      * @param listContact
      * @return message
      */
@@ -383,7 +395,7 @@ public class CustomerController {
             log.error("Authorization参数校验失败");
             return res.message;
         }
-        for(CustomerContacts contact : listContact){
+        for (CustomerContacts contact : listContact) {
             Integer result = customerService.insertCustomerContact(contact);
             if (result > 0) {
                 log.info("客户联系人添加成功");
@@ -398,6 +410,7 @@ public class CustomerController {
 
     /**
      * 获取客户联系人详情信息
+     *
      * @param map
      * @return message
      */
@@ -425,6 +438,7 @@ public class CustomerController {
 
     /**
      * 删除客户联系人
+     *
      * @param map
      * @return message
      */
@@ -450,6 +464,7 @@ public class CustomerController {
 
     /**
      * 字典表字段查询，获取字典信息
+     *
      * @param map
      * @return message
      */
@@ -477,6 +492,7 @@ public class CustomerController {
 
     /**
      * 所有客户字段查询
+     *
      * @return message
      */
     @PostMapping("/selectAllDicData")
@@ -502,6 +518,7 @@ public class CustomerController {
 
     /**
      * 获取所有销售业务员信息
+     *
      * @return message
      */
     @GetMapping("/listSales")
@@ -528,6 +545,7 @@ public class CustomerController {
 
     /**
      * 获取客户跟单记录列表（根据权限自动判断）
+     *
      * @return message
      */
     @PostMapping("/listDocumentRecord")
@@ -550,18 +568,18 @@ public class CustomerController {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Date beginTime = null;
         Date endTime = null;
-        if(beginTime1 != null){
+        if (beginTime1 != null) {
             beginTime = df.parse(beginTime1);
         }
-        if(endTime1 != null){
+        if (endTime1 != null) {
             endTime = df.parse(endTime1);
         }
         Map<String, Object> data = new HashMap<>();
         List<DocumentRecordListView> list = new ArrayList<>();
         PageInfo<DocumentRecordListView> pageInfo;
         if (role.contains("Customer_RW_A") || role.contains("Customer_RO")) {
-            PageHelper.startPage(pageNum,10);
-            list = customerService.listDocumentRecord(selectCustomerName,selectDocumentType,beginTime,endTime,selectEmployeeName,sort);
+            PageHelper.startPage(pageNum, 10);
+            list = customerService.listDocumentRecord(selectCustomerName, selectDocumentType, beginTime, endTime, selectEmployeeName, sort);
             pageInfo = new PageInfo<>(list);
         } else {
             List<CustomerListView> listCustomer = customerService.listPartCustomer(employeeGh);
@@ -587,9 +605,9 @@ public class CustomerController {
                         }
                     }
                 }
-                data.put("list",list);
-                data.put("total",list.size());
-                res.message.setMessage(200,"跟单记录列表返回成功",data);
+                data.put("list", list);
+                data.put("total", list.size());
+                res.message.setMessage(200, "跟单记录列表返回成功", data);
                 return res.message;
             } else if (listCustomer == null) {
                 log.error("客户列表返回为空");
@@ -625,7 +643,7 @@ public class CustomerController {
                         }
                     }
                     List<DocumentRecordListView> listView = customerService.selectPartDocumentRecord(employeeGh);
-                    if(listView.size() > 0){
+                    if (listView.size() > 0) {
                         list.addAll(listView);
                         for (int i = 0; i < list.size(); i++) {
                             for (int j = list.size() - 1; j > i; j--) {
@@ -635,9 +653,9 @@ public class CustomerController {
                             }
                         }
                     }
-                    data.put("list",list);
-                    data.put("total",list.size());
-                    res.message.setMessage(200,"跟单记录列表返回成功",data);
+                    data.put("list", list);
+                    data.put("total", list.size());
+                    res.message.setMessage(200, "跟单记录列表返回成功", data);
                     return res.message;
                 } else {
                     log.error("行业负责人负责行业返回为空");
@@ -646,7 +664,7 @@ public class CustomerController {
                 }
             }
         }
-        if (pageInfo.getTotal()>0) {
+        if (pageInfo.getTotal() > 0) {
             log.info("跟单记录列表返回成功");
             data.put("pageInfo", pageInfo);
             res.message.setMessage(200, "跟单记录列表返回成功", data);
@@ -659,6 +677,7 @@ public class CustomerController {
 
     /**
      * 获取单个客户的跟单记录列表
+     *
      * @param map
      * @return message
      */
@@ -687,18 +706,19 @@ public class CustomerController {
 
     /**
      * 新增客户跟单记录
+     *
      * @param listDocumentRecord
      * @return message
      */
     @PostMapping("/insertDocumentRecord")
     @ApiOperation(value = "增加跟单记录")
-    public Message insertDocumentRecord(@RequestBody List<CustomerDocumentRecord> listDocumentRecord){
+    public Message insertDocumentRecord(@RequestBody List<CustomerDocumentRecord> listDocumentRecord) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
             return res.message;
         }
-        for(CustomerDocumentRecord documentRecord : listDocumentRecord){
+        for (CustomerDocumentRecord documentRecord : listDocumentRecord) {
             Integer result = customerService.insertDocumentRecord(documentRecord);
             if (result > 0) {
                 log.info("跟单记录添加成功");
@@ -713,6 +733,7 @@ public class CustomerController {
 
     /**
      * 获取客户跟单记录详情
+     *
      * @param map
      * @return message
      */
@@ -740,6 +761,7 @@ public class CustomerController {
 
     /**
      * 删除客户跟单记录
+     *
      * @param map
      * @return message
      */
@@ -765,6 +787,7 @@ public class CustomerController {
 
     /**
      * 修改客户跟单记录
+     *
      * @param documentRecord
      * @return message
      */
@@ -789,6 +812,7 @@ public class CustomerController {
 
     /**
      * 获取客户跟单进度详情
+     *
      * @param map
      * @return message
      */
@@ -816,6 +840,7 @@ public class CustomerController {
 
     /**
      * 新增客户跟单进度
+     *
      * @param listDocumentPlanne
      * @return message
      */
@@ -827,7 +852,7 @@ public class CustomerController {
             log.error("Authorization参数校验失败");
             return res.message;
         }
-        for(CustomerDocumentPlanne documentPlanne : listDocumentPlanne){
+        for (CustomerDocumentPlanne documentPlanne : listDocumentPlanne) {
             Integer result = customerService.insertDocumentPlanne(documentPlanne);
             if (result > 0) {
                 log.info("新增跟单进度成功");
@@ -842,6 +867,7 @@ public class CustomerController {
 
     /**
      * 修改客户跟单进度
+     *
      * @param documentPlanne
      * @return message
      */
@@ -866,12 +892,13 @@ public class CustomerController {
 
     /**
      * 客户筛选
+     *
      * @param selectCustomerView
      * @return res.message
      */
     @PostMapping("/selectCustomer")
     @ApiOperation(value = "客户筛选")
-    public Message selectCustomer(@RequestBody SelectCustomerView selectCustomerView){
+    public Message selectCustomer(@RequestBody SelectCustomerView selectCustomerView) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -893,7 +920,7 @@ public class CustomerController {
                 log.info("行业负责人负责行业返回成功");
                 for (String sales : listSalesIndustry) {
                     List<CustomerListView> list2 = customerService.selectCustomerByIndustry(sales);
-                    if (list2 .size() > 0) {
+                    if (list2.size() > 0) {
                         log.info("行业负责人客户列表返回成功");
                         listCustomer.addAll(list2);
                         for (int i = 0; i < listCustomer.size(); i++) {
@@ -912,33 +939,34 @@ public class CustomerController {
             }
         }
         List<CustomerDetailView> list1 = new ArrayList<>();
-        if(list.size() > 0 && listCustomer.size() > 0){
+        if (list.size() > 0 && listCustomer.size() > 0) {
             log.info("成功筛选客户，返回数据成功");
-            for(CustomerDetailView customerDetailView:list){
-                for (CustomerListView customerListView:listCustomer){
-                    if(customerDetailView.getId().equals(customerListView.getId())){
+            for (CustomerDetailView customerDetailView : list) {
+                for (CustomerListView customerListView : listCustomer) {
+                    if (customerDetailView.getId().equals(customerListView.getId())) {
                         list1.add(customerDetailView);
                     }
                 }
             }
-            data.put("list",list1);
-            data.put("total",list1.size());
-            res.message.setMessage(200,"成功筛选客户，返回数据成功",data);
-        }else {
+            data.put("list", list1);
+            data.put("total", list1.size());
+            res.message.setMessage(200, "成功筛选客户，返回数据成功", data);
+        } else {
             log.error("筛选客户为空");
-            res.message.setMessage(400,"筛选客户为空");
+            res.message.setMessage(400, "筛选客户为空");
         }
         return res.message;
     }
 
     /**
      * 跟单记录筛选
+     *
      * @param selectDocumentRecordView
      * @return res.message
      */
     @PostMapping("/selectDocumentRecord")
     @ApiOperation(value = "跟单记录筛选")
-    public Message selectDocumentRecord(@RequestBody SelectDocumentRecordView selectDocumentRecordView){
+    public Message selectDocumentRecord(@RequestBody SelectDocumentRecordView selectDocumentRecordView) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -960,7 +988,7 @@ public class CustomerController {
                 log.info("行业负责人负责行业返回成功");
                 for (String sales : listSalesIndustry) {
                     List<CustomerListView> list2 = customerService.selectCustomerByIndustry(sales);
-                    if (list2 .size() > 0) {
+                    if (list2.size() > 0) {
                         log.info("行业负责人客户列表返回成功");
                         listCustomer.addAll(list2);
                         for (int i = 0; i < listCustomer.size(); i++) {
@@ -979,32 +1007,33 @@ public class CustomerController {
             }
         }
         List<DocumentRecordListView> list1 = new ArrayList<>();
-        if(list.size()>0&&listCustomer.size()>0){
+        if (list.size() > 0 && listCustomer.size() > 0) {
             log.info("成功筛选跟单记录，返回数据成功");
-            for(DocumentRecordListView documentRecordListView:list){
-                for (CustomerListView customerListView:listCustomer){
-                    if (documentRecordListView.getCustomerId().equals(customerListView.getId())){
+            for (DocumentRecordListView documentRecordListView : list) {
+                for (CustomerListView customerListView : listCustomer) {
+                    if (documentRecordListView.getCustomerId().equals(customerListView.getId())) {
                         list1.add(documentRecordListView);
                     }
                 }
             }
-            data.put("list",list1);
-            data.put("total",list1.size());
-            res.message.setMessage(200,"成功筛选跟单记录，返回数据成功",data);
-        }else {
+            data.put("list", list1);
+            data.put("total", list1.size());
+            res.message.setMessage(200, "成功筛选跟单记录，返回数据成功", data);
+        } else {
             log.error("筛选跟单记录为空");
-            res.message.setMessage(400,"筛选跟单记录为空");
+            res.message.setMessage(400, "筛选跟单记录为空");
         }
         return res.message;
     }
 
     /**
      * 跟单进度导出
+     *
      * @return res.message
      */
     @GetMapping("/listDocumentPlanne")
     @ApiOperation(value = "跟单进度导出")
-    public Message listDocumentPlanne(){
+    public Message listDocumentPlanne() {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -1026,7 +1055,7 @@ public class CustomerController {
                 log.info("行业负责人负责行业返回成功");
                 for (String sales : listSalesIndustry) {
                     List<CustomerListView> list2 = customerService.selectCustomerByIndustry(sales);
-                    if (list2 .size() > 0) {
+                    if (list2.size() > 0) {
                         log.info("行业负责人客户列表返回成功");
                         listCustomer.addAll(list2);
                         for (int i = 0; i < listCustomer.size(); i++) {
@@ -1045,32 +1074,33 @@ public class CustomerController {
             }
         }
         List<DocumentPlanneListView> list1 = new ArrayList<>();
-        if(list.size()>0 && listCustomer.size()>0){
+        if (list.size() > 0 && listCustomer.size() > 0) {
             log.info("成功筛选跟单进度，返回数据成功");
-            for(DocumentPlanneListView documentPlanneListView:list){
-                for(CustomerListView customerListView:listCustomer){
-                    if(documentPlanneListView.getCustomerId().equals(customerListView.getId())){
+            for (DocumentPlanneListView documentPlanneListView : list) {
+                for (CustomerListView customerListView : listCustomer) {
+                    if (documentPlanneListView.getCustomerId().equals(customerListView.getId())) {
                         list1.add(documentPlanneListView);
                     }
                 }
             }
-            data.put("list",list1);
-            data.put("total",list1.size());
-            res.message.setMessage(200,"成功筛选跟单进度，返回数据成功",data);
-        }else {
+            data.put("list", list1);
+            data.put("total", list1.size());
+            res.message.setMessage(200, "成功筛选跟单进度，返回数据成功", data);
+        } else {
             log.error("筛选跟单进度为空");
-            res.message.setMessage(400,"筛选跟单进度为空");
+            res.message.setMessage(400, "筛选跟单进度为空");
         }
         return res.message;
     }
 
     /**
      * 客户共享：共享给我
+     *
      * @return res.message
      */
     @GetMapping("/shareToMe")
     @ApiOperation(value = "客户共享：共享给我")
-    public Message shareToMe(){
+    public Message shareToMe() {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -1079,24 +1109,25 @@ public class CustomerController {
         String employeeGh = res.user.getId();
         Map<String, Object> data = new HashMap<>();
         List<CustomerListView> list = customerService.shareToMe(employeeGh);
-        if(list.size()>0){
+        if (list.size() > 0) {
             log.info("客户共享：共享给我返回成功");
-            data.put("list",list);
-            res.message.setMessage(200,"客户共享：共享给我返回成功",data);
-        }else {
+            data.put("list", list);
+            res.message.setMessage(200, "客户共享：共享给我返回成功", data);
+        } else {
             log.error("客户共享：共享给我返回为空");
-            res.message.setMessage(400,"客户共享：共享给我返回为空");
+            res.message.setMessage(400, "客户共享：共享给我返回为空");
         }
         return res.message;
     }
 
     /**
      * 客户共享：我的共享
+     *
      * @return res.message
      */
     @GetMapping("/myShared")
     @ApiOperation(value = "客户共享：我的共享")
-    public Message myShared(){
+    public Message myShared() {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -1105,24 +1136,25 @@ public class CustomerController {
         String employeeGh = res.user.getId();
         Map<String, Object> data = new HashMap<>();
         List<CustomerListView> list = customerService.myShared(employeeGh);
-        if(list.size()>0){
+        if (list.size() > 0) {
             log.info("客户共享：我的共享返回成功");
-            data.put("list",list);
-            res.message.setMessage(200,"客户共享：我的共享返回成功",data);
-        }else {
+            data.put("list", list);
+            res.message.setMessage(200, "客户共享：我的共享返回成功", data);
+        } else {
             log.error("客户共享：我的共享返回为空");
-            res.message.setMessage(400,"客户共享：我的共享返回为空");
+            res.message.setMessage(400, "客户共享：我的共享返回为空");
         }
         return res.message;
     }
 
     /**
      * 返回所有的客户名称
+     *
      * @return res.message
      */
     @GetMapping("/selectAllCustomerName")
     @ApiOperation(value = "获取所有客户的名字")
-    public Message selectAllCustomerName(){
+    public Message selectAllCustomerName() {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -1130,25 +1162,26 @@ public class CustomerController {
         }
         Map<String, Object> data = new HashMap<>();
         List<String> list = customerService.selectAllCustomerName();
-        if(list.size()>0){
+        if (list.size() > 0) {
             log.info("客户名称返回成功");
-            data.put("list",list);
-            data.put("total",list.size());
-            res.message.setMessage(200,"客户名称返回成功",data);
-        }else {
+            data.put("list", list);
+            data.put("total", list.size());
+            res.message.setMessage(200, "客户名称返回成功", data);
+        } else {
             log.error("客户名称返回为空");
-            res.message.setMessage(400,"客户名称返回为空");
+            res.message.setMessage(400, "客户名称返回为空");
         }
         return res.message;
     }
 
     /**
      * 获取业务员的列表（姓名及行业线）
+     *
      * @return res.message
      */
     @GetMapping("/listSaleman")
     @ApiOperation(value = "获取业务员列表")
-    public Message listSaleman(){
+    public Message listSaleman() {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -1156,26 +1189,27 @@ public class CustomerController {
         }
         Map<String, Object> data = new HashMap<>();
         List<UserListView> list = customerService.listSaleman();
-        if(list.size()>0){
+        if (list.size() > 0) {
             log.info("业务员列表获取成功");
-            data.put("list",list);
-            data.put("total",list.size());
-            res.message.setMessage(200,"业务员列表获取成功",data);
-        }else {
+            data.put("list", list);
+            data.put("total", list.size());
+            res.message.setMessage(200, "业务员列表获取成功", data);
+        } else {
             log.error("业务员列表获取为空");
-            res.message.setMessage(400,"业务员列表获取为空");
+            res.message.setMessage(400, "业务员列表获取为空");
         }
         return res.message;
     }
 
     /**
      * 客户共享
+     *
      * @param map
      * @return res.message
      */
     @PostMapping("/shareCustomer")
     @ApiOperation(value = "客户共享")
-    public Message shareCustomer(@RequestBody Map map){
+    public Message shareCustomer(@RequestBody Map map) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -1184,31 +1218,32 @@ public class CustomerController {
         String listEmployeeGh = (String) map.get("employeeGh");
         Integer fkCustomerId = (Integer) map.get("fkCustomerId");
         String[] split = listEmployeeGh.split(";");
-        if(!listEmployeeGh.equals("")){
+        if (!listEmployeeGh.equals("")) {
             Integer result1 = customerService.deleteSalemans(fkCustomerId);
-            for(String employeeGh:split){
-                Integer result = customerService.insertIntoCustomerSalesman(employeeGh,fkCustomerId);
-                if(result>0){
+            for (String employeeGh : split) {
+                Integer result = customerService.insertIntoCustomerSalesman(employeeGh, fkCustomerId);
+                if (result > 0) {
                     log.info("客户共享成功");
-                    res.message.setMessage(200,"客户共享成功");
-                }else {
+                    res.message.setMessage(200, "客户共享成功");
+                } else {
                     log.error("客户共享失败");
-                    res.message.setMessage(400,"客户共享失败");
+                    res.message.setMessage(400, "客户共享失败");
                 }
             }
-            
+
         }
         return res.message;
     }
 
     /**
      * 获取已经共享的业务员
+     *
      * @param map
      * @return res.message
      */
     @PostMapping("/getHadShared")
     @ApiOperation(value = "获取已经共享的业务员")
-    public Message getHadShared(@RequestBody Map map){
+    public Message getHadShared(@RequestBody Map map) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -1217,15 +1252,40 @@ public class CustomerController {
         Map<String, Object> data = new HashMap<>();
         Integer id = (Integer) map.get("id");
         List<String> list = customerService.getHadShared(id);
-        if(list.size()>0){
+        if (list.size() > 0) {
             log.info("获取已经共享的业务员成功");
-            data.put("list",list);
-            data.put("total",list.size());
-            res.message.setMessage(200,"获取已经共享的业务员成功",data);
-        }else {
+            data.put("list", list);
+            data.put("total", list.size());
+            res.message.setMessage(200, "获取已经共享的业务员成功", data);
+        } else {
             log.error("获取已经共享的业务员失败");
-            res.message.setMessage(400,"获取已经共享的业务员失败");
+            res.message.setMessage(400, "获取已经共享的业务员失败");
         }
+        return res.message;
+    }
+
+    /**
+     * 获取客户的所有项目
+     * @param customerId
+     * @return res.message
+     */
+    @PostMapping("/getProjByCustomer")
+    @ApiOperation(value = "获取客户的所有项目")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", name = "customerId", value = "客户Id", required = true)
+    })
+    public Message getProjByCustomer(Integer customerId) {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Map<String, Object> data = new HashMap<>();
+        List<ProjectListView> list = customerService.listProjectByCustomer(customerId);
+        log.info("客户项目获取成功");
+        data.put("list", list);
+        data.put("total", list.size());
+        res.message.setMessage(200, "客户项目获取成功", data);
         return res.message;
     }
 }

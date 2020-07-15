@@ -5,6 +5,7 @@ import com.harmonycloud.bean.customer.*;
 import com.harmonycloud.bean.document.DocumentPlanneListView;
 import com.harmonycloud.bean.document.DocumentRecordListView;
 import com.harmonycloud.bean.document.SelectDocumentRecordView;
+import com.harmonycloud.bean.project.ProjectListView;
 
 import java.util.Date;
 import java.util.List;
@@ -108,4 +109,6 @@ public interface CustomerService {
     Integer insertIntoCustomerSalesman(String employeeGh,Integer fkCustomerId);
 
     List<String> getHadShared(Integer id);
+
+    List<ProjectListView> listProjectByCustomer(Integer customerId);
 }

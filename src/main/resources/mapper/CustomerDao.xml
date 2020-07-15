@@ -756,4 +756,13 @@
     <select id="getHadShared" resultType="java.lang.String">
         SELECT employee_gh FROM customer_salesman where fk_customer_id=#{id}
     </select>
+    
+    <select id="listProjectByCustomer" resultType="com.harmonycloud.bean.project.ProjectListView">
+        select project.id,proj_name,customer_name,customer_place,proj_place,employee.employee_name as proj_PM_name,e.employee_name as proj_Saleman,DATE_FORMAT(proj_presta_time,'%Y-%m-%d') as proj_presta_time,DATE_FORMAT(proj_preend_time,'%Y-%m-%d') as proj_preend_time,
+        DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_time,'%Y-%m-%d') as proj_end_time,count(member.fk_employee_gh) as proj_num_of_people,
+        proj_status,proj_substate,proj_type,proj_line,proj_money,proj_all_cost,proj_current_cost,proj_cooperation_model,proj_dev_model,proj_description,proj_end_type from project LEFT JOIN customer on
+        project.fk_customer_id=customer.id LEFT JOIN employee on project.proj_PM_gh=employee.employee_gh LEFT JOIN employee as e on project.proj_Saleman=e.employee_gh
+        LEFT JOIN member on member.fk_project_id=project.id and member.is_quit=0 LEFT JOIN milestone on
+        project.id = milestone.fk_project_id where fk_customer_id=#{cutomerId} group by project.id
+    </select>
 </mapper>

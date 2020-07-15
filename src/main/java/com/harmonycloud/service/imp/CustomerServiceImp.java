@@ -6,6 +6,7 @@ import com.harmonycloud.bean.customer.*;
 import com.harmonycloud.bean.document.DocumentPlanneListView;
 import com.harmonycloud.bean.document.DocumentRecordListView;
 import com.harmonycloud.bean.document.SelectDocumentRecordView;
+import com.harmonycloud.bean.project.ProjectListView;
 import com.harmonycloud.dao.CustomerDao;
 import com.harmonycloud.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -255,5 +256,10 @@ public class CustomerServiceImp implements CustomerService {
     @Override
     public List<String> getHadShared(Integer id){
         return customerDao.getHadShared(id);
+    }
+
+    @Override
+    public List<ProjectListView> listProjectByCustomer(Integer customerId){
+        return customerDao.listProjectByCustomer(customerId);
     }
 }

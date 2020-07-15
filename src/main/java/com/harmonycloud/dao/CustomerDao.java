@@ -5,6 +5,7 @@ import com.harmonycloud.bean.customer.*;
 import com.harmonycloud.bean.document.DocumentPlanneListView;
 import com.harmonycloud.bean.document.DocumentRecordListView;
 import com.harmonycloud.bean.document.SelectDocumentRecordView;
+import com.harmonycloud.bean.project.ProjectListView;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -105,4 +106,6 @@ public interface CustomerDao {
     Integer insertIntoCustomerSalesman(String employeeGh,Integer fkCustomerId);
 
     List<String> getHadShared(Integer id);
+
+    List<ProjectListView> listProjectByCustomer(Integer customerId);
 }
