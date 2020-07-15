@@ -1,5 +1,7 @@
 package com.harmonycloud.util;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -40,14 +42,14 @@ public class DESUtil {
      * @param file     要加密的文件 如c:/test/srcFile.txt
      * @param destFile 加密后存放的文件名 如c:/加密后文件.txt
      */
-    public void encrypt(String file, String destFile) throws Exception {
+    public void encrypt(MultipartFile file, String destFile) throws Exception {
         Cipher cipher = Cipher.getInstance("DES");
         // cipher.init(Cipher.ENCRYPT_MODE, getKey());
         cipher.init(Cipher.ENCRYPT_MODE, this.key);
-        InputStream is = new FileInputStream(file);
+        InputStream is = file.getInputStream();
         OutputStream out = new FileOutputStream(destFile);
         CipherInputStream cis = new CipherInputStream(is, cipher);
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[4096];
         int r;
         while ((r = cis.read(buffer)) > 0) {
             out.write(buffer, 0, r);
@@ -73,7 +75,6 @@ public class DESUtil {
         byte[] buffer = new byte[1024];
         int r;
         while ((r = is.read(buffer)) >= 0) {
-            System.out.println();
             cos.write(buffer, 0, r);
         }
         cos.close();
@@ -83,8 +84,8 @@ public class DESUtil {
 
     public static void main(String[] args) throws Exception {
         DESUtil td = new DESUtil("harmonycloud");
-        td.encrypt("C:/Users/hc/Documents/r.txt", "C:/Users/hc/Documents/r解密.txt"); //加密
-        td.decrypt("C:/Users/hc/Documents/r解密.txt", "C:/Users/hc/Documents/r1.txt"); //解密
+//        td.encrypt("C:/Users/hc/Documents/r.txt", "C:/Users/hc/Documents/r解密.txt"); //加密
+//        td.decrypt("C:/Users/hc/Documents/r解密.txt", "C:/Users/hc/Documents/r1.txt"); //解密
 
     }
 }

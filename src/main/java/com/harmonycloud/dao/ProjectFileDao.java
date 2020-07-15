@@ -1,5 +1,6 @@
 package com.harmonycloud.dao;
 
+import com.harmonycloud.bean.contract.ContractFileView;
 import com.harmonycloud.bean.project.ProjectFileView;
 import org.springframework.stereotype.Repository;
 
@@ -21,4 +22,7 @@ public interface ProjectFileDao {
     Integer deleteFile(Integer fileId);
 
     Set<String> selectNewName(Integer projectId);
+
+    Integer insertContractFile(ContractFileView contractFileView);
+
 }

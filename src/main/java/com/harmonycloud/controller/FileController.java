@@ -4,13 +4,11 @@ import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
+import com.harmonycloud.bean.contract.ContractFileView;
 import com.harmonycloud.bean.project.ProjectFileView;
 import com.harmonycloud.config.FtpConfig;
 import com.harmonycloud.service.ProjectFileService;
-import com.harmonycloud.util.FtpUtil;
-import com.harmonycloud.util.SimpleFileUtil;
-import com.harmonycloud.util.UploadUtils;
-import com.harmonycloud.util.ZipUtils;
+import com.harmonycloud.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -312,11 +310,11 @@ public class FileController {
                     list.add(projectFileView);
                 } else {
                     log.error("上传文件信息返回失败");
-                    res.message.setMessage(403, "上传文件信息返回失败");
+                    res.message.setMessage(400, "上传文件信息返回失败");
                 }
             } else {
                 log.error("数据库文件信息添加失败");
-                res.message.setMessage(403, "数据库文件信息添加失败");
+                res.message.setMessage(400, "数据库文件信息添加失败");
             }
         }
         if (list.size() > 0) {
@@ -403,6 +401,65 @@ public class FileController {
         } else {
             log.warn("取消成功，无可删除文件");
             res.message.setMessage(200, "取消成功，已删除文件");
+        }
+        return res.message;
+    }
+
+    /**
+     * 合同文件加密上传
+     *
+     * @param files      文件
+     * @param customerId 客户id
+     * @param projectId  项目id
+     * @return res.message
+     * @throws Exception
+     */
+    @PostMapping("/encryptUploadFile")
+    @ApiOperation(value = "文件加密上传")
+    public Message encryptUploadFile(@RequestParam("file") MultipartFile[] files,
+                                     @RequestParam("customerId") Integer customerId,
+                                     @RequestParam("projectId") Integer projectId) throws Exception {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        Map<String, Object> data = new HashMap<>();
+        List<ContractFileView> list = new ArrayList<>();
+        String dataServerDestDir = "/var/upload/ContractFile";
+        for (MultipartFile file : files) {
+            ContractFileView contractFileView = new ContractFileView();
+            contractFileView.setFkCustomerId(customerId);
+            contractFileView.setFkProjectId(projectId);
+            String oldName = file.getOriginalFilename();// 获取文件原来的名字
+            contractFileView.setFileOldName(oldName);
+            String fileType = oldName.substring(oldName.lastIndexOf("."));
+            String newName = UploadUtils.generateRandonFileName(oldName) + fileType;// 通过工具类产生新文件名称，防止重名
+            contractFileView.setFileNewName(newName);
+            String SavePath = "/" + customerId + "/" + projectId;
+            File dest = new File(dataServerDestDir + SavePath);
+            dest.setWritable(true, false);
+            if (!dest.exists()) { //判断文件目录是否存在
+                dest.mkdirs();
+            }
+            String path = dataServerDestDir + SavePath + "/" + newName;
+            contractFileView.setContractPath(path);
+            DESUtil td = new DESUtil("harmonycloud");
+            td.encrypt(file, path);
+            String fileUrl = frame + SavePath + "/" + newName;
+            contractFileView.setContractUrl(fileUrl);
+            Integer result = projectFileService.insertContractFile(contractFileView);
+            if (result > 0) {
+                log.info("合同文件信息添加成功");
+                list.add(contractFileView);
+            } else {
+                log.error("合同文件信息添加失败");
+                res.message.setMessage(400, "合同文件信息添加失败");
+            }
+            log.info("项目文件上传成功");
+        }
+        if (list.size() > 0) {
+            data.put("list", list);
+            res.message.setMessage(200, "文件上传成功", data);
+        } else {
+            log.warn("没有上传文件");
+            res.message.setMessage(400, "没有上传文件");
         }
         return res.message;
     }

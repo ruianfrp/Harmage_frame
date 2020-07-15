@@ -1,5 +1,6 @@
 package com.harmonycloud.service;
 
+import com.harmonycloud.bean.contract.ContractFileView;
 import com.harmonycloud.bean.project.ProjectFileView;
 import com.harmonycloud.bean.project.ProjectStatusBean;
 
@@ -25,4 +26,6 @@ public interface ProjectFileService {
     List<ProjectStatusBean> getStopProjectDay(String status);
 
     int updateStopStatusForProject(int projectId, String status);
+
+    Integer insertContractFile(ContractFileView contractFileView);
 }

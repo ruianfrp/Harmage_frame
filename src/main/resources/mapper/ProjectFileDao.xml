@@ -33,5 +33,14 @@
     <select id="selectNewName" resultType="java.lang.String">
         select file_new_name from project_file where fk_project_id=#{projectId}
     </select>
+    
+    <!-- 合同文件操作 -->
+    <insert id="insertContractFile" parameterType="com.harmonycloud.bean.contract.ContractFileView">
+        insert into contract_file(fk_customer_id, fk_project_id, file_old_name, file_new_name, contract_path, contract_url)
+        value(#{fkCustomerId},#{fkProjectId},#{fileOldName},#{fileNewName},#{contractPath},#{contractUrl})
+        <selectKey resultType="java.lang.Integer" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+        </selectKey>
+    </insert>
 
 </mapper>

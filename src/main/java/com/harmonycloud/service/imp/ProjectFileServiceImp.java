@@ -1,5 +1,6 @@
 package com.harmonycloud.service.imp;
 
+import com.harmonycloud.bean.contract.ContractFileView;
 import com.harmonycloud.bean.project.ProjectFileView;
 import com.harmonycloud.bean.project.ProjectStatusBean;
 import com.harmonycloud.dao.ProjectDao;
@@ -62,5 +63,10 @@ public class ProjectFileServiceImp implements ProjectFileService {
     @Override
     public int updateStopStatusForProject(int projectId, String status) {
         return projectDao.updateStopStatusForProject(projectId, status);
+    }
+
+    @Override
+    public Integer insertContractFile(ContractFileView contractFileView){
+        return projectFileDao.insertContractFile(contractFileView);
     }
 }
