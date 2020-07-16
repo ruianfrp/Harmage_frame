@@ -32,10 +32,7 @@ public class UploadUtils {
      */
     public static String generateRandonFileName(String fileName) {
         // 首相获得扩展名，然后生成一个UUID码作为名称，然后加上扩展名
-        Date date = new Date();
-        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateTime = dateFormat.format(date);
-        return fileName.substring(0,fileName.lastIndexOf(".")) + dateTime;
+        return fileName.substring(0,fileName.lastIndexOf(".")) + System.currentTimeMillis();
 //        String ext = fileName.substring(fileName.lastIndexOf("."));
 //        return UUID.randomUUID().toString() + ext;
     }

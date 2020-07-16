@@ -442,7 +442,7 @@ public class FileController {
             contractFileView.setContractPath(path);
             DESUtil td = new DESUtil("harmonycloud");
             td.encrypt(file, path);
-            String fileUrl = frame + SavePath + "/" + newName;
+            String fileUrl = frame + "/ContractFile" + SavePath + "/" + newName;
             contractFileView.setContractUrl(fileUrl);
             Integer result = projectFileService.insertContractFile(contractFileView);
             if (result > 0) {
@@ -462,5 +462,53 @@ public class FileController {
             res.message.setMessage(400, "没有上传文件");
         }
         return res.message;
+    }
+
+    @PostMapping("/decryptDownFile")
+    @ApiOperation(value = "文件解密下载")
+    public Message decryptDownFile(@RequestParam("id") Integer id) throws Exception {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        Map<String, Object> data = new HashMap<>();
+        String dataServerDestDir = "/var/upload/ContractFile";
+        String savePath = dataServerDestDir + "/save";
+        File dest = new File(savePath);
+        dest.setWritable(true, false);
+        if (!dest.exists()) { //判断文件目录是否存在
+            dest.mkdirs();
+        }
+        ContractFileView contractFileView = projectFileService.selectContractFileById(id);
+        String path = contractFileView.getContractPath();
+        String oldName = contractFileView.getFileOldName();
+        DESUtil td = new DESUtil("harmonycloud");
+        td.decrypt(path, savePath + "/" + oldName);
+        data.put("url", frame + "/ContractFile/save/" + oldName);
+        res.message.setMessage(200, "下载url返回成功", data);
+        return res.message;
+    }
+
+    @GetMapping("/deleteFileCopy")
+    @ApiOperation(value = "删除解密文件")
+    public Message deleteFileCopy(){
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        boolean flag = removeFile("/var/upload/ContractFile/save/");
+        if(flag){
+            log.info("解密文件删除成功");
+            res.message.setMessage(200,"解密文件删除成功");
+        }else {
+            log.error("解密文件删除失败");
+            res.message.setMessage(200,"解密文件删除失败");
+        }
+        return res.message;
+    }
+
+    private static boolean removeFile(String dirpath){
+        File f = new File(dirpath);
+        if(f.isDirectory()){
+            File[] fl= f.listFiles();
+            for(File fs: fl){
+                removeFile(fs.toString());
+            }
+        }
+        return f.delete();
     }
 }

@@ -23,7 +23,7 @@
         <!-- MyBatis Generator mapper接口的生成位置 -->
         <targetDaoPackage>com.harmonycloud.dao</targetDaoPackage>
         <!-- MyBatis Generator model类的生成位置 -->
-        <targetEntityPackage>com.harmonycloud.entity</targetEntityPackage>
+        <targetEntityPackage>com.harmonycloud.bean</targetEntityPackage>
         <!-- MyBatis Generator mapper.xml生成位置 -->
         <targetMapperPackage>mapper</targetMapperPackage>
     </properties>

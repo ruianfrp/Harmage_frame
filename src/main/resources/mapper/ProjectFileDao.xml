@@ -43,4 +43,8 @@
         </selectKey>
     </insert>
 
+    <select id="selectContractFileById" resultType="com.harmonycloud.bean.contract.ContractFileView">
+        select * from contract_file where id=#{id}
+    </select>
+
 </mapper>

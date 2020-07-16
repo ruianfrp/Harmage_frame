@@ -69,4 +69,9 @@ public class ProjectFileServiceImp implements ProjectFileService {
     public Integer insertContractFile(ContractFileView contractFileView){
         return projectFileDao.insertContractFile(contractFileView);
     }
+
+    @Override
+    public ContractFileView selectContractFileById(Integer id){
+        return projectFileDao.selectContractFileById(id);
+    }
 }

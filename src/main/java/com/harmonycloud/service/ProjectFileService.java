@@ -28,4 +28,6 @@ public interface ProjectFileService {
     int updateStopStatusForProject(int projectId, String status);
 
     Integer insertContractFile(ContractFileView contractFileView);
+
+    ContractFileView selectContractFileById(Integer id);
 }

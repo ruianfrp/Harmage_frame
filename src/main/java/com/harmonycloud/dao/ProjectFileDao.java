@@ -25,4 +25,6 @@ public interface ProjectFileDao {
 
     Integer insertContractFile(ContractFileView contractFileView);
 
+    ContractFileView selectContractFileById(Integer id);
+
 }

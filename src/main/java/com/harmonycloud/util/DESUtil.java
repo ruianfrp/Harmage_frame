@@ -13,6 +13,7 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.KeyGenerator;
+import javax.crypto.spec.SecretKeySpec;
 
 public class DESUtil {
 
@@ -36,22 +37,16 @@ public class DESUtil {
         }
     }
 
-    /**
-     * 文件file进行加密并保存目标文件destFile中
-     *
-     * @param file     要加密的文件 如c:/test/srcFile.txt
-     * @param destFile 加密后存放的文件名 如c:/加密后文件.txt
-     */
+    //文件file进行加密并保存目标文件destFile中
     public void encrypt(MultipartFile file, String destFile) throws Exception {
         Cipher cipher = Cipher.getInstance("DES");
-        // cipher.init(Cipher.ENCRYPT_MODE, getKey());
-        cipher.init(Cipher.ENCRYPT_MODE, this.key);
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec("harmonyc".getBytes("utf-8"), "DES"));
         InputStream is = file.getInputStream();
         OutputStream out = new FileOutputStream(destFile);
         CipherInputStream cis = new CipherInputStream(is, cipher);
         byte[] buffer = new byte[4096];
         int r;
-        while ((r = cis.read(buffer)) > 0) {
+        while ((r = cis.read(buffer)) != -1) {
             out.write(buffer, 0, r);
         }
         cis.close();
@@ -59,22 +54,33 @@ public class DESUtil {
         out.close();
     }
 
-    /**
-     * 文件采用DES算法解密文件
-     *
-     * @param file 已加密的文件 如c:/加密后文件.txt
-     *             * @param destFile
-     *             解密后存放的文件名 如c:/ test/解密后文件.txt
-     */
+    //文件file进行加密并保存目标文件destFile中
+    public void encrypt(String file, String destFile) throws Exception {
+        Cipher cipher = Cipher.getInstance("DES");
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec("harmonyc".getBytes("utf-8"), "DES"));
+        InputStream is = new FileInputStream(file);
+        OutputStream out = new FileOutputStream(destFile);
+        CipherInputStream cis = new CipherInputStream(is, cipher);
+        byte[] buffer = new byte[4096];
+        int r;
+        while ((r = cis.read(buffer)) != -1) {
+            out.write(buffer, 0, r);
+        }
+        cis.close();
+        is.close();
+        out.close();
+    }
+
+    //文件采用DES算法解密文件
     public void decrypt(String file, String dest) throws Exception {
         Cipher cipher = Cipher.getInstance("DES");
-        cipher.init(Cipher.DECRYPT_MODE, this.key);
+        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec("harmonyc".getBytes("utf-8"), "DES"));
         InputStream is = new FileInputStream(file);
         OutputStream out = new FileOutputStream(dest);
         CipherOutputStream cos = new CipherOutputStream(out, cipher);
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[4096];
         int r;
-        while ((r = is.read(buffer)) >= 0) {
+        while ((r = is.read(buffer)) != -1) {
             cos.write(buffer, 0, r);
         }
         cos.close();
@@ -84,8 +90,9 @@ public class DESUtil {
 
     public static void main(String[] args) throws Exception {
         DESUtil td = new DESUtil("harmonycloud");
-//        td.encrypt("C:/Users/hc/Documents/r.txt", "C:/Users/hc/Documents/r解密.txt"); //加密
-//        td.decrypt("C:/Users/hc/Documents/r解密.txt", "C:/Users/hc/Documents/r1.txt"); //解密
+        System.out.println(td.key);
+        td.encrypt("C:/Users/hc/Desktop/新建文本文档.txt", "C:/Users/hc/Desktop/新建文本文档r.txt"); //加密
+        td.decrypt("C:/Users/hc/Desktop/新建文本文档r.txt", "C:/Users/hc/Desktop/新建文本文档rr.txt"); //解密
 
     }
 }
