@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.ProjectCostRecordDao">
+    <!--
+     id与Dao里面的方法名相对
+     namespace里接口路径为Dao所在路径
+     Dao接口名也要和mapper 映射文件名一致
+     -->
+    <insert id="insertCostRecordDataBase" parameterType="com.harmonycloud.bean.project.ProjectCostRecord">
+        insert into project_cost_record(fk_project_id,amount,update_time)
+        values(#{fkProjectId},#{amount},#{updateTime})
+    </insert>
+
+    <update id="updateProjectCurrentCost" parameterType="java.lang.Double">
+        update project
+        <set>
+            proj_current_cost = proj_current_cost + #{amount}
+        </set>
+        where id = #{projectId}
+    </update>
+
+    <select id="selectProjectCostRecord" resultType="com.harmonycloud.bean.project.ProjectCostRecord">
+        select * from project_cost_record
+        where fk_project_id = #{projectId}
+    </select>
+
+    <select id="selectProjectName" resultType="java.lang.String">
+        select proj_name from project
+        where id = #{projectId}
+    </select>
+</mapper>
