@@ -6,11 +6,13 @@ import com.github.pagehelper.PageInfo;
 import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
 import com.harmonycloud.bean.account.UserListView;
+import com.harmonycloud.bean.contract.Contract;
 import com.harmonycloud.bean.customer.*;
 import com.harmonycloud.bean.document.DocumentPlanneListView;
 import com.harmonycloud.bean.document.DocumentRecordListView;
 import com.harmonycloud.bean.document.SelectDocumentRecordView;
 import com.harmonycloud.bean.project.ProjectListView;
+import com.harmonycloud.service.ContractService;
 import com.harmonycloud.service.CustomerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -40,6 +42,9 @@ public class CustomerController {
 
     @Autowired
     CustomerService customerService;
+
+    @Autowired
+    ContractService contractService;
 
     @Autowired
     private HttpServletRequest request;
@@ -1266,6 +1271,7 @@ public class CustomerController {
 
     /**
      * 获取客户的所有项目
+     *
      * @param customerId
      * @return res.message
      */
@@ -1286,6 +1292,37 @@ public class CustomerController {
         data.put("list", list);
         data.put("total", list.size());
         res.message.setMessage(200, "客户项目获取成功", data);
+        return res.message;
+    }
+
+    /**
+     * @param projectId
+     * @param customerId
+     * @return
+     */
+    @PostMapping("/listContract")
+    @ApiOperation(value = "获取客户项目对应的合同阶段")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", name = "projectId", value = "项目Id", required = true),
+            @ApiImplicitParam(paramType = "query", name = "customerId", value = "客户Id", required = true)
+    })
+    public Message listContract(Integer projectId, Integer customerId) {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Map<String, Object> data = new HashMap<>();
+        List<Contract> list = contractService.listContract(projectId, customerId);
+        if (list.size() > 0) {
+            data.put("list", list);
+            data.put("total", list.size());
+            log.info("合同阶段获取成功");
+            res.message.setMessage(200, "合同阶段获取成功", data);
+        } else {
+            log.warn("合同阶段获取为空");
+            res.message.setMessage(200, "合同阶段获取为空");
+        }
         return res.message;
     }
 }

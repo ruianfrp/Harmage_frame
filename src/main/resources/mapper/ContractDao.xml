@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.ContractDao">
+    <select id="listContract" resultType="com.harmonycloud.bean.contract.Contract">
+        SELECT co.*,e.employee_name,cu.customer_name,p.proj_name FROM contract as co
+        left join customer as cu on co.fk_customer_id=cu.id left join project as p on p.id=co.fk_project_id
+        left join employee as e on e.employee_gh=co.fk_employee_gh where fk_project_id=#{projectId} and fk_customer_id=#{customerId};
+    </select>
+
+    <insert id="insertContract">
+
+    </insert>
+</mapper>
