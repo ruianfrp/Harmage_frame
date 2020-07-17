@@ -46,7 +46,9 @@ public class MemberView {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date realEndTime;
 
-    private Byte isQuit;
+    private Integer isQuit;
+
+    private Integer isExit;
 
     private String memberRemarks;
 
@@ -58,12 +60,20 @@ public class MemberView {
         this.memberType = memberType;
     }
 
-    public Byte getIsQuit() {
+    public Integer getIsQuit() {
         return isQuit;
     }
 
-    public void setIsQuit(Byte isQuit) {
+    public void setIsQuit(Integer isQuit) {
         this.isQuit = isQuit;
+    }
+
+    public Integer getIsExit() {
+        return isExit;
+    }
+
+    public void setIsExit(Integer isExit) {
+        this.isExit = isExit;
     }
 
     public Long getId() {
