@@ -21,4 +21,19 @@ public class ContractServiceImp implements ContractService {
     public List<Contract> listContract(Integer projectId, Integer customerId){
         return contractDao.listContract(projectId, customerId);
     }
+
+    @Override
+    public Integer insertContract(Contract contract){
+        return contractDao.insertContract(contract);
+    }
+
+    @Override
+    public Integer deleteContract(Integer id){
+        return contractDao.deleteContract(id);
+    }
+
+    @Override
+    public Integer updateContract(Contract contract){
+        return contractDao.updateContract(contract);
+    }
 }

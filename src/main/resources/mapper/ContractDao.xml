@@ -7,7 +7,27 @@
         left join employee as e on e.employee_gh=co.fk_employee_gh where fk_project_id=#{projectId} and fk_customer_id=#{customerId};
     </select>
 
-    <insert id="insertContract">
-
+    <insert id="insertContract" parameterType="com.harmonycloud.bean.contract.Contract">
+        insert into contract(fk_customer_id, fk_project_id, contract_stage, contract_proportion, contract_amount,
+        contract_time, fk_employee_gh, contract_remark) values(fkCustomerId, fkProjectId, contractStage, contractProportion, contractAmount,
+        contractTime, fkEmployeeGh, contractRemark)
     </insert>
+    
+    <delete id="deleteContract">
+        delete from contract where id=#{id}
+    </delete>
+    
+    <update id="updateContract" parameterType="com.harmonycloud.bean.contract.Contract">
+        update contract
+        <set>
+            <if test="contractStage!=null">contract_stage=#{contractStage},</if>
+            <if test="contractProportion!=null">contract_proportion=#{contractProportion},</if>
+            <if test="contractAmount!=null">contract_amount=#{contractAmount},</if>
+            <if test="contractTime!=null">contract_time=#{contractTime},</if>
+            <if test="fkEmployeeGh!=null">fk_employee_gh=#{fkEmployeeGh},</if>
+            <if test="contractRemark!=null">contract_remark=#{contractRemark},</if>
+            update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        </set>
+        where id=#{id}
+    </update>
 </mapper>
