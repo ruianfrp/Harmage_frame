@@ -763,6 +763,6 @@
         proj_status,proj_substate,proj_type,proj_line,proj_money,proj_all_cost,proj_current_cost,proj_cooperation_model,proj_dev_model,proj_description,proj_end_type from project LEFT JOIN customer on
         project.fk_customer_id=customer.id LEFT JOIN employee on project.proj_PM_gh=employee.employee_gh LEFT JOIN employee as e on project.proj_Saleman=e.employee_gh
         LEFT JOIN member on member.fk_project_id=project.id and member.is_quit=0 LEFT JOIN milestone on
-        project.id = milestone.fk_project_id where fk_customer_id=#{cutomerId} group by project.id
+        project.id = milestone.fk_project_id where fk_customer_id=#{customerId} group by project.id
     </select>
 </mapper>
