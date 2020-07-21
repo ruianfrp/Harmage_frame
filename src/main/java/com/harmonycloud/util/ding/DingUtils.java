@@ -293,6 +293,7 @@ public class DingUtils {
     }
 
     public static OapiProcessinstanceGetResponse getDeliverTheProject(String instanceId) {
+        getToken();
         try {
             DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/get");
             OapiProcessinstanceGetRequest request = new OapiProcessinstanceGetRequest();

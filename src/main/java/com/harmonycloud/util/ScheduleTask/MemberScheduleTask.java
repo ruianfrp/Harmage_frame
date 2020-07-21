@@ -97,13 +97,13 @@ public class MemberScheduleTask {
 
     @Async
     @Scheduled(cron = "0 20 0 * * ?")
-    public void memberApplyAddWithoutProj(){
+    public void memberApplyAddWithoutProj() {
         List<MemberApply> list = memberApplyService.selectDistributionGh();
-        if(list!=null){
-            for(MemberApply memberApply:list){
+        if (list != null) {
+            for (MemberApply memberApply : list) {
                 String fkEmployeeGh = memberApply.getDistributionGh();
                 List<Integer> memberId = memberApplyService.selectIfHaveProj(fkEmployeeGh);
-                if(memberId.size()==0){
+                if (memberId.size() == 0) {
                     Integer id = Math.toIntExact(memberApply.getId());
                     String memberJoinType = memberApply.getMemberJoinType();
                     String employeeGh = memberApply.getDistributionGh();
@@ -125,14 +125,14 @@ public class MemberScheduleTask {
                     }
                 }
             }
-        }else {
+        } else {
             log.warn(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 没有需要进组的无项目组成员");
         }
     }
 
     @Async
     @Scheduled(cron = "0 30 0 * * ?")
-    public void memberApplyAdd(){
+    public void memberApplyAdd() {
         List<MemberApply> list = memberApplyService.selectAllAgreeMemberApply();
         if (list.size() > 0) {
             for (short i = 0; i < list.size(); i++) {
@@ -179,12 +179,12 @@ public class MemberScheduleTask {
 
     @Async
     @Scheduled(cron = "0 30 1 * * ?")
-    public void memberQuit(){
+    public void memberQuit() {
         List<String> list = employeeService.selectEmployeeQuit();
-        if(list!=null){
-            for(String employeeGh : list){
+        if (list.size() > 0) {
+            for (String employeeGh : list) {
                 Integer result = memberService.updateMemberQuit(employeeGh);
-                if(result>0){
+                if (result > 0) {
                     log.info(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 离职员工离组成功");
                 } else {
                     log.warn(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 离职员工已经离组");
