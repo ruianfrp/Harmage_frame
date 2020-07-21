@@ -5,7 +5,9 @@ import com.harmonycloud.bean.VerifyMessage;
 import com.harmonycloud.bean.project.ProjectCostRecord;
 import com.harmonycloud.bean.project.ProjectFileView;
 import com.harmonycloud.service.ProjectCostRecordService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,8 @@ import static com.harmonycloud.util.JsonWebToken.VerifyCode;
 
 @RestController
 @Slf4j
+@Api(value = "项目成本Controller",tags = {"项目成本操作接口"})
+@RequestMapping("/projectCost")
 public class ProjectCostRecordController {
 
     @Autowired
@@ -67,9 +71,9 @@ public class ProjectCostRecordController {
     * 查询项目成本记录
      */
     @PostMapping("/selectProjectCostRecord")
-    @ApiOperation(value="查询项目成本记录")
+    @ApiOperation(value="查询项目成本记录",notes = "根据项目id返回成本记录")
     @ResponseBody
-    public Map selectProjectCostRecord(@RequestBody Map map){
+    public Map selectProjectCostRecord(@RequestBody @ApiParam(name="projectId",value = "项目id",required = true)Map map){
         //VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         Integer projectId = Integer.parseInt(map.get("projectId").toString());
 

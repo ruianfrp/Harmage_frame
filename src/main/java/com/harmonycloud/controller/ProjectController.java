@@ -47,7 +47,7 @@ public class ProjectController {
     CustomerService customerService;
 
     @Autowired
-    private HttpServletRequest request;
+    private HttpServletRequest request; 
 
     @Autowired
     private ProjectStatusCacheService projectStatusCacheService;

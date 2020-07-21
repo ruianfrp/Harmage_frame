@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.ProjectProbRiskDao">
+
+    <!--
+        insert update 一定要有parameterType
+        select 一定要有resultType 否则报错
+        It's likely that neither a Result Type nor a Result Map was specified
+    -->
+    <insert id="insertProjectProblem" parameterType="com.harmonycloud.bean.project.ProjectProblem">
+        insert into project_prob(prob_description,solution,est_settle_time,act_settle_time,current_state,
+        proposed_time,proposed_person,incharge_person,fk_project_id)
+        values(#{probDescription},#{solution},#{estSettleTime},#{actSettleTime},#{currentState},#{proposedTime},
+        #{proposedPerson},#{inChargePerson},#{fkProjectId})
+    </insert>
+
+    <insert id="insertProjectRisk" parameterType="com.harmonycloud.bean.project.ProjectRisk">
+        insert into project_risk(risk_description,solution,est_settle_time,act_settle_time,current_state,
+        proposed_time,proposed_person,incharge_person,fk_project_id)
+        values(#{riskDescription},#{solution},#{estSettleTime},#{actSettleTime},#{currentState},#{proposedTime},
+        #{proposedPerson},#{inChargePerson},#{fkProjectId})
+    </insert>
+
+    <select id="listProjectProblemById" resultType="com.harmonycloud.bean.project.ProjectProblem">
+        select * from project_prob
+        where fk_project_id = #{projectId}
+    </select>
+
+    <select id="listProjectRiskById" resultType="com.harmonycloud.bean.project.ProjectRisk">
+        select * from project_risk
+        where fk_project_id = #{projectId}
+    </select>
+    
+    <update id="updateProjectProblem" parameterType="com.harmonycloud.bean.project.ProjectProblem">
+        update project_prob
+        <set>
+            <if test="probDescription!=null">
+                prob_description = #{probDescription}
+            </if>
+            <if test="solution!=null">
+                solution = #{solution}
+            </if>
+            <if test="estSettleTime!=null">
+                est_settle_time = #{estSettleTime}
+            </if>
+            <if test="actSettleTime!=null">
+                act_settle_time = #{actSettleTime}
+            </if>
+            <if test = "currentState!=null">
+                current_state = #{currentState}
+            </if>
+            <if test="proposedTime!=null">
+                proposed_time = #{proposedTime}
+            </if>
+            <if test="proposedPerson!=null">
+                proposed_person = #{proposedPerson}
+            </if>
+            <if test="inChargePerson!=null">
+                in_charge_person = #{inChargePerson}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateProjectRisk" parameterType="com.harmonycloud.bean.project.ProjectRisk">
+        update project_risk
+        <set>
+            <if test="riskDescription!=null">
+                risk_description = #{riskDescription}
+            </if>
+            <if test="solution!=null">
+                solution = #{solution}
+            </if>
+            <if test="estSettleTime!=null">
+                est_settle_time = #{estSettleTime}
+            </if>
+            <if test="actSettleTime!=null">
+                act_settle_time = #{actSettleTime}
+            </if>
+            <if test = "currentState!=null">
+                current_state = #{currentState}
+            </if>
+            <if test="proposedTime!=null">
+                proposed_time = #{proposedTime}
+            </if>
+            <if test="proposedPerson!=null">
+                proposed_person = #{proposedPerson}
+            </if>
+            <if test="inChargePerson!=null">
+            in_charge_person = #{inChargePerson}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectProblem" parameterType="java.lang.Integer">
+        delete from project_prob
+        where id = #{problemId}
+    </delete>
+    <delete id="deleteProjectRisk" parameterType="java.lang.Integer">
+        delete from project_risk
+        where id = #{riskId}
+    </delete>
+</mapper>
