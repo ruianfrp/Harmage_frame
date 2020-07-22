@@ -1,7 +1,7 @@
 package com.harmonycloud.service.imp;
 
-import com.harmonycloud.bean.project.ProjectProblem;
-import com.harmonycloud.bean.project.ProjectRisk;
+import com.harmonycloud.bean.project.ProjectProbRisk;
+import com.harmonycloud.bean.project.ProjectProbRiskState;
 import com.harmonycloud.dao.ProjectProbRiskDao;
 import com.harmonycloud.service.ProjectProbRiskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,42 +15,32 @@ public class ProjectProbRiskServiceImp implements ProjectProbRiskService {
     ProjectProbRiskDao projectProbRiskDao;
 
     @Override
-    public List<ProjectProblem> listProjectProblemById(Integer projectId) {
-        return projectProbRiskDao.listProjectProblemById(projectId);
+    public List<ProjectProbRisk> listProjectProbRiskById(Integer projectId) {
+        return projectProbRiskDao.listProjectProbRiskById(projectId);
     }
 
     @Override
-    public List<ProjectRisk> listProjectRiskById(Integer projectId) {
-        return projectProbRiskDao.listProjectRiskById(projectId);
+    public Integer insertProjectProbRisk(ProjectProbRisk projectProbRisk) {
+        return projectProbRiskDao.insertProjectProbRisk(projectProbRisk);
     }
 
     @Override
-    public Integer insertProjectProblem(ProjectProblem projectProblem) {
-        return projectProbRiskDao.insertProjectProblem(projectProblem);
+    public Integer updateProjectProbRisk(ProjectProbRisk projectProbRisk) {
+        return projectProbRiskDao.updateProjectProbRisk(projectProbRisk);
     }
 
     @Override
-    public Integer insertProjectRisk(ProjectRisk projectRisk) {
-        return projectProbRiskDao.insertProjectRisk(projectRisk);
+    public Integer deleteProjectProbRisk(Integer id) {
+        return projectProbRiskDao.deleteProjectProbRisk(id);
     }
 
     @Override
-    public Integer updateProjectProblem(ProjectProblem projectProblem) {
-        return projectProbRiskDao.updateProjectProblem(projectProblem);
+    public List<ProjectProbRiskState> listProjectProbRiskState() {
+        return projectProbRiskDao.listProjectProbRiskState();
     }
 
     @Override
-    public Integer updateProjectRisk(ProjectRisk projectRisk) {
-        return projectProbRiskDao.insertProjectRisk(projectRisk);
-    }
-
-    @Override
-    public Integer deleteProjectProblem(Integer problemId) {
-        return projectProbRiskDao.deleteProjectProblem(problemId);
-    }
-
-    @Override
-    public Integer deleteProjectRisk(Integer riskId) {
-        return projectProbRiskDao.deleteProjectRisk(riskId);
+    public String selectProbRiskDescription(Integer projectId) {
+        return projectProbRiskDao.selectProbRiskDescription(projectId);
     }
 }

@@ -2,26 +2,18 @@ package com.harmonycloud.bean.project;
 
 import java.util.Date;
 
-public class ProjectRisk {
+public class  ProjectProbRisk{
     private Long id;
     private Long fkProjectId;
-    private String riskDescription;
+    private String description;
     private String solution;
     private Date estSettleTime;
     private Date actSettleTime;
-    private String currentState;
+    private Integer currentState;
     private Date proposedTime;
     private String proposedPerson;
     private String inChargePerson;
-
-    public ProjectRisk(Long fkProjectId,String riskDescription,Date proposedTime,String proposedPerson){
-        this.fkProjectId=fkProjectId;
-        this.riskDescription=riskDescription;
-        this.proposedTime=proposedTime;
-        this.proposedPerson=proposedPerson;
-    }
-    public ProjectRisk(){}
-
+    private Integer type;
 
     public Long getId() {
         return id;
@@ -39,12 +31,12 @@ public class ProjectRisk {
         this.fkProjectId = fkProjectId;
     }
 
-    public String getRiskDescription() {
-        return riskDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setRiskDescription(String riskDescription) {
-        this.riskDescription = riskDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getSolution() {
@@ -71,11 +63,11 @@ public class ProjectRisk {
         this.actSettleTime = actSettleTime;
     }
 
-    public String getCurrentState() {
+    public Integer getCurrentState() {
         return currentState;
     }
 
-    public void setCurrentState(String currentState) {
+    public void setCurrentState(Integer currentState) {
         this.currentState = currentState;
     }
 
@@ -101,5 +93,13 @@ public class ProjectRisk {
 
     public void setInChargePerson(String inChargePerson) {
         this.inChargePerson = inChargePerson;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

@@ -19,6 +19,7 @@ import com.harmonycloud.config.DingConstant;
 import com.harmonycloud.util.ding.DingUtils;
 import com.taobao.api.ApiException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ import static com.harmonycloud.util.JsonWebToken.VerifyCode;
 @CrossOrigin
 @RestController
 @Slf4j
-@Api(value="员工controller",tags={"员工操作接口"})
+@Api(value="钉钉回调controller",tags={"钉钉回调操作接口"})
 public class CallbackController {
 
 
@@ -68,7 +69,16 @@ public class CallbackController {
      */
     private static final String EVENT_TMP_AUTH_CODE = "tmp_auth_code";
 
+    /**
+     * 钉钉回调接口
+     * @param signature
+     * @param timestamp
+     * @param nonce
+     * @param json
+     * @return Object
+     */
     @RequestMapping(value = "dingCallback", method = RequestMethod.POST)
+    @ApiOperation(value = "回调接口")
     public Object dingCallback(
             @RequestParam(value = "signature") String signature,
             @RequestParam(value = "timestamp") Long timestamp,
@@ -132,8 +142,12 @@ public class CallbackController {
         }
     }
 
-    //测试
+    /**
+     * 测试
+     * @return res.message
+     */
     @GetMapping("/aaa")
+    @ApiOperation(value = "测试")
     public Message aaa(){
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
 //        if (res.message.getCode() == 401) {

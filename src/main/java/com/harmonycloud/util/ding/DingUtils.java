@@ -300,6 +300,7 @@ public class DingUtils {
             request.setProcessInstanceId(instanceId);
             OapiProcessinstanceGetResponse response = client.execute(request, accessToken);
             if (response.isSuccess() && response.getProcessInstance().getResult().equals("agree") && response.getProcessInstance().getStatus().equals("COMPLETED")) {
+                log.info("有新的立项申请...");
 //                duplicateCharacters(response.getProcessInstance().getFormComponentValues().get(2).getValue());
 //                duplicateCharacters(response.getProcessInstance().getFormComponentValues().get(3).getValue());
 //                Connection con = DriverManager.getConnection("jdbc:mysql://47.92.161.179:31036/harmage?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai",

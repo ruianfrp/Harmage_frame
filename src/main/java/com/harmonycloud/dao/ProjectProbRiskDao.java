@@ -1,27 +1,23 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.bean.project.ProjectProblem;
-import com.harmonycloud.bean.project.ProjectRisk;
+import com.harmonycloud.bean.project.ProjectProbRisk;
+import com.harmonycloud.bean.project.ProjectProbRiskState;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public interface ProjectProbRiskDao {
-    List<ProjectProblem> listProjectProblemById(Integer projectId);
+    List<ProjectProbRisk> listProjectProbRiskById(Integer projectId);
 
-    List<ProjectRisk> listProjectRiskById(Integer projectId);
+    Integer insertProjectProbRisk( ProjectProbRisk projectProbRisk);
 
-    Integer insertProjectProblem(ProjectProblem projectProblem);
+    Integer updateProjectProbRisk( ProjectProbRisk projectProbRisk);
 
-    Integer insertProjectRisk(ProjectRisk projectRisk);
+    Integer deleteProjectProbRisk(Integer id);
 
-    Integer updateProjectProblem(ProjectProblem projectProblem);
+    List<ProjectProbRiskState> listProjectProbRiskState();
 
-    Integer updateProjectRisk(ProjectRisk projectRisk);
-
-    Integer deleteProjectProblem(Integer problemId);
-
-    Integer deleteProjectRisk(Integer riskId);
+    String selectProbRiskDescription(Integer projectId);
 
 }

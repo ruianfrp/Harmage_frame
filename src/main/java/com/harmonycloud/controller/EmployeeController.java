@@ -367,10 +367,10 @@ public class EmployeeController {
     @ApiOperation(value = "员工信息同步", notes = "同步时会自动添加用户")
     public Message synchronization(){
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-//        if (res.message.getCode() == 401) {
-//            log.error("Authorization参数校验失败");
-//            return res.message;
-//        }
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
         SynchroThread synchro = new SynchroThread();
         synchro.run();
         res.message.setMessage(200, "同步成功");

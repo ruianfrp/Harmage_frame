@@ -6,36 +6,29 @@
         insert update 一定要有parameterType
         select 一定要有resultType 否则报错
         It's likely that neither a Result Type nor a Result Map was specified
+
+        Binding Exception:
+        1.namespace error 2. id=function name
+        3.erase chinese character 4. add/delete some space
     -->
-    <insert id="insertProjectProblem" parameterType="com.harmonycloud.bean.project.ProjectProblem">
-        insert into project_prob(prob_description,solution,est_settle_time,act_settle_time,current_state,
-        proposed_time,proposed_person,incharge_person,fk_project_id)
-        values(#{probDescription},#{solution},#{estSettleTime},#{actSettleTime},#{currentState},#{proposedTime},
-        #{proposedPerson},#{inChargePerson},#{fkProjectId})
+    <insert id="insertProjectProbRisk" parameterType="com.harmonycloud.bean.project.ProjectProbRisk">
+        insert into project_prob_risk(description,solution,est_settle_time,act_settle_time,current_state,
+        proposed_time,proposed_person,incharge_person,fk_project_id,type)
+        values(#{description},#{solution},#{estSettleTime},#{actSettleTime},#{currentState},#{proposedTime},
+        #{proposedPerson},#{inChargePerson},#{fkProjectId},#{type})
     </insert>
 
-    <insert id="insertProjectRisk" parameterType="com.harmonycloud.bean.project.ProjectRisk">
-        insert into project_risk(risk_description,solution,est_settle_time,act_settle_time,current_state,
-        proposed_time,proposed_person,incharge_person,fk_project_id)
-        values(#{riskDescription},#{solution},#{estSettleTime},#{actSettleTime},#{currentState},#{proposedTime},
-        #{proposedPerson},#{inChargePerson},#{fkProjectId})
-    </insert>
-
-    <select id="listProjectProblemById" resultType="com.harmonycloud.bean.project.ProjectProblem">
-        select * from project_prob
+    <select id="listProjectProbRiskById" resultType="com.harmonycloud.bean.project.ProjectProbRisk">
+        select * from project_prob_risk
         where fk_project_id = #{projectId}
     </select>
 
-    <select id="listProjectRiskById" resultType="com.harmonycloud.bean.project.ProjectRisk">
-        select * from project_risk
-        where fk_project_id = #{projectId}
-    </select>
     
-    <update id="updateProjectProblem" parameterType="com.harmonycloud.bean.project.ProjectProblem">
-        update project_prob
+    <update id="updateProjectProbRisk" parameterType="com.harmonycloud.bean.project.ProjectProbRisk">
+        update project_prob_risk
         <set>
-            <if test="probDescription!=null">
-                prob_description = #{probDescription}
+            <if test="description!=null">
+                description = #{description}
             </if>
             <if test="solution!=null">
                 solution = #{solution}
@@ -61,43 +54,36 @@
         </set>
         where id = #{id}
     </update>
-    <update id="updateProjectRisk" parameterType="com.harmonycloud.bean.project.ProjectRisk">
-        update project_risk
-        <set>
-            <if test="riskDescription!=null">
-                risk_description = #{riskDescription}
-            </if>
-            <if test="solution!=null">
-                solution = #{solution}
-            </if>
-            <if test="estSettleTime!=null">
-                est_settle_time = #{estSettleTime}
-            </if>
-            <if test="actSettleTime!=null">
-                act_settle_time = #{actSettleTime}
-            </if>
-            <if test = "currentState!=null">
-                current_state = #{currentState}
-            </if>
-            <if test="proposedTime!=null">
-                proposed_time = #{proposedTime}
-            </if>
-            <if test="proposedPerson!=null">
-                proposed_person = #{proposedPerson}
-            </if>
-            <if test="inChargePerson!=null">
-            in_charge_person = #{inChargePerson}
-            </if>
-        </set>
-        where id = #{id}
-    </update>
 
-    <delete id="deleteProjectProblem" parameterType="java.lang.Integer">
-        delete from project_prob
-        where id = #{problemId}
+    <delete id="deleteProjectProbRisk" parameterType="java.lang.Integer">
+        delete from project_prob_risk
+        where id = #{id}
     </delete>
-    <delete id="deleteProjectRisk" parameterType="java.lang.Integer">
-        delete from project_risk
-        where id = #{riskId}
-    </delete>
+
+    <select id="listProjectProbRiskState" resultType="com.harmonycloud.bean.project.ProjectProbRiskState">
+        select fk_project_id as projectId,proj_name,count(proj_name) as probRiskCount
+        from project_prob_risk left join project
+        on fk_project_id = project.id
+        where current_state = 0
+        GROUP BY fk_project_id
+    </select>
+
+    <select id="selectProbRiskDescription" resultType="java.lang.String">
+        select description
+        from project_prob_risk
+        where fk_project_id = #{projectId} and current_state = 0
+        LIMIT 0,1
+    </select>
+
+    <!--select id="countOfProb" resultType="java.lang.Integer">
+        select count(*) as count from project_prob_risk
+        GROUP BY type
+        having type = 0
+    </select>
+
+    <select id="countOfRisk" resultType="java.lang.Integer">
+        select count(*) as count from project_prob_risk
+        GROUP BY type
+        having type = 1
+    </select-->
 </mapper>
