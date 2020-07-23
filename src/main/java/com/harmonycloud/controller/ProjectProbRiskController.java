@@ -1,30 +1,41 @@
 package com.harmonycloud.controller;
 
 
+import com.harmonycloud.bean.VerifyMessage;
 import com.harmonycloud.bean.project.ProjectProbRisk;
 import com.harmonycloud.bean.project.ProjectProbRiskState;
 import com.harmonycloud.service.ProjectProbRiskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.harmonycloud.bean.Message;
+import com.harmonycloud.bean.VerifyMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.harmonycloud.util.JsonWebToken.VerifyCode;
+
 @RestController
 @Api(value = "项目问题/风险Controller",tags = {"项目问题/风险操作接口"})
 @RequestMapping("/projectProbRisk")
+@Slf4j
 public class ProjectProbRiskController {
     @Autowired
     ProjectProbRiskService projectProbRiskService;
 
     @Autowired
-    private HttpServletRequest request;
+    HttpServletRequest request;
 
 
     /*
@@ -35,15 +46,25 @@ public class ProjectProbRiskController {
     @PostMapping("/listProjectProbRisk")
     @ApiOperation(value = "返回项目风险/问题列表",notes = "根据projectId返回列表")
     @ResponseBody
-    public Map listProjectProbRisk(@RequestBody @ApiParam(name = "projectId",value = "项目id",required = true) Map map) {
+    public Message listProjectProbRisk(@RequestBody @ApiParam(name = "projectId",value = "项目id",required = true) Map map) {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
         Integer projectId = Integer.parseInt(map.get("projectId").toString());
         Map<String, Object> data = new HashMap<>();
         List<ProjectProbRisk> list = projectProbRiskService.listProjectProbRiskById(projectId);
-
-        data.put("list", list);
-        data.put("total", list.size());
-
-        return data;
+        if (list != null) {
+            log.info("项目风险/问题列表返回成功");
+            data.put("list", list);
+            data.put("total", list.size());
+            res.message.setMessage(200, "项目风险/问题列表返回成功", data);
+        } else {
+            log.error("项目风险/问题列表返回为空");
+            res.message.setMessage(400, "项目风险/问题列表返回为空");
+        }
+       return res.message;
     }
 
 
@@ -54,52 +75,92 @@ public class ProjectProbRiskController {
     @PostMapping("/insertProjectProbRisk")
     @ApiOperation(value = "添加项目风险/问题")
     @ResponseBody
-    public Map insertProjectProbRisk(@RequestBody ProjectProbRisk ProjectProbRisk){
-        Map<String,Object> data = new HashMap<>();
-        ProjectProbRisk.setProposedTime(new Timestamp(System.currentTimeMillis()));
-        Integer result = projectProbRiskService.insertProjectProbRisk(ProjectProbRisk);
-        if(result>0) {
-            data.put("result","添加成功！");
-            data.put("object",ProjectProbRisk);
+    public Message insertProjectProbRisk(@RequestBody @ApiParam(name="fkProjectId\ndescription\ncurrentState\n" +
+            "proposedPerson\ninChargePerson\ntype",value="以上字段必填,其余可不填或填null",required = true) ProjectProbRisk projectProbRisk){
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
         }
-        else data.put("result","添加失败！");
+        projectProbRisk.setProposedTime(new Date());
 
-        return data;
+
+        Integer result = projectProbRiskService.insertProjectProbRisk(projectProbRisk);
+        Map<String,Object> data = new HashMap<>();
+        if(result>0) {
+            data.put("insert data",projectProbRisk);
+            if(projectProbRisk.getType()==0) {
+                log.info("项目问题添加成功");
+                res.message.setMessage(200,"项目问题添加成功",data);
+            }
+            else{
+                log.info("项目风险添加成功");
+                res.message.setMessage(200,"项目风险添加成功",data);
+            }
+        }else{
+            log.error("添加失败！");
+            res.message.setMessage(400,"添加失败！");
+        }
+
+        return res.message;
     }
 
 
     @PostMapping("/updateProjectProbRisk")
-    @ApiOperation(value = "更新项目风险/问题",notes = "根据id标识来更新")
+    @ApiOperation(value = "更新项目风险/问题",notes = "根据记录id标识来更新")
     @ResponseBody
-    public Map updateProjectProbRisk(@RequestBody ProjectProbRisk ProjectProbRisk){
-        Map<String,Object> data = new HashMap<>();
-        Integer result = projectProbRiskService.updateProjectProbRisk(ProjectProbRisk);
-        if(result>0){
-            data.put("result","更新成功");
-            data.put("object",ProjectProbRisk);
+    public Message updateProjectProbRisk(@RequestBody @ApiParam(name = "id",value = "id非项目projectId，更新的字段" +
+            "可为一个或多个",required = true) ProjectProbRisk projectProbRisk){
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
         }
-        else data.put("result","更新失败");
-        return data;
+        Integer result = projectProbRiskService.updateProjectProbRisk(projectProbRisk);
+        Map<String,Object> data = new HashMap<>();
+        if(result>0){
+            log.info("更新成功！");
+            data.put("after update",projectProbRisk);
+            res.message.setMessage(200,"更新成功！",data);
+        }
+        else{
+            log.error("更新失败！");
+            res.message.setMessage(400,"更新失败！");
+        }
+        return res.message;
     }
 
 
     @PostMapping("/deleteProjectProbRisk")
     @ApiOperation(value = "删除项目风险/问题",notes = "id为风险/问题标识")
     @ResponseBody
-    public Map deleteProjectProbRisk(@RequestBody @ApiParam(name = "id",value = "标识") Map map){
-        Map<String, Object> data = new HashMap<>();
+    public Message deleteProjectProbRisk(@RequestBody @ApiParam(name = "id",value = "标识",required = true) Map map){
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
         Integer result = projectProbRiskService.deleteProjectProbRisk(Integer.parseInt(map.get("id").toString()));
         if(result>0){
-            data.put("result","delete success!");
+            log.info("删除成功！");
+            res.message.setMessage(200,"删除成功！");
         }
-        else data.put("result","delete failed!");
-        return data;
+        else{
+            log.error("删除失败！");
+            res.message.setMessage(400,"删除失败!");
+        }
+        return res.message;
     }
 
     @GetMapping("/listProjectProbRiskState")
-    @ApiOperation(value = "返回项目风险/问题概览")
+    @ApiOperation(value = "返回项目风险/问题概览",notes = "返回项目id,名称,描述,未处理的问题/风险数量")
     @ResponseBody
-    public Map ProjectProbRiskState(){
+    public Message ProjectProbRiskState(){
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
         Map<String,Object> data = new HashMap<>();
         List<ProjectProbRiskState> list = projectProbRiskService.listProjectProbRiskState();
         /*
@@ -110,10 +171,16 @@ public class ProjectProbRiskController {
             String overviewDes = projectProbRiskService.selectProbRiskDescription(projectId);
             projectProbRiskState.setDescription(overviewDes);
         }
-        data.put("message","success");
-        data.put("total",list.size());
-        data.put("overview",list);
+        if(list!=null){
+            log.info("项目风险/问题概览返回成功");
+            data.put("list",list);
+            data.put("total",list.size());
+            res.message.setMessage(200,"项目风险/问题概览返回成功",data);
+        }else{
+            log.error("项目风险/问题概览返回为空");
+            res.message.setMessage(400,"项目风险/问题概览列表返回为空");
+        }
 
-        return data;
+        return res.message;
     }
 }

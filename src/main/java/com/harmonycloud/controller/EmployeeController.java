@@ -498,4 +498,11 @@ public class EmployeeController {
         }
         return res.message;
     }
+
+
+    @GetMapping("/QucikAuthentication")
+    @ApiOperation("一键授权")
+    public void LDAPAuthentication(){
+        SyncInfo.LoadAllUserInfo();
+    }
 }

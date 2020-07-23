@@ -14,6 +14,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>harmage-frame</name>
     <description>Demo project for Spring Boot</description>
+    <packaging>jar</packaging>
 
 
     <properties>
@@ -23,7 +24,7 @@
         <!-- MyBatis Generator mapper接口的生成位置 -->
         <targetDaoPackage>com.harmonycloud.dao</targetDaoPackage>
         <!-- MyBatis Generator model类的生成位置 -->
-        <targetEntityPackage>com.harmonycloud.bean</targetEntityPackage>
+        <targetEntityPackage>com.harmonycloud.entity</targetEntityPackage>
         <!-- MyBatis Generator mapper.xml生成位置 -->
         <targetMapperPackage>mapper</targetMapperPackage>
     </properties>

@@ -56,6 +56,11 @@ public class DateUtils {
         return dateList;
     }
 
+    public static Date format(Date source){
+        String sourceString = simpleDateFormat.format(source);
+        Date desDate = java.sql.Date.valueOf(sourceString);
+        return desDate;
+    }
     public static void main(String[] args) {
         JSONObject jsonObject = new JSONObject();
         insertUserIdMap(jsonObject);

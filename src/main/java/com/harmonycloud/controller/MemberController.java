@@ -6,6 +6,7 @@ import com.harmonycloud.bean.VerifyMessage;
 import com.harmonycloud.bean.member.Member;
 import com.harmonycloud.bean.member.MemberView;
 import com.harmonycloud.service.MemberService;
+import com.harmonycloud.util.SyncInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,8 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.harmonycloud.util.JsonWebToken.VerifyCode;
 
+import static com.harmonycloud.util.JsonWebToken.VerifyCode;
 /**
  * @author ：lxl
  * @date ：Created in 2019/8/1 20:29
@@ -268,4 +269,9 @@ public class MemberController {
         }
         return res.message;
     }
+
+
+
+
+
 }

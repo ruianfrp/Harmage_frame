@@ -1,5 +1,11 @@
 package com.harmonycloud.bean.project;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.harmonycloud.util.date.DateUtils;
+
+import java.text.DateFormat;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class  ProjectProbRisk{
@@ -47,20 +53,22 @@ public class  ProjectProbRisk{
         this.solution = solution;
     }
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     public Date getEstSettleTime() {
         return estSettleTime;
     }
 
     public void setEstSettleTime(Date estSettleTime) {
-        this.estSettleTime = estSettleTime;
+        this.estSettleTime = DateUtils.format(estSettleTime);
     }
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     public Date getActSettleTime() {
         return actSettleTime;
     }
 
     public void setActSettleTime(Date actSettleTime) {
-        this.actSettleTime = actSettleTime;
+        this.actSettleTime = DateUtils.format(actSettleTime);
     }
 
     public Integer getCurrentState() {
@@ -71,12 +79,13 @@ public class  ProjectProbRisk{
         this.currentState = currentState;
     }
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     public Date getProposedTime() {
         return proposedTime;
     }
 
     public void setProposedTime(Date proposedTime) {
-        this.proposedTime = proposedTime;
+        this.proposedTime = DateUtils.format(proposedTime);
     }
 
     public String getProposedPerson() {
