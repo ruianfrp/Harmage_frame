@@ -1,11 +1,19 @@
 package com.harmonycloud.service;
 
 import com.harmonycloud.bean.contract.Contract;
+import com.harmonycloud.bean.contract.ContractListView;
+import com.harmonycloud.bean.contract.ContractReceivedView;
 
 import java.util.List;
 
 public interface ContractService {
-    List<Contract> listContract(Integer projectId, Integer customerId);
+    List<ContractListView> listContract(String employeeGh);
+
+    List<ContractReceivedView> selectReceived();
+
+    List<ContractListView> listAllContract();
+
+    List<ContractListView> selectContractByIndustry(String sales);
 
     Integer insertContract(Contract contract);
 

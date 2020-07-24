@@ -2,6 +2,8 @@ package com.harmonycloud.service.imp;
 
 import com.harmonycloud.bean.account.Admin;
 import com.harmonycloud.bean.contract.Contract;
+import com.harmonycloud.bean.contract.ContractListView;
+import com.harmonycloud.bean.contract.ContractReceivedView;
 import com.harmonycloud.dao.AdminDao;
 import com.harmonycloud.dao.ContractDao;
 import com.harmonycloud.service.AdminService;
@@ -18,8 +20,23 @@ public class ContractServiceImp implements ContractService {
     ContractDao contractDao;
 
     @Override
-    public List<Contract> listContract(Integer projectId, Integer customerId){
-        return contractDao.listContract(projectId, customerId);
+    public List<ContractListView> listContract(String employeeGh){
+        return contractDao.listContract(employeeGh);
+    }
+
+    @Override
+    public List<ContractListView> listAllContract(){
+        return contractDao.listAllContract();
+    }
+
+    @Override
+    public List<ContractListView> selectContractByIndustry(String sales){
+        return contractDao.selectContractByIndustry(sales);
+    }
+
+    @Override
+    public List<ContractReceivedView> selectReceived(){
+        return contractDao.selectReceived();
     }
 
     @Override

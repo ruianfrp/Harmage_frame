@@ -7,6 +7,8 @@ import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
 import com.harmonycloud.bean.account.UserListView;
 import com.harmonycloud.bean.contract.Contract;
+import com.harmonycloud.bean.contract.ContractListView;
+import com.harmonycloud.bean.contract.ContractReceivedView;
 import com.harmonycloud.bean.customer.*;
 import com.harmonycloud.bean.document.DocumentPlanneListView;
 import com.harmonycloud.bean.document.DocumentRecordListView;
@@ -1298,69 +1300,142 @@ public class CustomerController {
     /**
      * 获取客户项目对应的合同阶段
      *
-     * @param projectId  项目id
-     * @param customerId 客户id
      * @return res.message
      */
-    @PostMapping("/listContract")
+    @GetMapping("/listContract")
     @ApiOperation(value = "获取客户项目对应的合同阶段")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", name = "projectId", value = "项目Id", required = true),
-            @ApiImplicitParam(paramType = "query", name = "customerId", value = "客户Id", required = true)
-    })
-    public Message listContract(Integer projectId, Integer customerId) {
+    public Message listContract() {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
             return res.message;
         }
         Map<String, Object> data = new HashMap<>();
-        List<Contract> list = contractService.listContract(projectId, customerId);
-        if (list.size() > 0) {
-            data.put("list", list);
-            data.put("total", list.size());
-            log.info("合同阶段获取成功");
-            res.message.setMessage(200, "合同阶段获取成功", data);
-        } else {
-            log.warn("合同阶段获取为空");
-            res.message.setMessage(200, "合同阶段获取为空");
+        String employeeGh = res.user.getId();
+        String authority = res.user.getRole();
+        if (authority.contains("Contract_RW_A") || authority.contains("Contract_RO")) {
+            List<ContractListView> list1 = contractService.listAllContract();
+            List<ContractReceivedView> list2 = contractService.selectReceived();
+            if (list1.size() > 0 && list2.size() > 0) {
+                for (ContractListView contractListView : list1) {
+                    for (ContractReceivedView contractReceivedView : list2) {
+                        if (contractListView.getId() == contractReceivedView.getFkContractId()) {
+                            contractListView.setReceived(contractReceivedView.getContractReceived());
+                            contractListView.setUncollected(contractListView.getContractAmount() - contractReceivedView.getContractReceived());
+                        }
+                    }
+                }
+                data.put("list", list1);
+                data.put("total", list1.size());
+                log.info("合同列表获取成功");
+                res.message.setMessage(200, "合同列表获取成功", data);
+            } else {
+                log.warn("合同列表获取为空");
+                res.message.setMessage(200, "合同列表获取为空");
+            }
+        }
+        if (authority.contains("Contract_RW_S")) {
+            List<ContractListView> list1 = contractService.listContract(employeeGh);
+            List<ContractReceivedView> list2 = contractService.selectReceived();
+            if (list1.size() > 0 && list2.size() > 0) {
+                for (ContractListView contractListView : list1) {
+                    for (ContractReceivedView contractReceivedView : list2) {
+                        if (contractListView.getId() == contractReceivedView.getFkContractId()) {
+                            contractListView.setReceived(contractReceivedView.getContractReceived());
+                            contractListView.setUncollected(contractListView.getContractAmount() - contractReceivedView.getContractReceived());
+                        }
+                    }
+                }
+                data.put("list", list1);
+                data.put("total", list1.size());
+                log.info("合同列表获取成功");
+                res.message.setMessage(200, "合同列表获取成功", data);
+            } else {
+                log.warn("合同列表获取为空");
+                res.message.setMessage(200, "合同列表获取为空");
+            }
+        }
+        if (authority.contains("Contract_RW_M_I")) {
+            List<ContractListView> list = contractService.listContract(employeeGh);
+            List<String> listSalesIndustry = customerService.selectSalesIndustry(employeeGh);
+            if (listSalesIndustry.size() > 0) {
+                log.info("行业负责人负责行业返回成功");
+                for (String sales : listSalesIndustry) {
+                    List<ContractListView> list1 = contractService.selectContractByIndustry(sales);
+                    if (list1.size() > 0) {
+                        log.info("行业负责人合同列表返回成功");
+                        list.addAll(list1);
+                        for (int i = 0; i < list.size(); i++) {
+                            for (int j = list.size() - 1; j > i; j--) {
+                                if (list.get(i).getId().equals(list.get(j).getId())) {
+                                    list.remove(j);
+                                }
+                            }
+                        }
+                    } else {
+                        log.warn("行业负责人合同列表返回为空");
+                        res.message.setMessage(400, "行业负责人合同列表返回为空");
+                    }
+                }
+                List<ContractReceivedView> list2 = contractService.selectReceived();
+                if (list.size() > 0 && list2.size() > 0) {
+                    for (ContractListView contractListView : list) {
+                        for (ContractReceivedView contractReceivedView : list2) {
+                            if (contractListView.getId() == contractReceivedView.getFkContractId()) {
+                                contractListView.setReceived(contractReceivedView.getContractReceived());
+                                contractListView.setUncollected(contractListView.getContractAmount() - contractReceivedView.getContractReceived());
+                            }
+                        }
+                    }
+                    data.put("list", list);
+                    data.put("total", list.size());
+                    log.info("合同列表获取成功");
+                    res.message.setMessage(200, "合同列表获取成功", data);
+                } else {
+                    log.warn("合同列表获取为空");
+                    res.message.setMessage(200, "合同列表获取为空");
+                }
+            } else {
+                log.error("行业负责人负责行业返回为空");
+                res.message.setMessage(400, "行业负责人负责行业返回为空");
+            }
         }
         return res.message;
     }
 
-    /**
-     * 新增合同阶段信息
-     *
-     * @param contracts 合同阶段信息
-     * @return res.message
-     */
-    @PostMapping("/insertContract")
-    @ApiOperation(value = "新增合同阶段信息")
-    public Message insertContract(@RequestBody List<Contract> contracts) {
-        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-        if (res.message.getCode() == 401) {
-            log.error("Authorization参数校验失败");
-            return res.message;
-        }
-        short flag = 0;
-        for (Contract contract : contracts) {
-            Integer result = contractService.insertContract(contract);
-            if (result > 0) {
-                log.info("合同" + contract.getContractStage() + "阶段添加成功");
-                flag = 1;
-            } else {
-                log.error("合同" + contract.getContractStage() + "阶段添加失败");
-                flag = 0;
-                break;
-            }
-        }
-        if (flag == 1) {
-            res.message.setMessage(200, "合同添加成功");
-        } else {
-            res.message.setMessage(400, "合同添加失败");
-        }
-        return res.message;
-    }
+//    /**
+//     * 新增合同阶段信息
+//     *
+//     * @param contracts 合同阶段信息
+//     * @return res.message
+//     */
+//    @PostMapping("/insertContract")
+//    @ApiOperation(value = "新增合同阶段信息")
+//    public Message insertContract(@RequestBody List<Contract> contracts) {
+//        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+//        if (res.message.getCode() == 401) {
+//            log.error("Authorization参数校验失败");
+//            return res.message;
+//        }
+//        short flag = 0;
+//        for (Contract contract : contracts) {
+//            Integer result = contractService.insertContract(contract);
+//            if (result > 0) {
+//                log.info("合同" + contract.getContractStage() + "阶段添加成功");
+//                flag = 1;
+//            } else {
+//                log.error("合同" + contract.getContractStage() + "阶段添加失败");
+//                flag = 0;
+//                break;
+//            }
+//        }
+//        if (flag == 1) {
+//            res.message.setMessage(200, "合同添加成功");
+//        } else {
+//            res.message.setMessage(400, "合同添加失败");
+//        }
+//        return res.message;
+//    }
 
     /**
      * 删除合同阶段信息

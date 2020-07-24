@@ -1,10 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.harmonycloud.dao.ContractDao">
-    <select id="listContract" resultType="com.harmonycloud.bean.contract.Contract">
-        SELECT co.*,e.employee_name,cu.customer_name,p.proj_name FROM contract as co
-        left join customer as cu on co.fk_customer_id=cu.id left join project as p on p.id=co.fk_project_id
-        left join employee as e on e.employee_gh=co.fk_employee_gh where fk_project_id=#{projectId} and fk_customer_id=#{customerId};
+    <select id="listContract" resultType="com.harmonycloud.bean.contract.ContractListView">
+        SELECT co.*,e.employee_name,cu.customer_name,p.proj_name,p.proj_line,p.proj_substate,cs.contract_stage,cs.contract_proportion,
+		cs.contract_amount,cs.contract_time,cs.contract_remark FROM contract as co
+        left join contract_step as cs on co.id=cs.fk_contract_id
+        left join customer as cu on co.fk_customer_id=cu.id left join customer_salesman as csman on csman.fk_customer_id=co.fk_customer_id
+        left join project as p on p.id=co.fk_project_id
+        left join employee as e on e.employee_gh=co.fk_employee_gh where (cs.acceptance_done!=1 or cs.payment_done!=1) and csman.employee_gh=#{employeeGh}
+        group by co.id having min(cs.contract_time)
+    </select>
+
+    <select id="listAllContract" resultType="com.harmonycloud.bean.contract.ContractListView">
+        SELECT co.*,e.employee_name,cu.customer_name,p.proj_name,p.proj_line,p.proj_substate,cs.contract_stage,cs.contract_proportion,
+		cs.contract_amount,cs.contract_time,cs.contract_remark FROM contract as co
+        left join contract_step as cs on co.id=cs.fk_contract_id
+        left join customer as cu on co.fk_customer_id=cu.id
+        left join project as p on p.id=co.fk_project_id
+        left join employee as e on e.employee_gh=co.fk_employee_gh where (cs.acceptance_done!=1 or cs.payment_done!=1)
+        group by co.id having min(cs.contract_time)
+    </select>
+
+    <select id="selectContractByIndustry" resultType="com.harmonycloud.bean.contract.ContractListView">
+        SELECT co.*,e.employee_name,cu.customer_name,p.proj_name,p.proj_line,p.proj_substate,cs.contract_stage,cs.contract_proportion,
+		cs.contract_amount,cs.contract_time,cs.contract_remark FROM contract as co
+        left join contract_step as cs on co.id=cs.fk_contract_id
+        left join customer as cu on co.fk_customer_id=cu.id left join customer_dic_data as cdd2 on cdd2.id=cu.customer_industry
+        left join project as p on p.id=co.fk_project_id
+        left join employee as e on e.employee_gh=co.fk_employee_gh where (cs.acceptance_done!=1 or cs.payment_done!=1) and cdd2.dic_data_sort=#{sales}
+        group by co.id having min(cs.contract_time)
+    </select>
+
+    <select id="selectReceived" resultType="com.harmonycloud.bean.contract.ContractReceivedView">
+        SELECT id,fk_contract_id,sum(contract_amount) as contract_received FROM contract_step where acceptance_done=1 and payment_done=1 group by fk_contract_id;
     </select>
 
     <insert id="insertContract" parameterType="com.harmonycloud.bean.contract.Contract">
