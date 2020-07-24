@@ -81,11 +81,11 @@ public class LoginController {
         Map<String, Object> data = new HashMap<>();
         String account = (String) map.get("account");
         String password = (String) map.get("password");
-        if (account.equals("0020")) {
+        if (account.equals("160001")) {
             ArrayList<LoginInfoView> user = new ArrayList<>();
-            String value = loginInfoService.selectUserAuthority("0020");
+            String value = loginInfoService.selectUserAuthority("160001");
             String role = selectRole(value);
-            LoginInfoView information = new LoginInfoView("0020", "王瑜", role);
+            LoginInfoView information = new LoginInfoView("160001", "王翱宇", role);
             user.add(information);
             data.put("list", user);
             data.put("total", 1);
@@ -99,11 +99,11 @@ public class LoginController {
             message.setMessage(200, "登陆成功", data);
             return message;
         }
-        if (account.equals("0001")) {
+        if (account.equals("200301")) {
             ArrayList<LoginInfoView> user = new ArrayList<>();
-            String value = loginInfoService.selectUserAuthority("0001");
+            String value = loginInfoService.selectUserAuthority("200301");
             String role = selectRole(value);
-            LoginInfoView information = new LoginInfoView("0001", "王翱宇", role);
+            LoginInfoView information = new LoginInfoView("200301", "朱超波", role);
             user.add(information);
             data.put("list", user);
             data.put("total", 1);
@@ -117,11 +117,11 @@ public class LoginController {
             message.setMessage(200, "登陆成功", data);
             return message;
         }
-        if (account.equals("0012")) {
+        if (account.equals("190262")) {
             ArrayList<LoginInfoView> user = new ArrayList<>();
-            String value = loginInfoService.selectUserAuthority("0012");
+            String value = loginInfoService.selectUserAuthority("190262");
             String role = selectRole(value);
-            LoginInfoView information = new LoginInfoView("0012", "杨晶", role);
+            LoginInfoView information = new LoginInfoView("190262", "罗剑", role);
             user.add(information);
             data.put("list", user);
             data.put("total", 1);
@@ -135,11 +135,11 @@ public class LoginController {
             message.setMessage(200, "登陆成功", data);
             return message;
         }
-        if (account.equals("0016")) {
+        if (account.equals("160016")) {
             ArrayList<LoginInfoView> user = new ArrayList<>();
-            String value = loginInfoService.selectUserAuthority("0016");
+            String value = loginInfoService.selectUserAuthority("160016");
             String role = selectRole(value);
-            LoginInfoView information = new LoginInfoView("0016", "郑国林", role);
+            LoginInfoView information = new LoginInfoView("160016", "郑国林", role);
             user.add(information);
             data.put("list", user);
             data.put("total", 1);
