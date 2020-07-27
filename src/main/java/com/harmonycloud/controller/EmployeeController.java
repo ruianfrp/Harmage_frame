@@ -499,10 +499,13 @@ public class EmployeeController {
         return res.message;
     }
 
-
-    @GetMapping("/QucikAuthentication")
+    @GetMapping("/qucikAuthentication")
     @ApiOperation("一键授权")
-    public void LDAPAuthentication(){
+    public Message LDAPAuthentication()
+    {
+        VerifyMessage res = new VerifyMessage();
         SyncInfo.LoadAllUserInfo();
+        res.message.setMessage(200,"一键授权成功",null);
+        return res.message;
     }
 }
