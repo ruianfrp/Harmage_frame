@@ -169,7 +169,7 @@ public class LoginController {
                     log.info("登陆成功");
                     if (adminLoginView.getFkEmployeeGh().equals("admin")) {
                         ArrayList<LoginInfoView> user = new ArrayList<>();
-                        LoginInfoView information = new LoginInfoView("01", "管理员", "Overview_RO,Project_RW_A,Approval_RW_A,Employee_RW_A,Customer_RW_A,User_RW_A,Setting_RW_A");
+                        LoginInfoView information = new LoginInfoView("01", "管理员", "Overview_RO,Project_RW_A,Approval_RW_A,Employee_RW_A,Customer_RW_A,User_RW_A,Setting_RW_A,Contract_RW_A");
                         user.add(information);
                         data.put("list", user);
                         data.put("total", 1);
@@ -183,7 +183,7 @@ public class LoginController {
                         message.setMessage(200, "登陆成功", data);
                     } else if (adminLoginView.getFkEmployeeGh().equals("saleAdmin")) {
                         ArrayList<LoginInfoView> user = new ArrayList<>();
-                        LoginInfoView information = new LoginInfoView("02", "销售管理员", "Customer_RW_A,Setting_RW,User_RW_S");
+                        LoginInfoView information = new LoginInfoView("02", "销售管理员", "Customer_RW_A,User_RW_S_S,Contract_RW_A");
                         user.add(information);
                         data.put("list", user);
                         data.put("total", 1);
