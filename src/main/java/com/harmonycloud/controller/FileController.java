@@ -7,6 +7,7 @@ import com.harmonycloud.bean.VerifyMessage;
 import com.harmonycloud.bean.contract.ContractFileView;
 import com.harmonycloud.bean.project.ProjectFileView;
 import com.harmonycloud.config.FtpConfig;
+import com.harmonycloud.service.ContractService;
 import com.harmonycloud.service.ProjectFileService;
 import com.harmonycloud.util.*;
 import io.swagger.annotations.Api;
@@ -41,6 +42,9 @@ public class FileController {
 
     @Autowired
     ProjectFileService projectFileService;
+
+    @Autowired
+    ContractService contractService;
 
     @Autowired
     private HttpServletRequest request;
@@ -409,30 +413,36 @@ public class FileController {
      * 合同文件加密上传
      *
      * @param files      文件
-     * @param customerId 客户id
-     * @param projectId  项目id
-     * @return res.message
+     * @param id         合同阶段id
+     * @param uploadType
+     * @return
      * @throws Exception
      */
     @PostMapping("/encryptUploadFile")
     @ApiOperation(value = "文件加密上传")
     public Message encryptUploadFile(@RequestParam("file") MultipartFile[] files,
-                                     @RequestParam("customerId") Integer customerId,
-                                     @RequestParam("projectId") Integer projectId) throws Exception {
+                                     @RequestParam("contractId") Integer contractId,
+                                     @RequestParam("contractStepId") Integer contractStepId,
+                                     @RequestParam("uploadType") Integer uploadType) throws Exception {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         Map<String, Object> data = new HashMap<>();
         List<ContractFileView> list = new ArrayList<>();
         String dataServerDestDir = "/var/upload/ContractFile";
         for (MultipartFile file : files) {
             ContractFileView contractFileView = new ContractFileView();
-            contractFileView.setFkCustomerId(customerId);
-            contractFileView.setFkProjectId(projectId);
+            contractFileView.setFkContractId(contractId);
+            if (contractStepId != null) {
+                contractFileView.setFkContractStepId(contractStepId);
+            }
             String oldName = file.getOriginalFilename();// 获取文件原来的名字
             contractFileView.setFileOldName(oldName);
             String fileType = oldName.substring(oldName.lastIndexOf("."));
             String newName = UploadUtils.generateRandonFileName(oldName) + fileType;// 通过工具类产生新文件名称，防止重名
             contractFileView.setFileNewName(newName);
-            String SavePath = "/" + customerId + "/" + projectId;
+            String SavePath = "/" + contractId;
+            if (contractStepId != null) {
+                SavePath = SavePath + "/" + contractStepId;
+            }
             File dest = new File(dataServerDestDir + SavePath);
             dest.setWritable(true, false);
             if (!dest.exists()) { //判断文件目录是否存在
@@ -445,9 +455,17 @@ public class FileController {
             String fileUrl = frame + "/ContractFile" + SavePath + "/" + newName;
             contractFileView.setContractUrl(fileUrl);
             Integer result = projectFileService.insertContractFile(contractFileView);
-            if (result > 0) {
+            if (result != 0) {
                 log.info("合同文件信息添加成功");
                 list.add(contractFileView);
+                if (contractStepId != null) {
+                    Integer result2 = contractService.updateFile(contractId, contractStepId, uploadType);
+                    if (result2 != 0) {
+                        log.info("阶段文件上传修改成功");
+                    } else {
+                        log.error("阶段文件上传修改失败");
+                    }
+                }
             } else {
                 log.error("合同文件信息添加失败");
                 res.message.setMessage(400, "合同文件信息添加失败");
@@ -488,24 +506,24 @@ public class FileController {
 
     @GetMapping("/deleteFileCopy")
     @ApiOperation(value = "删除解密文件")
-    public Message deleteFileCopy(){
+    public Message deleteFileCopy() {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         boolean flag = removeFile("/var/upload/ContractFile/save/");
-        if(flag){
+        if (flag) {
             log.info("解密文件删除成功");
-            res.message.setMessage(200,"解密文件删除成功");
-        }else {
+            res.message.setMessage(200, "解密文件删除成功");
+        } else {
             log.error("解密文件删除失败");
-            res.message.setMessage(200,"解密文件删除失败");
+            res.message.setMessage(200, "解密文件删除失败");
         }
         return res.message;
     }
 
-    private static boolean removeFile(String dirpath){
+    private static boolean removeFile(String dirpath) {
         File f = new File(dirpath);
-        if(f.isDirectory()){
-            File[] fl= f.listFiles();
-            for(File fs: fl){
+        if (f.isDirectory()) {
+            File[] fl = f.listFiles();
+            for (File fs : fl) {
                 removeFile(fs.toString());
             }
         }
