@@ -614,20 +614,4 @@ public class ProjectController {
     }
 
 
-    @PostMapping("/submitTermiate")
-    @ApiOperation(value ="提交项目终止申请")
-    public Message submitTerminate(@RequestBody Map map){
-        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-        if (res.message.getCode() == 401) {
-            log.error("Authorization参数校验失败");
-            return res.message;
-        }
-        Integer fkProjectId = (Integer) map.get("fkProjectId");
-        String projEndTime = (String) map.get("projEndTime");
-        String projEndRemark = (String) map.get("projEndRemark");
-        String projEndMeeting = (String) map.get("projEndMeeting");
-        String meetingTime = (String) map.get("meetingTime");
-        res.message.setMessage(200, "提交申请成功");
-        return res.message;
-    }
 }

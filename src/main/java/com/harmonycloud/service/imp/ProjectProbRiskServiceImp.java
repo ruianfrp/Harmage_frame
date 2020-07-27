@@ -43,4 +43,9 @@ public class ProjectProbRiskServiceImp implements ProjectProbRiskService {
     public String selectProbRiskDescription(Integer projectId) {
         return projectProbRiskDao.selectProbRiskDescription(projectId);
     }
+
+    @Override
+    public String selectPersonNameByEmployeeId(String employeeId) {
+        return projectProbRiskDao.selectPersonNameByEmployeeId(employeeId);
+    }
 }

@@ -17,4 +17,6 @@ public interface ProjectProbRiskService {
     List<ProjectProbRiskState> listProjectProbRiskState();
 
     String selectProbRiskDescription(Integer projectId);
+
+    String selectPersonNameByEmployeeId(String employeeId);
 }

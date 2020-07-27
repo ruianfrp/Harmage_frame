@@ -20,4 +20,6 @@ public interface ProjectProbRiskDao {
 
     String selectProbRiskDescription(Integer projectId);
 
+    String selectPersonNameByEmployeeId(String employeeId);
+
 }

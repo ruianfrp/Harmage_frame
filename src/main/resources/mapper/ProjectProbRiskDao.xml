@@ -19,7 +19,11 @@
     </insert>
 
     <select id="listProjectProbRiskById" resultType="com.harmonycloud.bean.project.ProjectProbRisk">
-        select * from project_prob_risk
+        select id,fk_project_id,description,solution,est_settle_time,act_settle_time,current_state,
+        proposed_time,a.employee_name as proposed_person,b.employee_name as incharge_person,type
+        from project_prob_risk
+        LEFT JOIN employee as a ON project_prob_risk.proposed_person = a.employee_gh
+        LEFT JOIN employee as b ON project_prob_risk.incharge_person = b.employee_gh
         where fk_project_id = #{projectId}
     </select>
 
@@ -73,6 +77,11 @@
         from project_prob_risk
         where fk_project_id = #{projectId} and current_state = 0
         LIMIT 0,1
+    </select>
+
+    <select id="selectPersonNameByEmployeeId" resultType="java.lang.String">
+        select employee_name from employee
+        where employee_gh = #{employeeId}
     </select>
 
     <!--select id="countOfProb" resultType="java.lang.Integer">
