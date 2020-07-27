@@ -1,20 +1,37 @@
 package com.harmonycloud.bean.contract;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class ContractFileView {
     private Integer id;
-    private Integer fkCustomerId;
-    private String customerName;
-    private Integer fkProjectId;
-    private String projectName;
+    private Integer fkContractId;
+    private Integer fkContractStepId;
     private String fileOldName;
     private String fileNewName;
     private String contractPath;
     private String contractUrl;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
+    public Integer getFkContractId() {
+        return fkContractId;
+    }
+
+    public void setFkContractId(Integer fkContractId) {
+        this.fkContractId = fkContractId;
+    }
+
+    public Integer getFkContractStepId() {
+        return fkContractStepId;
+    }
+
+    public void setFkContractStepId(Integer fkContractStepId) {
+        this.fkContractStepId = fkContractStepId;
+    }
 
     public String getFileOldName() {
         return fileOldName;
@@ -38,38 +55,6 @@ public class ContractFileView {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getFkCustomerId() {
-        return fkCustomerId;
-    }
-
-    public void setFkCustomerId(Integer fkCustomerId) {
-        this.fkCustomerId = fkCustomerId;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public Integer getFkProjectId() {
-        return fkProjectId;
-    }
-
-    public void setFkProjectId(Integer fkProjectId) {
-        this.fkProjectId = fkProjectId;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
     }
 
     public String getContractPath() {

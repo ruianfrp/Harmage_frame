@@ -35,25 +35,67 @@
         SELECT id,fk_contract_id,sum(contract_amount) as contract_received FROM contract_step where acceptance_done=1 and payment_done=1 group by fk_contract_id;
     </select>
 
+    <select id="listContractStep" resultType="com.harmonycloud.bean.contract.ContractStep">
+        SELECT cs.*,e.employee_name FROM contract_step as cs left join employee as e on e.employee_gh=cs.fk_employee_gh
+        left join contract as co on co.id=cs.fk_contract_id where co.fk_project_id=#{projId};
+    </select>
+
     <insert id="insertContract" parameterType="com.harmonycloud.bean.contract.Contract">
-        insert into contract(fk_customer_id, fk_project_id, contract_stage, contract_proportion, contract_amount,
-        contract_time, fk_employee_gh, contract_remark) values(fkCustomerId, fkProjectId, contractStage, contractProportion, contractAmount,
-        contractTime, fkEmployeeGh, contractRemark)
+        insert into contract(fk_customer_id, fk_project_id, contract_no, contract_name, contract_money, contract_date, fk_employee_gh)
+        values(fkCustomerId, fkProjectId, contractNo, contractName, contractMoney, contractDate, fkEmployeeGh)
+        <selectKey resultType="java.lang.Integer" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+        </selectKey>
+    </insert>
+
+    <insert id="insertContractStep">
+        insert into contract_step(fk_contract_id, contract_stage, contract_proportion, contract_amount, contract_standard, fk_employee_gh, contract_time, contract_remark) values
+        <foreach collection="list" index="index" item="contractStep" separator=",">
+            (#{contractStep.fkContractId},#{contractStep.contractStage},#{contractStep.contractProportion},#{contractStep.contractAmount},
+            #{contractStep.contractStandard},#{contractStep.fkEmployeeGh},#{contractStep.contractTime},#{contractStep.contractRemark})
+        </foreach>
     </insert>
     
     <delete id="deleteContract">
         delete from contract where id=#{id}
     </delete>
+
+    <delete id="deleteContractStep">
+        delete from contract_step where id=#{id}
+    </delete>
     
     <update id="updateContract" parameterType="com.harmonycloud.bean.contract.Contract">
         update contract
         <set>
+            <if test="contractNo!=null">contract_no=#{contractNo},</if>
+            <if test="contractName!=null">contract_name=#{contractName},</if>
+            <if test="contractMoney!=null">contract_money=#{contractMoney},</if>
+            <if test="contractDate!=null">contract_date=#{contractDate},</if>
+            <if test="fkEmployeeGh!=null">fk_employee_gh=#{fkEmployeeGh},</if>
+            update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="updateContractStep" parameterType="com.harmonycloud.bean.contract.ContractStep">
+        update contract_step
+        <set>
             <if test="contractStage!=null">contract_stage=#{contractStage},</if>
             <if test="contractProportion!=null">contract_proportion=#{contractProportion},</if>
             <if test="contractAmount!=null">contract_amount=#{contractAmount},</if>
-            <if test="contractTime!=null">contract_time=#{contractTime},</if>
+            <if test="contractStandard!=null">contract_standard=#{contractStandard},</if>
             <if test="fkEmployeeGh!=null">fk_employee_gh=#{fkEmployeeGh},</if>
+            <if test="contractTime!=null">contract_time=#{contractTime},</if>
             <if test="contractRemark!=null">contract_remark=#{contractRemark},</if>
+            update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
+        </set>
+        where id=#{id}
+    </update>
+    <update id="updateFile">
+        update contract_step
+        <set>
+            <if test="uploadType==1">acceptance_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),acceptance_done=1</if>
+            <if test="uploadType==2">payment_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),payment_done=1,</if>
             update_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S')
         </set>
         where id=#{id}

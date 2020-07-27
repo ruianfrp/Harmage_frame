@@ -1,30 +1,36 @@
 package com.harmonycloud.bean.contract;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class ContractListView {
-    private Integer id;
-    private Integer fkCustomerId;
-    private String customerName;
-    private Integer fkProjectId;
-    private String projLine;
-    private String projSubstate;
-    private String projectName;
-    private String contractNo;
-    private String contractName;
-    private double contractMoney;
-    private double received;
-    private double uncollected;
-    private Date contractDate;
-    private String fkEmployeeGh;
-    private String employeeName;
-    private String contractStage;
-    private String contractProportion;
-    private double contractAmount;
-    private Date contractTime;
-    private String contractRemark;
-    private Date createTime;
-    private Date updateTime;
+    private Integer id;  //id
+    private Integer fkCustomerId;  //客户id
+    private String customerName;  //客户名称
+    private Integer fkProjectId;  //项目id
+    private String projLine;  //项目产品线（类型）
+    private String projSubstate;  //项目状态
+    private String projName;  //项目名称
+    private String contractNo;  //合同编号
+    private String contractName;  //合同名称
+    private double contractMoney;  //合同金额
+    private double received;  //已收款
+    private double uncollected;  //未收款
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date contractDate;  //合同签订时间
+    private String fkEmployeeGh;  //合同签署人工号
+    private String employeeName;  //合同签署人姓名
+    private String contractStage;  //下一阶段
+    private String contractProportion;  //比例
+    private double contractAmount;  //金额
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date contractTime;  //预计开票时间
+    private String contractRemark;  //备注
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;  //合同录入时间
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date updateTime;  //合同修改时间
 
     public double getReceived() {
         return received;
@@ -90,12 +96,12 @@ public class ContractListView {
         this.projSubstate = projSubstate;
     }
 
-    public String getProjectName() {
-        return projectName;
+    public String getProjName() {
+        return projName;
     }
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
+    public void setProjName(String projName) {
+        this.projName = projName;
     }
 
     public String getContractNo() {

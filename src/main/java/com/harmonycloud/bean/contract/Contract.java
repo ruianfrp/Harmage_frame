@@ -1,5 +1,7 @@
 package com.harmonycloud.bean.contract;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class Contract {
@@ -7,14 +9,17 @@ public class Contract {
     private Integer fkCustomerId;
     private String customerName;
     private Integer fkProjectId;
-    private String projectName;
+    private String projName;
     private String contractNo;
     private String contractName;
     private double contractMoney;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date contractDate;
     private String fkEmployeeGh;
     private String employeeName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     public Integer getId() {
@@ -49,12 +54,12 @@ public class Contract {
         this.fkProjectId = fkProjectId;
     }
 
-    public String getProjectName() {
-        return projectName;
+    public String getProjName() {
+        return projName;
     }
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
+    public void setProjName(String projName) {
+        this.projName = projName;
     }
 
     public String getContractNo() {
