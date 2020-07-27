@@ -9,6 +9,7 @@ import com.harmonycloud.bean.account.UserListView;
 import com.harmonycloud.bean.contract.Contract;
 import com.harmonycloud.bean.contract.ContractListView;
 import com.harmonycloud.bean.contract.ContractReceivedView;
+import com.harmonycloud.bean.contract.ContractStep;
 import com.harmonycloud.bean.customer.*;
 import com.harmonycloud.bean.document.DocumentPlanneListView;
 import com.harmonycloud.bean.document.DocumentRecordListView;
@@ -1298,12 +1299,12 @@ public class CustomerController {
     }
 
     /**
-     * 获取客户项目对应的合同阶段
+     * 获取合同列表
      *
      * @return res.message
      */
     @GetMapping("/listContract")
-    @ApiOperation(value = "获取客户项目对应的合同阶段")
+    @ApiOperation(value = "获取合同列表")
     public Message listContract() {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
@@ -1403,39 +1404,85 @@ public class CustomerController {
         return res.message;
     }
 
-//    /**
-//     * 新增合同阶段信息
-//     *
-//     * @param contracts 合同阶段信息
-//     * @return res.message
-//     */
-//    @PostMapping("/insertContract")
-//    @ApiOperation(value = "新增合同阶段信息")
-//    public Message insertContract(@RequestBody List<Contract> contracts) {
-//        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-//        if (res.message.getCode() == 401) {
-//            log.error("Authorization参数校验失败");
-//            return res.message;
-//        }
-//        short flag = 0;
-//        for (Contract contract : contracts) {
-//            Integer result = contractService.insertContract(contract);
-//            if (result > 0) {
-//                log.info("合同" + contract.getContractStage() + "阶段添加成功");
-//                flag = 1;
-//            } else {
-//                log.error("合同" + contract.getContractStage() + "阶段添加失败");
-//                flag = 0;
-//                break;
-//            }
-//        }
-//        if (flag == 1) {
-//            res.message.setMessage(200, "合同添加成功");
-//        } else {
-//            res.message.setMessage(400, "合同添加失败");
-//        }
-//        return res.message;
-//    }
+    /**
+     * 获取项目对应的合同阶段
+     *
+     * @param projId 项目id
+     * @return res.message
+     */
+    @PostMapping("/listContractStep")
+    @ApiOperation(value = "获取项目对应的合同阶段")
+    public Message listContractStep(@RequestBody Integer projId) {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Map<String, Object> data = new HashMap<>();
+        List<ContractStep> list = contractService.listContractStep(projId);
+        if (list.size() > 0) {
+            log.info("获取项目对应的合同阶段成功");
+            data.put("list", list);
+            data.put("total", list.size());
+            res.message.setMessage(200, "获取项目对应的合同阶段成功", data);
+        } else {
+            log.error("获取项目对应的合同阶段为空");
+            res.message.setMessage(400, "获取项目对应的合同阶段为空");
+        }
+        return res.message;
+    }
+
+    /**
+     * 新增合同
+     *
+     * @param contract 合同信息
+     * @return res.message
+     */
+    @PostMapping("/insertContract")
+    @ApiOperation(value = "新增合同阶段信息")
+    public Message insertContract(@RequestBody Contract contract) {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Map<String, Object> data = new HashMap<>();
+        Integer result = contractService.insertContract(contract);
+        if (result != 0) {
+            log.info("合同添加成功");
+            data.put("id", result);
+            res.message.setMessage(200, "合同添加成功", data);
+        } else {
+            log.error("合同添加失败");
+            res.message.setMessage(400, "合同添加失败");
+        }
+        return res.message;
+    }
+
+    /**
+     * 添加合同阶段
+     *
+     * @param contractSteps 合同阶段信息
+     * @return res.message
+     */
+    @PostMapping("/insertContractStep")
+    @ApiOperation(value = "添加合同阶段")
+    public Message insertContractStep(@RequestBody List<ContractStep> contractSteps) {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Integer result = contractService.insertContractStep(contractSteps);
+        if (result > 0) {
+            log.info("添加合同阶段成功");
+            res.message.setMessage(200, "添加合同阶段成功");
+        } else {
+            log.error("添加合同阶段失败");
+            res.message.setMessage(400, "添加合同阶段失败");
+        }
+        return res.message;
+    }
 
     /**
      * 删除合同阶段信息
@@ -1444,7 +1491,7 @@ public class CustomerController {
      * @return res.message
      */
     @PostMapping("/deleteContract")
-    @ApiOperation(value = "删除合同阶段信息")
+    @ApiOperation(value = "删除合同信息")
     public Message deleteContract(@RequestBody Integer id) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
@@ -1452,6 +1499,29 @@ public class CustomerController {
             return res.message;
         }
         Integer result = contractService.deleteContract(id);
+        if (result > 0) {
+            res.message.setMessage(200, "删除合同信息成功");
+        } else {
+            res.message.setMessage(400, "删除合同信息失败");
+        }
+        return res.message;
+    }
+
+    /**
+     * 删除合同阶段信息
+     *
+     * @param id 合同阶段id
+     * @return res.message
+     */
+    @PostMapping("/deleteContractStep")
+    @ApiOperation(value = "删除合同阶段信息")
+    public Message deleteContractStep(@RequestBody Integer id) {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Integer result = contractService.deleteContractStep(id);
         if (result > 0) {
             res.message.setMessage(200, "删除合同阶段信息成功");
         } else {
@@ -1461,13 +1531,13 @@ public class CustomerController {
     }
 
     /**
-     * 修改合同阶段信息
+     * 修改合同
      *
      * @param contract 修改的合同信息
      * @return res.message
      */
     @PostMapping("/updateContract")
-    @ApiOperation(value = "修改合同阶段信息")
+    @ApiOperation(value = "修改合同")
     public Message updateContract(@RequestBody Contract contract) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
@@ -1475,6 +1545,29 @@ public class CustomerController {
             return res.message;
         }
         Integer result = contractService.updateContract(contract);
+        if (result > 0) {
+            res.message.setMessage(200, "合同修改成功");
+        } else {
+            res.message.setMessage(400, "合同修改失败");
+        }
+        return res.message;
+    }
+
+    /**
+     * 修改合同阶段
+     *
+     * @param contractStep 修改的合同阶段信息
+     * @return res.message
+     */
+    @PostMapping("/updateContractStep")
+    @ApiOperation(value = "修改合同阶段信息")
+    public Message updateContractStep(@RequestBody ContractStep contractStep) {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Integer result = contractService.updateContractStep(contractStep);
         if (result > 0) {
             res.message.setMessage(200, "合同阶段信息修改成功");
         } else {
