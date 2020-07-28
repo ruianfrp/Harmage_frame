@@ -19,13 +19,31 @@ public class ContractStep {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date acceptanceTime;  //验收报告上传时间
     private Integer acceptanceDone;  //验收报告是否上传（0未上传，1已上传）
+    private ContractFileView acceptanceFile;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date paymentTime;  //回款证明上传时间
     private Integer paymentDone;  //回款证明是否上传（0未上传，1已上传）
+    private ContractFileView paymentFile;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;  //录入时间
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;  //修改时间
+
+    public ContractFileView getAcceptanceFile() {
+        return acceptanceFile;
+    }
+
+    public void setAcceptanceFile(ContractFileView acceptanceFile) {
+        this.acceptanceFile = acceptanceFile;
+    }
+
+    public ContractFileView getPaymentFile() {
+        return paymentFile;
+    }
+
+    public void setPaymentFile(ContractFileView paymentFile) {
+        this.paymentFile = paymentFile;
+    }
 
     public Integer getId() {
         return id;

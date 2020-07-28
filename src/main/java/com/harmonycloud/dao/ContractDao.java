@@ -1,9 +1,6 @@
 package com.harmonycloud.dao;
 
-import com.harmonycloud.bean.contract.Contract;
-import com.harmonycloud.bean.contract.ContractListView;
-import com.harmonycloud.bean.contract.ContractReceivedView;
-import com.harmonycloud.bean.contract.ContractStep;
+import com.harmonycloud.bean.contract.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,7 +16,11 @@ public interface ContractDao {
 
     List<ContractReceivedView> selectReceived();
 
+    ContractFileView selectContractFile(Integer id);
+
     List<ContractStep> listContractStep(Integer projId);
+
+    ContractFileView selectContractStepFile(Integer id, String fileType);
 
     Integer insertContract(Contract contract);
 
@@ -33,6 +34,6 @@ public interface ContractDao {
 
     Integer updateContractStep(ContractStep contractStep);
 
-    Integer updateFile(Integer contractId,Integer contractStepId,Integer updateType);
+    Integer updateFile(Integer contractStepId,String updateType);
 
 }

@@ -6,10 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
 import com.harmonycloud.bean.account.UserListView;
-import com.harmonycloud.bean.contract.Contract;
-import com.harmonycloud.bean.contract.ContractListView;
-import com.harmonycloud.bean.contract.ContractReceivedView;
-import com.harmonycloud.bean.contract.ContractStep;
+import com.harmonycloud.bean.contract.*;
 import com.harmonycloud.bean.customer.*;
 import com.harmonycloud.bean.document.DocumentPlanneListView;
 import com.harmonycloud.bean.document.DocumentRecordListView;
@@ -1325,6 +1322,8 @@ public class CustomerController {
                             contractListView.setUncollected(contractListView.getContractAmount() - contractReceivedView.getContractReceived());
                         }
                     }
+                    ContractFileView contractFileView = contractService.selectContractFile(contractListView.getId());
+                    contractListView.setContractFile(contractFileView);
                 }
                 data.put("list", list1);
                 data.put("total", list1.size());
@@ -1346,6 +1345,8 @@ public class CustomerController {
                             contractListView.setUncollected(contractListView.getContractAmount() - contractReceivedView.getContractReceived());
                         }
                     }
+                    ContractFileView contractFileView = contractService.selectContractFile(contractListView.getId());
+                    contractListView.setContractFile(contractFileView);
                 }
                 data.put("list", list1);
                 data.put("total", list1.size());
@@ -1387,6 +1388,8 @@ public class CustomerController {
                                 contractListView.setUncollected(contractListView.getContractAmount() - contractReceivedView.getContractReceived());
                             }
                         }
+                        ContractFileView contractFileView = contractService.selectContractFile(contractListView.getId());
+                        contractListView.setContractFile(contractFileView);
                     }
                     data.put("list", list);
                     data.put("total", list.size());
@@ -1412,7 +1415,7 @@ public class CustomerController {
      */
     @PostMapping("/listContractStep")
     @ApiOperation(value = "获取项目对应的合同阶段")
-    public Message listContractStep(@RequestBody Integer projId) {
+    public Message listContractStep(@RequestParam("projId") Integer projId) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -1422,6 +1425,12 @@ public class CustomerController {
         List<ContractStep> list = contractService.listContractStep(projId);
         if (list.size() > 0) {
             log.info("获取项目对应的合同阶段成功");
+            for (ContractStep contractStep : list) {
+                ContractFileView contractFileView1 = contractService.selectContractStepFile(contractStep.getId(), "验收报告");
+                ContractFileView contractFileView2 = contractService.selectContractStepFile(contractStep.getId(), "回款证明");
+                contractStep.setAcceptanceFile(contractFileView1);
+                contractStep.setPaymentFile(contractFileView2);
+            }
             data.put("list", list);
             data.put("total", list.size());
             res.message.setMessage(200, "获取项目对应的合同阶段成功", data);
@@ -1492,7 +1501,7 @@ public class CustomerController {
      */
     @PostMapping("/deleteContract")
     @ApiOperation(value = "删除合同信息")
-    public Message deleteContract(@RequestBody Integer id) {
+    public Message deleteContract(@RequestParam("id") Integer id) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");
@@ -1515,7 +1524,7 @@ public class CustomerController {
      */
     @PostMapping("/deleteContractStep")
     @ApiOperation(value = "删除合同阶段信息")
-    public Message deleteContractStep(@RequestBody Integer id) {
+    public Message deleteContractStep(@RequestParam("id") Integer id) {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         if (res.message.getCode() == 401) {
             log.error("Authorization参数校验失败");

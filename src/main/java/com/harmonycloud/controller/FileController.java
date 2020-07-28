@@ -423,7 +423,7 @@ public class FileController {
     public Message encryptUploadFile(@RequestParam("file") MultipartFile[] files,
                                      @RequestParam("contractId") Integer contractId,
                                      @RequestParam("contractStepId") Integer contractStepId,
-                                     @RequestParam("uploadType") Integer uploadType) throws Exception {
+                                     @RequestParam("uploadFileType") String uploadType) throws Exception {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         Map<String, Object> data = new HashMap<>();
         List<ContractFileView> list = new ArrayList<>();
@@ -433,6 +433,7 @@ public class FileController {
             contractFileView.setFkContractId(contractId);
             if (contractStepId != null) {
                 contractFileView.setFkContractStepId(contractStepId);
+                contractFileView.setFileType(uploadType);
             }
             String oldName = file.getOriginalFilename();// 获取文件原来的名字
             contractFileView.setFileOldName(oldName);
@@ -459,7 +460,7 @@ public class FileController {
                 log.info("合同文件信息添加成功");
                 list.add(contractFileView);
                 if (contractStepId != null) {
-                    Integer result2 = contractService.updateFile(contractId, contractStepId, uploadType);
+                    Integer result2 = contractService.updateFile(contractStepId, uploadType);
                     if (result2 != 0) {
                         log.info("阶段文件上传修改成功");
                     } else {

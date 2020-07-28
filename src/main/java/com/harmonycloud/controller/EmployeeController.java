@@ -500,12 +500,14 @@ public class EmployeeController {
     }
 
     @GetMapping("/qucikAuthentication")
-    @ApiOperation("一键授权")
-    public Message LDAPAuthentication()
+    @ApiOperation(value = "一键授权")
+    public Map LDAPAuthentication()
     {
-        VerifyMessage res = new VerifyMessage();
         SyncInfo.LoadAllUserInfo();
-        res.message.setMessage(200,"一键授权成功",null);
-        return res.message;
+        return new HashMap<String, Object>(){{
+            put("msg", "一键授权成功");
+            put("code",200);
+            put("data",null);
+        }};
     }
 }

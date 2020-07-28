@@ -27,10 +27,19 @@ public class ContractListView {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date contractTime;  //预计开票时间
     private String contractRemark;  //备注
+    private ContractFileView contractFile;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;  //合同录入时间
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;  //合同修改时间
+
+    public ContractFileView getContractFile() {
+        return contractFile;
+    }
+
+    public void setContractFile(ContractFileView contractFile) {
+        this.contractFile = contractFile;
+    }
 
     public double getReceived() {
         return received;

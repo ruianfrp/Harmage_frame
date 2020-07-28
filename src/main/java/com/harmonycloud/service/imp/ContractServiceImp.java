@@ -1,10 +1,7 @@
 package com.harmonycloud.service.imp;
 
 import com.harmonycloud.bean.account.Admin;
-import com.harmonycloud.bean.contract.Contract;
-import com.harmonycloud.bean.contract.ContractListView;
-import com.harmonycloud.bean.contract.ContractReceivedView;
-import com.harmonycloud.bean.contract.ContractStep;
+import com.harmonycloud.bean.contract.*;
 import com.harmonycloud.dao.AdminDao;
 import com.harmonycloud.dao.ContractDao;
 import com.harmonycloud.service.AdminService;
@@ -41,8 +38,18 @@ public class ContractServiceImp implements ContractService {
     }
 
     @Override
+    public ContractFileView selectContractFile(Integer id){
+        return contractDao.selectContractFile(id);
+    }
+
+    @Override
     public List<ContractStep> listContractStep(Integer projId){
         return contractDao.listContractStep(projId);
+    }
+
+    @Override
+    public ContractFileView selectContractStepFile(Integer id, String fileType){
+        return contractDao.selectContractStepFile(id, fileType);
     }
 
     @Override
@@ -76,7 +83,7 @@ public class ContractServiceImp implements ContractService {
     }
 
     @Override
-    public Integer updateFile(Integer contractId,Integer contractStepId,Integer updateType){
-        return contractDao.updateFile(contractId, contractStepId, updateType);
+    public Integer updateFile(Integer contractStepId,String updateType){
+        return contractDao.updateFile(contractStepId, updateType);
     }
 }

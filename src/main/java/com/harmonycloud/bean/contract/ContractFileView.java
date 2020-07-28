@@ -8,6 +8,7 @@ public class ContractFileView {
     private Integer id;
     private Integer fkContractId;
     private Integer fkContractStepId;
+    private String fileType;
     private String fileOldName;
     private String fileNewName;
     private String contractPath;
@@ -16,6 +17,14 @@ public class ContractFileView {
     private Date createTime;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
 
     public Integer getFkContractId() {
         return fkContractId;
