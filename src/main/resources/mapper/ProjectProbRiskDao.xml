@@ -12,10 +12,71 @@
         3.erase chinese character 4. add/delete some space
     -->
     <insert id="insertProjectProbRisk" parameterType="com.harmonycloud.bean.project.ProjectProbRisk">
-        insert into project_prob_risk(description,solution,est_settle_time,act_settle_time,current_state,
-        proposed_time,proposed_person,incharge_person,fk_project_id,type)
-        values(#{description},#{solution},#{estSettleTime},#{actSettleTime},#{currentState},#{proposedTime},
-        #{proposedPerson},#{inChargePerson},#{fkProjectId},#{type})
+        insert into project_prob_risk
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="description!=null">
+                description,
+            </if>
+            <if test="solution!=null">
+                solution,
+            </if>
+            <if test="estSettleTime!=null">
+                est_settle_time,
+            </if>
+            <if test="actSettleTime!=null">
+                act_settle_time,
+            </if>
+            <if test="currentState!=null">
+                current_state,
+            </if>
+            <if test="proposedTime!=null">
+                proposed_time,
+            </if>
+            <if test="proposedPerson!=null">
+                proposed_person,
+            </if>
+            <if test="inChargePerson!=null">
+                incharge_person,
+            </if>
+            <if test="fkProjectId!=null">
+                fk_project_id,
+            </if>
+            <if test="type!=null">
+                type,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="description!=null">
+                #{description},
+            </if>
+            <if test="solution!=null">
+                #{solution},
+            </if>
+            <if test="estSettleTime!=null">
+                #{estSettleTime},
+            </if>
+            <if test="actSettleTime!=null">
+                #{actSettleTime},
+            </if>
+            <if test="currentState!=null">
+                #{currentState},
+            </if>
+            <if test="proposedTime!=null">
+                #{proposedTime},
+            </if>
+            <if test="proposedPerson!=null">
+                #{proposedPerson},
+            </if>
+            <if test="inChargePerson!=null">
+                #{inChargePerson},
+            </if>
+            <if test="fkProjectId!=null">
+                #{fkProjectId},
+            </if>
+            <if test="type!=null">
+                #{type},
+            </if>
+        </trim>
     </insert>
 
     <select id="listProjectProbRiskById" resultType="com.harmonycloud.bean.project.ProjectProbRisk">

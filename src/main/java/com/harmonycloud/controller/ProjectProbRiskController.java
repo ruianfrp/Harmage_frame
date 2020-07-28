@@ -85,13 +85,11 @@ public class ProjectProbRiskController {
             "proposedPerson\ninChargePerson\ntype",value="以上字段必填,其余可不填或填null,提出人负责人" +
             "填工号",required = true) ProjectProbRisk projectProbRisk){
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-        if (res.message.getCode() == 401) {
-            log.error("Authorization参数校验失败");
-            return res.message;
-        }
-        projectProbRisk.setProposedTime(new Date());
-
-
+//        if (res.message.getCode() == 401) {
+//            log.error("Authorization参数校验失败");
+//            return res.message;
+//        }
+//        projectProbRisk.setProposedTime(new Date());
         Integer result = projectProbRiskService.insertProjectProbRisk(projectProbRisk);
         Map<String,Object> data = new HashMap<>();
         if(result>0) {
@@ -99,8 +97,7 @@ public class ProjectProbRiskController {
             if(projectProbRisk.getType()==0) {
                 log.info("项目问题添加成功");
                 res.message.setMessage(200,"项目问题添加成功",data);
-            }
-            else{
+            }else{
                 log.info("项目风险添加成功");
                 res.message.setMessage(200,"项目风险添加成功",data);
             }
@@ -115,14 +112,12 @@ public class ProjectProbRiskController {
 
     @PostMapping("/updateProjectProbRisk")
     @ApiOperation(value = "更新项目风险/问题",notes = "根据记录id标识来更新")
-    @ResponseBody
-    public Message updateProjectProbRisk(@RequestBody @ApiParam(name = "id",value = "id非项目projectId，更新的字段" +
-            "可为一个或多个",required = true) ProjectProbRisk projectProbRisk){
+    public Message updateProjectProbRisk(@RequestBody ProjectProbRisk projectProbRisk){
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-        if (res.message.getCode() == 401) {
-            log.error("Authorization参数校验失败");
-            return res.message;
-        }
+//        if (res.message.getCode() == 401) {
+//            log.error("Authorization参数校验失败");
+//            return res.message;
+//        }
         Integer result = projectProbRiskService.updateProjectProbRisk(projectProbRisk);
         Map<String,Object> data = new HashMap<>();
         if(result>0){
