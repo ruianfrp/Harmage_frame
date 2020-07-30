@@ -12,6 +12,7 @@ import com.harmonycloud.config.DingConstant;
 
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import java.sql.*;
 import java.text.SimpleDateFormat;

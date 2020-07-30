@@ -1,10 +1,12 @@
 package com.harmonycloud.service.imp;
 
+import com.harmonycloud.bean.Threads.SynchroThread;
 import com.harmonycloud.bean.employee.*;
 import com.harmonycloud.bean.skill.TestSkillListView;
 import com.harmonycloud.dao.EmployeeDao;
 import com.harmonycloud.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

@@ -136,6 +136,67 @@ public class SendMessageUtil {
         }
     }
 
+
+
+
+
+    public static void projectTerminateMessageSend(ProjectEndMsgView projectEndMsgView) throws Exception {
+        DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
+        OapiMessageCorpconversationAsyncsendV2Request.Form form0 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        OapiMessageCorpconversationAsyncsendV2Request.Form form1 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        OapiMessageCorpconversationAsyncsendV2Request.Form form2 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        OapiMessageCorpconversationAsyncsendV2Request.Form form3 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        OapiMessageCorpconversationAsyncsendV2Request.Form form4 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        OapiMessageCorpconversationAsyncsendV2Request.Form form5 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        form0.setKey("项目名称：");
+        form0.setValue(projectEndMsgView.getProjectName());
+        form1.setKey("项目经理：");
+        form1.setValue(projectEndMsgView.getPmName());
+        form2.setKey("预计结束时间：");
+        form2.setValue(projectEndMsgView.getPreEndTime());
+        form3.setKey("实际结束时间：");
+        form3.setValue(projectEndMsgView.getRealEndTime());
+        form4.setKey("申请时间：");
+        form4.setValue(projectEndMsgView.getCreatTime());
+        form5.setKey("申请理由：");
+        form5.setValue(projectEndMsgView.getRemark());
+        List<OapiMessageCorpconversationAsyncsendV2Request.Form> list = new ArrayList<>();
+        list.add(0,form0);
+        list.add(1,form1);
+        list.add(2,form2);
+        list.add(3,form3);
+        list.add(4,form4);
+        list.add(5,form5);
+
+        OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
+        request.setAgentId(305862497L);
+        request.setUseridList("15848927472119248");
+
+        OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
+        msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
+        msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
+        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f58.16.78.136%3a33029%2flogin&pc_slide=false");
+        msg.getOa().getHead().setText("终止项目申请审批");
+        msg.getOa().getHead().setBgcolor("FFBBBBBB");
+        msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
+        msg.getOa().getBody().setTitle("Harmage消息通知");
+        msg.getOa().getBody().setForm(Collections.singletonList(new OapiMessageCorpconversationAsyncsendV2Request.Form()));
+        msg.getOa().getBody().setForm(list);
+        msg.getOa().getBody().setContent("此项目已完成且已开结项会议，特此申请结项！\n(*^v^*)点击详情前往Harmage");
+        msg.getOa().getBody().setFileCount(String.valueOf(projectEndMsgView.getFileNum()));
+        msg.getOa().getBody().setAuthor(projectEndMsgView.getPmName());
+        msg.setMsgtype("oa");
+        request.setMsg(msg);
+
+        OapiMessageCorpconversationAsyncsendV2Response response = client.execute(request, getToken());
+        if (response.isSuccess()) {
+            log.info("钉钉发送工作通知消息成功");
+        } else {
+            log.error("钉钉发送工作通知消息失败");
+        }
+    }
+
+
     public static void projectEndMeetingMsgSend(ProjectEndMsgView projectEndMsgView) throws Exception {
         DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
         OapiMessageCorpconversationAsyncsendV2Request.Form form0 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
@@ -169,6 +230,60 @@ public class SendMessageUtil {
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
         msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f58.16.78.136%3a33029%2flogin&pc_slide=false");
         msg.getOa().getHead().setText("结项会议申请审批");
+        msg.getOa().getHead().setBgcolor("FFBBBBBB");
+        msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
+        msg.getOa().getBody().setTitle("Harmage消息通知");
+        msg.getOa().getBody().setForm(Collections.singletonList(new OapiMessageCorpconversationAsyncsendV2Request.Form()));
+        msg.getOa().getBody().setForm(list);
+        msg.getOa().getBody().setContent("此项目已完成暂未开结项会议，特此申请结项会议时间，请尽快安排实际会议时间！\n(*^v^*)点击详情前往Harmage");
+        msg.getOa().getBody().setFileCount(String.valueOf(projectEndMsgView.getFileNum()));
+        msg.getOa().getBody().setAuthor(projectEndMsgView.getPmName());
+        msg.setMsgtype("oa");
+        request.setMsg(msg);
+
+        OapiMessageCorpconversationAsyncsendV2Response response = client.execute(request, getToken());
+        if (response.isSuccess()) {
+            log.info("钉钉发送工作通知消息成功");
+        } else {
+            log.error("钉钉发送工作通知消息失败");
+        }
+    }
+
+
+
+    public static void projectTerminateMeetingMsgSend(ProjectEndMsgView projectEndMsgView) throws Exception {
+        DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
+        OapiMessageCorpconversationAsyncsendV2Request.Form form0 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        OapiMessageCorpconversationAsyncsendV2Request.Form form1 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        OapiMessageCorpconversationAsyncsendV2Request.Form form2 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        OapiMessageCorpconversationAsyncsendV2Request.Form form3 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        OapiMessageCorpconversationAsyncsendV2Request.Form form4 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+        form0.setKey("项目名称：");
+        form0.setValue(projectEndMsgView.getProjectName());
+        form1.setKey("项目经理：");
+        form1.setValue(projectEndMsgView.getPmName());
+        form2.setKey("预定会议时间：");
+        form2.setValue(projectEndMsgView.getMeetingTime());
+        form3.setKey("申请时间：");
+        form3.setValue(projectEndMsgView.getCreatTime());
+        form4.setKey("申请理由：");
+        form4.setValue(projectEndMsgView.getRemark());
+        List<OapiMessageCorpconversationAsyncsendV2Request.Form> list = new ArrayList<>();
+        list.add(0,form0);
+        list.add(1,form1);
+        list.add(2,form2);
+        list.add(3,form3);
+        list.add(4,form4);
+
+        OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
+        request.setAgentId(305862497L);
+        request.setUseridList("15848927472119248");
+
+        OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
+        msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
+        msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
+        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f58.16.78.136%3a33029%2flogin&pc_slide=false");
+        msg.getOa().getHead().setText("终止项目会议申请审批");
         msg.getOa().getHead().setBgcolor("FFBBBBBB");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
         msg.getOa().getBody().setTitle("Harmage消息通知");

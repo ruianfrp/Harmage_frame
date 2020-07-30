@@ -3,6 +3,7 @@ package com.harmonycloud.service;
 
 import com.harmonycloud.bean.employee.*;
 import com.harmonycloud.bean.skill.TestSkillListView;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.Date;
 import java.util.List;
