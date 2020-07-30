@@ -735,6 +735,10 @@
         select customer_name from customer;
     </select>
 
+    <select id="listAllCustomer" resultType="com.harmonycloud.bean.customer.Customer">
+        select * from customer;
+    </select>
+
     <select id="listSaleman" resultType="com.harmonycloud.bean.account.UserListView" >
         SELECT e.employee_gh,e.employee_name as user_name,aaa1.sales_industry FROM user as u left join
         employee as e on e.employee_gh=u.fk_employee_gh

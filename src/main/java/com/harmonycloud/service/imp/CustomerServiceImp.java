@@ -239,6 +239,11 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
+    public List<Customer> listAllCustomer(){
+        return customerDao.listAllCustomer();
+    }
+
+    @Override
     public List<UserListView> listSaleman(){
         return customerDao.listSaleman();
     }

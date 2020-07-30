@@ -5,17 +5,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 public class ContractFileView {
-    private Integer id;
-    private Integer fkContractId;
-    private Integer fkContractStepId;
-    private String fileType;
-    private String fileOldName;
-    private String fileNewName;
-    private String contractPath;
-    private String contractUrl;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Integer id;  //id
+    private Integer fkContractId;  //合同id  必填
+    private Integer fkContractStepId;  //合同阶段id  非必填
+    private String fileType;  //合同类型（验收报告、回款证明）  非必填
+    private String fileOldName;  //合同文件名称
+    private String fileNewName;  //重命名后的名字
+    private String contractPath;  //合同文件路径
+    private String contractUrl;  //合同文件Url（加密后无用）
     private Date createTime;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     public String getFileType() {

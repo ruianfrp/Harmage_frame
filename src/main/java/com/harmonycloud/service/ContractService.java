@@ -32,4 +32,8 @@ public interface ContractService {
     Integer updateContractStep(ContractStep contractStep);
 
     Integer updateFile(Integer contractStepId,String updateType);
+
+    List<Integer> listPaymentDone(Integer contractStepId);
+
+    Integer finashProj(Integer contractStepId);
 }

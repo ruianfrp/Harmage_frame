@@ -102,6 +102,8 @@ public interface CustomerService {
 
     List<String> selectAllCustomerName();
 
+    List<Customer> listAllCustomer();
+
     List<UserListView> listSaleman();
 
     Integer deleteSalemans(Integer fkCustomerId);

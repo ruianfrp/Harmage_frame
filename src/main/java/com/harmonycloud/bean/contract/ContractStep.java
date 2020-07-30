@@ -1,5 +1,6 @@
 package com.harmonycloud.bean.contract;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -13,21 +14,47 @@ public class ContractStep {
     private String contractStandard;  //验收标准
     private String fkEmployeeGh;  //负责人工号
     private String employeeName;  //负责人姓名
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date contractTime;  //预计开票时间
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date contractTime;  //预计开票时间 
     private String contractRemark;  //备注
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date acceptanceTime;  //验收报告上传时间
     private Integer acceptanceDone;  //验收报告是否上传（0未上传，1已上传）
-    private ContractFileView acceptanceFile;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private ContractFileView acceptanceFile;  //验收报告文件信息
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date invoiceTime;  //开票证明上传时间
+    private Integer invoiceDone;  //开票证明是否上传（0未上传，1已上传）
+    private ContractFileView invoiceFile;  //开票证明文件信息
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date paymentTime;  //回款证明上传时间
     private Integer paymentDone;  //回款证明是否上传（0未上传，1已上传）
-    private ContractFileView paymentFile;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private ContractFileView paymentFile;  //回款证明文件信息
     private Date createTime;  //录入时间
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;  //修改时间
+
+    public Date getInvoiceTime() {
+        return invoiceTime;
+    }
+
+    public void setInvoiceTime(Date invoiceTime) {
+        this.invoiceTime = invoiceTime;
+    }
+
+    public Integer getInvoiceDone() {
+        return invoiceDone;
+    }
+
+    public void setInvoiceDone(Integer invoiceDone) {
+        this.invoiceDone = invoiceDone;
+    }
+
+    public ContractFileView getInvoiceFile() {
+        return invoiceFile;
+    }
+
+    public void setInvoiceFile(ContractFileView invoiceFile) {
+        this.invoiceFile = invoiceFile;
+    }
 
     public ContractFileView getAcceptanceFile() {
         return acceptanceFile;

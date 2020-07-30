@@ -1,5 +1,6 @@
 package com.harmonycloud.bean.contract;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -17,20 +18,18 @@ public class ContractListView {
     private double contractMoney;  //合同金额
     private double received;  //已收款
     private double uncollected;  //未收款
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date contractDate;  //合同签订时间
     private String fkEmployeeGh;  //合同签署人工号
     private String employeeName;  //合同签署人姓名
     private String contractStage;  //下一阶段
     private String contractProportion;  //比例
     private double contractAmount;  //金额
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date contractTime;  //预计开票时间
     private String contractRemark;  //备注
-    private ContractFileView contractFile;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private ContractFileView contractFile;  //合同文件信息
     private Date createTime;  //合同录入时间
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;  //合同修改时间
 
     public ContractFileView getContractFile() {

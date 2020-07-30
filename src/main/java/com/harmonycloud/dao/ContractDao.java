@@ -36,4 +36,8 @@ public interface ContractDao {
 
     Integer updateFile(Integer contractStepId,String updateType);
 
+    List<Integer> listPaymentDone(Integer contractStepId);
+
+    Integer finashProj(Integer contractStepId);
+
 }

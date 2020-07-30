@@ -86,4 +86,14 @@ public class ContractServiceImp implements ContractService {
     public Integer updateFile(Integer contractStepId,String updateType){
         return contractDao.updateFile(contractStepId, updateType);
     }
+
+    @Override
+    public List<Integer> listPaymentDone(Integer contractStepId){
+        return contractDao.listPaymentDone(contractStepId);
+    }
+
+    @Override
+    public Integer finashProj(Integer contractStepId){
+        return contractDao.finashProj(contractStepId);
+    }
 }

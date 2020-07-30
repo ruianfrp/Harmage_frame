@@ -1180,6 +1180,33 @@ public class CustomerController {
     }
 
     /**
+     * 获取所有客户信息
+     *
+     * @return res.message
+     */
+    @GetMapping("/listAllCustomer")
+    @ApiOperation(value = "获取所有客户信息")
+    public Message listAllCustomer() {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Map<String, Object> data = new HashMap<>();
+        List<Customer> list = customerService.listAllCustomer();
+        if (list.size() > 0) {
+            log.info("所有客户信息返回成功");
+            data.put("list", list);
+            data.put("total", list.size());
+            res.message.setMessage(200, "所有客户信息返回成功", data);
+        } else {
+            log.error("所有客户信息返回为空");
+            res.message.setMessage(400, "所有客户信息返回为空");
+        }
+        return res.message;
+    }
+
+    /**
      * 获取业务员的列表（姓名及行业线）
      *
      * @return res.message
@@ -1427,9 +1454,11 @@ public class CustomerController {
             log.info("获取项目对应的合同阶段成功");
             for (ContractStep contractStep : list) {
                 ContractFileView contractFileView1 = contractService.selectContractStepFile(contractStep.getId(), "验收报告");
-                ContractFileView contractFileView2 = contractService.selectContractStepFile(contractStep.getId(), "回款证明");
+                ContractFileView contractFileView2 = contractService.selectContractStepFile(contractStep.getId(), "开票证明");
+                ContractFileView contractFileView3 = contractService.selectContractStepFile(contractStep.getId(), "回款证明");
                 contractStep.setAcceptanceFile(contractFileView1);
-                contractStep.setPaymentFile(contractFileView2);
+                contractStep.setInvoiceFile(contractFileView2);
+                contractStep.setPaymentFile(contractFileView3);
             }
             data.put("list", list);
             data.put("total", list.size());
