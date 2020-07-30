@@ -6,6 +6,7 @@ import com.dingtalk.api.request.OapiDepartmentListRequest;
 import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiDepartmentListResponse;
 import com.dingtalk.api.response.OapiGettokenResponse;
+import com.github.pagehelper.Constant;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.harmonycloud.bean.Message;
@@ -17,6 +18,7 @@ import com.harmonycloud.bean.employee.EmployeeNumView;
 import com.harmonycloud.bean.employee.EmployeeSkillView;
 import com.harmonycloud.bean.skill.TestSkillListView;
 import com.harmonycloud.config.DingConstant;
+import com.harmonycloud.service.AsyncService;
 import com.harmonycloud.service.EmployeeService;
 import com.harmonycloud.util.SyncInfo;
 import com.taobao.api.ApiException;
@@ -26,6 +28,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,10 +50,13 @@ import static com.harmonycloud.util.JsonWebToken.VerifyCode;
 @Slf4j
 @Api(value="员工controller",tags={"员工操作接口"})
 @RequestMapping("/employee")
-public class EmployeeController {
+public class EmployeeController implements Constant {
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    AsyncService asyncService;
 
     @Autowired
     private HttpServletRequest request;
@@ -371,9 +377,8 @@ public class EmployeeController {
             log.error("Authorization参数校验失败");
             return res.message;
         }
-        SynchroThread synchro = new SynchroThread();
-        synchro.run();
-        res.message.setMessage(200, "同步成功");
+        asyncService.employeeAsync();
+        res.message.setMessage(200, "同步进行中");
         return res.message;
     }
 
@@ -497,17 +502,5 @@ public class EmployeeController {
             res.message.setMessage(400,"员工数量返回为空");
         }
         return res.message;
-    }
-
-    @GetMapping("/qucikAuthentication")
-    @ApiOperation(value = "一键授权")
-    public Map LDAPAuthentication()
-    {
-        SyncInfo.LoadAllUserInfo();
-        return new HashMap<String, Object>(){{
-            put("msg", "一键授权成功");
-            put("code",200);
-            put("data",null);
-        }};
     }
 }

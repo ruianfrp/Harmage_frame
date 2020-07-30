@@ -410,12 +410,13 @@ public class FileController {
     }
 
     /**
-     * 合同文件加密上传
+     * 文件加密上传
      *
-     * @param files      文件
-     * @param id         合同阶段id
-     * @param uploadType
-     * @return
+     * @param files          文件
+     * @param contractId     合同id
+     * @param contractStepId 合同阶段id
+     * @param uploadType     合同类型
+     * @return res.message
      * @throws Exception
      */
     @PostMapping("/encryptUploadFile")
@@ -463,6 +464,29 @@ public class FileController {
                     Integer result2 = contractService.updateFile(contractStepId, uploadType);
                     if (result2 != 0) {
                         log.info("阶段文件上传修改成功");
+                        if (uploadType.equals("回款证明")) {
+                            List<Integer> list1 = contractService.listPaymentDone(contractStepId);
+                            if (list1.size() > 0) {
+                                log.info("项目阶段回款证明返回成功");
+                                boolean flag = true;
+                                for (Integer done : list1) {
+                                    if (done != 1) {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                if (flag) {
+                                    Integer result3 = contractService.finashProj(contractStepId);
+                                    if (result3 > 0) {
+                                        log.info("项目维保期结束，项目状态修改成功");
+                                    } else {
+                                        log.error("项目维保期结束，项目状态修改失败");
+                                    }
+                                }
+                            } else {
+                                log.error("项目阶段回款证明返回为空");
+                            }
+                        }
                     } else {
                         log.error("阶段文件上传修改失败");
                     }
@@ -483,6 +507,13 @@ public class FileController {
         return res.message;
     }
 
+    /**
+     * 文件解密下载（转存）
+     *
+     * @param id 文件id
+     * @return res.message
+     * @throws Exception
+     */
     @PostMapping("/decryptDownFile")
     @ApiOperation(value = "文件解密下载")
     public Message decryptDownFile(@RequestParam("id") Integer id) throws Exception {
@@ -505,6 +536,11 @@ public class FileController {
         return res.message;
     }
 
+    /**
+     * 转存文件删除
+     *
+     * @return res.message
+     */
     @GetMapping("/deleteFileCopy")
     @ApiOperation(value = "删除解密文件")
     public Message deleteFileCopy() {
