@@ -1,6 +1,8 @@
 package com.harmonycloud.bean.project;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.harmonycloud.util.date.DateUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -9,9 +11,15 @@ public class  ProjectProbRisk{
     private Long fkProjectId;
     private String description;
     private String solution;
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date estSettleTime;
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date actSettleTime;
     private Integer currentState;
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date proposedTime;
     private String proposedPerson;
     private String inChargePerson;

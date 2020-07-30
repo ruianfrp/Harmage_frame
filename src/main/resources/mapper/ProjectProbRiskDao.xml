@@ -93,28 +93,34 @@
         update project_prob_risk
         <set>
             <if test="description!=null">
-                description = #{description}
+                description = #{description},
             </if>
             <if test="solution!=null">
-                solution = #{solution}
+                solution = #{solution},
             </if>
             <if test="estSettleTime!=null">
-                est_settle_time = #{estSettleTime}
+                est_settle_time = #{estSettleTime},
             </if>
             <if test="actSettleTime!=null">
-                act_settle_time = #{actSettleTime}
+                act_settle_time = #{actSettleTime},
             </if>
             <if test = "currentState!=null">
-                current_state = #{currentState}
+                current_state = #{currentState},
             </if>
             <if test="proposedTime!=null">
-                proposed_time = #{proposedTime}
+                proposed_time = #{proposedTime},
             </if>
             <if test="proposedPerson!=null">
-                proposed_person = #{proposedPerson}
+                proposed_person = #{proposedPerson},
             </if>
             <if test="inChargePerson!=null">
-                in_charge_person = #{inChargePerson}
+                incharge_person = #{inChargePerson},
+            </if>
+            <if test="type!=null">
+                type=#{type},
+            </if>
+            <if test="fkProjectId!=null">
+                fk_project_id=#{fkProjectId},
             </if>
         </set>
         where id = #{id}

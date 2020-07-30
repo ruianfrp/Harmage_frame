@@ -15,10 +15,6 @@ import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,12 +53,6 @@ public class ProjectProbRiskController {
         List<ProjectProbRisk> list = projectProbRiskService.listProjectProbRiskById(projectId);
         if (list != null) {
             log.info("项目风险/问题列表返回成功");
-/*            for(ProjectProbRisk tmp:list){
-                String employeeName = projectProbRiskService.selectPersonNameByEmployeeId(tmp.getInChargePerson());
-                tmp.setInChargePerson(employeeName);
-                employeeName = projectProbRiskService.selectPersonNameByEmployeeId(tmp.getProposedPerson());
-                tmp.setProposedPerson(employeeName);
-            }*/
             data.put("list", list);
             data.put("total", list.size());
             res.message.setMessage(200, "项目风险/问题列表返回成功", data);
@@ -85,11 +75,11 @@ public class ProjectProbRiskController {
             "proposedPerson\ninChargePerson\ntype",value="以上字段必填,其余可不填或填null,提出人负责人" +
             "填工号",required = true) ProjectProbRisk projectProbRisk){
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-//        if (res.message.getCode() == 401) {
-//            log.error("Authorization参数校验失败");
-//            return res.message;
-//        }
-//        projectProbRisk.setProposedTime(new Date());
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        projectProbRisk.setProposedTime(new Date());
         Integer result = projectProbRiskService.insertProjectProbRisk(projectProbRisk);
         Map<String,Object> data = new HashMap<>();
         if(result>0) {
@@ -114,10 +104,10 @@ public class ProjectProbRiskController {
     @ApiOperation(value = "更新项目风险/问题",notes = "根据记录id标识来更新")
     public Message updateProjectProbRisk(@RequestBody ProjectProbRisk projectProbRisk){
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-//        if (res.message.getCode() == 401) {
-//            log.error("Authorization参数校验失败");
-//            return res.message;
-//        }
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
         Integer result = projectProbRiskService.updateProjectProbRisk(projectProbRisk);
         Map<String,Object> data = new HashMap<>();
         if(result>0){
@@ -126,8 +116,8 @@ public class ProjectProbRiskController {
             res.message.setMessage(200,"更新成功！",data);
         }
         else{
-            log.error("更新失败！");
-            res.message.setMessage(400,"更新失败！");
+            log.error("更新失败！数据不存在");
+            res.message.setMessage(400,"更新失败！数据不存在");
         }
         return res.message;
     }
