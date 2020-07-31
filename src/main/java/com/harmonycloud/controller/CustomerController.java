@@ -1449,6 +1449,7 @@ public class CustomerController {
             return res.message;
         }
         Map<String, Object> data = new HashMap<>();
+        ContractFileView contractFileView = contractService.selectContractFileByProjId(projId);
         List<ContractStep> list = contractService.listContractStep(projId);
         if (list.size() > 0) {
             log.info("获取项目对应的合同阶段成功");
@@ -1462,6 +1463,7 @@ public class CustomerController {
             }
             data.put("list", list);
             data.put("total", list.size());
+            data.put("contractFileView", contractFileView);
             res.message.setMessage(200, "获取项目对应的合同阶段成功", data);
         } else {
             log.error("获取项目对应的合同阶段为空");
@@ -1488,7 +1490,7 @@ public class CustomerController {
         Integer result = contractService.insertContract(contract);
         if (result != 0) {
             log.info("合同添加成功");
-            data.put("id", result);
+            data.put("id", contract.getId());
             res.message.setMessage(200, "合同添加成功", data);
         } else {
             log.error("合同添加失败");

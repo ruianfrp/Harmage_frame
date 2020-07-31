@@ -415,7 +415,7 @@ public class FileController {
      * @param files          文件
      * @param contractId     合同id
      * @param contractStepId 合同阶段id
-     * @param uploadType     合同类型
+     * @param uploadFileType     合同类型
      * @return res.message
      * @throws Exception
      */
@@ -424,7 +424,7 @@ public class FileController {
     public Message encryptUploadFile(@RequestParam("file") MultipartFile[] files,
                                      @RequestParam("contractId") Integer contractId,
                                      @RequestParam("contractStepId") Integer contractStepId,
-                                     @RequestParam("uploadFileType") String uploadType) throws Exception {
+                                     @RequestParam("uploadFileType") String uploadFileType) throws Exception {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
         Map<String, Object> data = new HashMap<>();
         List<ContractFileView> list = new ArrayList<>();
@@ -432,9 +432,9 @@ public class FileController {
         for (MultipartFile file : files) {
             ContractFileView contractFileView = new ContractFileView();
             contractFileView.setFkContractId(contractId);
-            if (contractStepId != null) {
+            if (contractStepId != 0) {
                 contractFileView.setFkContractStepId(contractStepId);
-                contractFileView.setFileType(uploadType);
+                contractFileView.setFileType(uploadFileType);
             }
             String oldName = file.getOriginalFilename();// 获取文件原来的名字
             contractFileView.setFileOldName(oldName);
@@ -442,7 +442,7 @@ public class FileController {
             String newName = UploadUtils.generateRandonFileName(oldName) + fileType;// 通过工具类产生新文件名称，防止重名
             contractFileView.setFileNewName(newName);
             String SavePath = "/" + contractId;
-            if (contractStepId != null) {
+            if (contractStepId != 0) {
                 SavePath = SavePath + "/" + contractStepId;
             }
             File dest = new File(dataServerDestDir + SavePath);
@@ -460,11 +460,11 @@ public class FileController {
             if (result != 0) {
                 log.info("合同文件信息添加成功");
                 list.add(contractFileView);
-                if (contractStepId != null) {
-                    Integer result2 = contractService.updateFile(contractStepId, uploadType);
+                if (contractStepId != 0) {
+                    Integer result2 = contractService.updateFile(uploadFileType,contractStepId);
                     if (result2 != 0) {
                         log.info("阶段文件上传修改成功");
-                        if (uploadType.equals("回款证明")) {
+                        if (uploadFileType.equals("回款证明")) {
                             List<Integer> list1 = contractService.listPaymentDone(contractStepId);
                             if (list1.size() > 0) {
                                 log.info("项目阶段回款证明返回成功");

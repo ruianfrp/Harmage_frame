@@ -43,6 +43,11 @@ public class ContractServiceImp implements ContractService {
     }
 
     @Override
+    public ContractFileView selectContractFileByProjId(Integer projId){
+        return contractDao.selectContractFileByProjId(projId);
+    }
+
+    @Override
     public List<ContractStep> listContractStep(Integer projId){
         return contractDao.listContractStep(projId);
     }
@@ -83,8 +88,8 @@ public class ContractServiceImp implements ContractService {
     }
 
     @Override
-    public Integer updateFile(Integer contractStepId,String updateType){
-        return contractDao.updateFile(contractStepId, updateType);
+    public Integer updateFile(String uploadFileType,Integer contractStepId){
+        return contractDao.updateFile(uploadFileType, contractStepId);
     }
 
     @Override

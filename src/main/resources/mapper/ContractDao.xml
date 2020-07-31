@@ -36,7 +36,12 @@
     </select>
 
     <select id="selectContractFile" resultType="com.harmonycloud.bean.contract.ContractFileView">
-        SELECT * FROM contract_file where fk_contract_id=#{id} and fk_contract_step_id=null and file_type=null;
+        SELECT * FROM contract_file where fk_contract_id=#{id} and fk_contract_step_id is null and file_type is null;
+    </select>
+
+    <select id="selectContractFileByProjId" resultType="com.harmonycloud.bean.contract.ContractFileView">
+        SELECT cf.* FROM contract_file as cf left join contract as co on co.id=cf.fk_contract_id
+        where co.fk_project_id=#{projId} and cf.fk_contract_step_id is null and cf.file_type is null;
     </select>
 
     <select id="listContractStep" resultType="com.harmonycloud.bean.contract.ContractStep">
@@ -102,9 +107,9 @@
     <update id="updateFile">
         update contract_step
         <set>
-            <if test="uploadType=='验收报告'">acceptance_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),acceptance_done=1</if>
-            <if test="uploadType=='开票证明'">invoice_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),invoice_done=1</if>
-            <if test="uploadType=='回款证明'">payment_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),payment_done=1</if>
+            <if test="uploadFileType=='验收报告'">acceptance_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),acceptance_done=1</if>
+            <if test="uploadFileType=='开票证明'">invoice_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),invoice_done=1</if>
+            <if test="uploadFileType=='回款证明'">payment_time=DATE_FORMAT(now(),'%Y-%m-%d %H:%i:%S'),payment_done=1</if>
         </set>
         where id=#{contractStepId}
     </update>

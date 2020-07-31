@@ -15,6 +15,8 @@ public interface ContractService {
 
     ContractFileView selectContractFile(Integer id);
 
+    ContractFileView selectContractFileByProjId(Integer projId);
+
     List<ContractStep> listContractStep(Integer projId);
 
     ContractFileView selectContractStepFile(Integer id, String fileType);
@@ -31,7 +33,7 @@ public interface ContractService {
 
     Integer updateContractStep(ContractStep contractStep);
 
-    Integer updateFile(Integer contractStepId,String updateType);
+    Integer updateFile(String uploadFileType,Integer contractStepId);
 
     List<Integer> listPaymentDone(Integer contractStepId);
 
