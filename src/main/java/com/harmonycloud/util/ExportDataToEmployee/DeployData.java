@@ -12,6 +12,11 @@ public class DeployData {
         this.deployUserInfoData();
     }
 
+    public void excuteFile(File file){
+        fileOut = file;
+        this.deployUserInfoData();
+    }
+
     public void deployUserInfoData() {
         try {
             new ExportExcel(fileOut, "customer_salesman", Object.class, "Sheet5");
