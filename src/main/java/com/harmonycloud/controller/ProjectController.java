@@ -47,7 +47,7 @@ public class ProjectController {
     CustomerService customerService;
 
     @Autowired
-    private HttpServletRequest request; 
+    private HttpServletRequest request;
 
     @Autowired
     private ProjectStatusCacheService projectStatusCacheService;
@@ -262,7 +262,7 @@ public class ProjectController {
     /**
      * 获取项目列表
      *
-     * @return message
+     * @return res.message
      */
     @GetMapping("/listProject")
     @ApiOperation(value = "获取项目列表")
@@ -537,7 +537,10 @@ public class ProjectController {
     }
 
     /**
+     * 获取项目周报
      *
+     * @param projectMessage 项目信息
+     * @return res.message
      */
     @PostMapping("/getProjectReportOld")
     @ApiOperation(value = "获取项目周报")
@@ -557,7 +560,11 @@ public class ProjectController {
     }
 
     /**
+     * 获取项目周报
      *
+     * @param projectName 项目名称
+     * @return res.message
+     * @throws ParseException
      */
     @PostMapping("/getProjectReport")
     @ApiOperation(value = "获取项目周报")
@@ -573,17 +580,17 @@ public class ProjectController {
         List<String> projectDate = DateUtils.getProjectDate(project.getProjStartTime(), ObjectUtils.isEmpty(project.getProjEndTime()) ? new Date() : project.getProjEndTime());
         int index = 0;
         JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
-        for(String monday: projectDate) {
+        for (String monday : projectDate) {
             ProjectReport projectReport = null;
             Date startTime = null;
-            if(index < data.size()) {
+            if (index < data.size()) {
                 projectReport = data.get(index);
                 startTime = simpleDateFormat.parse(projectReport.getStartTime());
             }
-            if(!ObjectUtils.isEmpty(projectReport) && startTime.getTime() >= simpleDateFormat.parse(monday).getTime() && startTime.getTime() < (simpleDateFormat.parse(monday).getTime() + 1000 * 60 * 60 * 24 * 7)) {
+            if (!ObjectUtils.isEmpty(projectReport) && startTime.getTime() >= simpleDateFormat.parse(monday).getTime() && startTime.getTime() < (simpleDateFormat.parse(monday).getTime() + 1000 * 60 * 60 * 24 * 7)) {
                 jsonObject.put(projectReport.getStartTime() + "~" + projectReport.getEndTime(), projectReport.getReport());
                 index++;
-            }else {
+            } else {
                 Calendar c_friday = new GregorianCalendar();
                 c_friday.setTime(simpleDateFormat.parse(monday));
                 System.out.println("时间：" + simpleDateFormat.format(c_friday.getTime().getTime()));
@@ -612,6 +619,4 @@ public class ProjectController {
         }
         return false;
     }
-
-
 }
