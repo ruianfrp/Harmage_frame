@@ -19,8 +19,8 @@ public class ProjectCostRecordServiceImp implements ProjectCostRecordService {
     }
 
     @Override
-    public int updateProjectCurrentCost(Integer projectId,double amount) {
-        return projectCostRecordDao.updateProjectCurrentCost(projectId,amount);
+    public int updateProjectCurrentCost(Integer projectId,double money) {
+        return projectCostRecordDao.updateProjectCurrentCost(projectId,money);
     }
 
     @Override
@@ -31,5 +31,10 @@ public class ProjectCostRecordServiceImp implements ProjectCostRecordService {
     @Override
     public String selectProjectName(Integer projectId) {
         return projectCostRecordDao.selectProjectName(projectId);
+    }
+
+    @Override
+    public Integer selectProjectId(String projectNameInExcel) {
+        return projectCostRecordDao.selectProjectId(projectNameInExcel);
     }
 }

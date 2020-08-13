@@ -5,8 +5,8 @@ import java.util.Date;
 public class ProjectCostRecord {
     private long id;
     private long fkProjectId;
-    private double amount;
-    private Date updateTime;
+    private double money;
+    private Date importTime;
 
     public long getId() {
         return id;
@@ -24,19 +24,20 @@ public class ProjectCostRecord {
         this.fkProjectId = fkProjectId;
     }
 
-    public double getAmount() {
-        return amount;
+    public double getMoney() {
+        return money;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setMoney(double money) {
+        this.money = money;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
+    public Date getImportTime() {
+        return importTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setImportTime(Date importTime) {
+        this.importTime = importTime;
     }
+
 }

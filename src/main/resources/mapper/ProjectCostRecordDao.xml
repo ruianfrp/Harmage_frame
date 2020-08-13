@@ -7,14 +7,14 @@
      Dao接口名也要和mapper 映射文件名一致
      -->
     <insert id="insertCostRecordDataBase" parameterType="com.harmonycloud.bean.project.ProjectCostRecord">
-        insert into project_cost_record(fk_project_id,amount,update_time)
-        values(#{fkProjectId},#{amount},#{updateTime})
+        insert into project_cost_record(fk_project_id,money,import_time)
+        values(#{fkProjectId},#{money},#{importTime})
     </insert>
 
     <update id="updateProjectCurrentCost" parameterType="java.lang.Double">
         update project
         <set>
-            proj_current_cost = proj_current_cost + #{amount}
+            proj_current_cost = proj_current_cost + #{money}
         </set>
         where id = #{projectId}
     </update>
@@ -27,5 +27,10 @@
     <select id="selectProjectName" resultType="java.lang.String">
         select proj_name from project
         where id = #{projectId}
+    </select>
+
+    <select id="selectProjectId" resultType="java.lang.Integer">
+        select fk_project_id from project_name_map
+        where proj_name_in_excel = #{projectNameInExcel}
     </select>
 </mapper>
