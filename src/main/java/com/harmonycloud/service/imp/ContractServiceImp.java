@@ -101,4 +101,14 @@ public class ContractServiceImp implements ContractService {
     public Integer finashProj(Integer contractStepId){
         return contractDao.finashProj(contractStepId);
     }
+
+    @Override
+    public List<ExcelContractView> selectAllContract(){
+        return contractDao.selectAllContract();
+    }
+
+    @Override
+    public List<ExcelContractStepView> selectAllContractStep(Integer contractId){
+        return contractDao.selectAllContractStep(contractId);
+    }
 }

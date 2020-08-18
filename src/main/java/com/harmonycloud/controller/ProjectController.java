@@ -566,6 +566,7 @@ public class ProjectController {
      * @return res.message
      * @throws ParseException
      */
+
     @PostMapping("/getProjectReport")
     @ApiOperation(value = "获取项目周报")
     public Message getProjectReport(@RequestParam String projectName) throws ParseException {
@@ -575,32 +576,67 @@ public class ProjectController {
             return res.message;
         }
         DingUtils.getToken();
-        ArrayList<ProjectReport> data = projectReportService.getProjectReport(projectName);
+        ArrayList<ProjectReport> ndata = projectReportService.getProjectReport(projectName);
+
+        ArrayList<ProjectReport> data=new ArrayList<>();
+        data.add(ndata.get(0));
+        for(int i=1;i<ndata.size();i++){
+            ProjectReport lastest=data.get(data.size()-1);
+            System.out.println(lastest.getStartTime()+","+ndata.get(i).getStartTime());
+            String a=new String(lastest.getStartTime());
+            String b=new String(ndata.get(i).getStartTime());
+
+            if(a.equals(b)){
+                System.out.println("xiangdeng");
+            }
+            else
+            {
+                data.add(ndata.get(i));
+            }
+
+        }
+
+        for(int i=0;i<data.size();i++){
+            System.out.println("newstart="+data.get(i).getStartTime());
+        }
         Project project = projectService.getProject(projectName);
         List<String> projectDate = DateUtils.getProjectDate(project.getProjStartTime(), ObjectUtils.isEmpty(project.getProjEndTime()) ? new Date() : project.getProjEndTime());
+        for(String i:projectDate){
+            System.out.println("i="+i);
+        }
+
         int index = 0;
+        System.out.println(data.size());
         JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
-        for (String monday : projectDate) {
+        for(int  i =projectDate.size()-1;i>=0; i--) {
+            String monday=projectDate.get(i);
             ProjectReport projectReport = null;
             Date startTime = null;
-            if (index < data.size()) {
+            Date endTime=null;
+            if(index < data.size()) {
                 projectReport = data.get(index);
                 startTime = simpleDateFormat.parse(projectReport.getStartTime());
+                endTime=simpleDateFormat.parse(projectReport.getEndTime());
             }
-            if (!ObjectUtils.isEmpty(projectReport) && startTime.getTime() >= simpleDateFormat.parse(monday).getTime() && startTime.getTime() < (simpleDateFormat.parse(monday).getTime() + 1000 * 60 * 60 * 24 * 7)) {
+            System.out.println(monday+" "+startTime.getTime()+" "+endTime.getTime());
+            System.out.println("start:"+startTime.getTime()+"end:"+simpleDateFormat.parse(monday).getTime());
+            System.out.println(simpleDateFormat.parse(monday).getTime()+7*60*60*1000*24);
+            if(index<data.size()&&!ObjectUtils.isEmpty(projectReport.getReport()) && (endTime.getTime() >= simpleDateFormat.parse(monday).getTime())&&(endTime.getTime()<=(simpleDateFormat.parse(monday).getTime()+7*60*60*1000*24))) {
                 jsonObject.put(projectReport.getStartTime() + "~" + projectReport.getEndTime(), projectReport.getReport());
                 index++;
-            } else {
+            }else {
                 Calendar c_friday = new GregorianCalendar();
                 c_friday.setTime(simpleDateFormat.parse(monday));
-                System.out.println("时间：" + simpleDateFormat.format(c_friday.getTime().getTime()));
+//                System.out.println("时间：" + simpleDateFormat.format(c_friday.getTime().getTime()));
                 c_friday.add(Calendar.DAY_OF_MONTH, 4);
                 jsonObject.put(monday + "~" + simpleDateFormat.format(c_friday.getTime().getTime()), "There is no data");
             }
         }
         res.message.setMessage(200, "获取项目周报成功", jsonObject);
         return res.message;
+
     }
+
 
     public static boolean getListStopFlag(List<String> typeList) {
         for (String type : typeList) {

@@ -22,13 +22,13 @@ public class DeployData {
             if(importType.equals("成员导入")){
                 new ExportExcel(fileOut, "member", Object.class, "Sheet1");
             }else if (importType.equals("项目导入")) {
-                new ExportExcel(fileOut, "member", Object.class, "Sheet1");
+                new ExportExcel(fileOut, "project", Object.class, "Sheet1");
             }else if (importType.equals("客户导入")) {
-                new ExportExcel(fileOut, "member", Object.class, "Sheet1");
+                new ExportExcel(fileOut, "customer", Object.class, "Sheet1");
             }else if (importType.equals("客户跟单记录导入")) {
-                new ExportExcel(fileOut, "member", Object.class, "Sheet1");
+                new ExportExcel(fileOut, "customer_document_record", Object.class, "Sheet1");
             }else if (importType.equals("项目成本导入")) {
-                new ExportExcel(fileOut, "member", Object.class, "Sheet1");
+                new ExportExcel(fileOut, "project_cost_record", Object.class, "Sheet1");
             }else {
                 new ExportExcel(fileOut, "member", Object.class, "Sheet1");
             }

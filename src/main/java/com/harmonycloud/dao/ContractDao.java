@@ -42,4 +42,8 @@ public interface ContractDao {
 
     Integer finashProj(Integer contractStepId);
 
+    List<ExcelContractView> selectAllContract();
+
+    List<ExcelContractStepView> selectAllContractStep(Integer contractId);
+
 }

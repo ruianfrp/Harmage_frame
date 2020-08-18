@@ -123,4 +123,16 @@
         set p.proj_status="完成",p.proj_substate="完成"
         where p.id=(select co.fk_project_id from contract_step as cs left join contract as co on co.id=cs.fk_contract_id where cs.id=#{contractStepId})
     </update>
+
+    <select id="selectAllContract" resultType="com.harmonycloud.bean.contract.ExcelContractView">
+        SELECT co.id,co.fk_project_id,p.proj_line,p.proj_name,c.customer_name,cdd.dic_data_sort as customer_industry,co.contract_money,co.contract_date
+        FROM contract as co left join project as p on p.id=co.fk_project_id left join customer as c on c.id=co.fk_customer_id left join
+        customer_dic_data as cdd on cdd.id=c.customer_industry;
+    </select>
+
+    <select id="selectAllContractStep" resultType="com.harmonycloud.bean.contract.ExcelContractStepView">
+        SELECT cs.contract_stage, cs.contract_proportion, cs.contract_amount, cs.contract_standard, cs.contract_time, cs.contract_remark,e.employee_name,
+        cs.acceptance_time, if(cs.acceptance_done=1,"已上传","未上传") as acceptance_done, cs.invoice_time, if(cs.invoice_done=1,"已上传","未上传") as invoice_done, cs.payment_time, if(cs.payment_done=1,"已上传","未上传") as payment_done FROM contract_step as cs
+        left join contract as co on co.id=cs.fk_contract_id left join employee as e on cs.fk_employee_gh=e.employee_gh where cs.fk_contract_id=#{contractId};
+    </select>
 </mapper>

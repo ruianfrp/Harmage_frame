@@ -38,4 +38,8 @@ public interface ContractService {
     List<Integer> listPaymentDone(Integer contractStepId);
 
     Integer finashProj(Integer contractStepId);
+
+    List<ExcelContractView> selectAllContract();
+
+    List<ExcelContractStepView> selectAllContractStep(Integer contractId);
 }

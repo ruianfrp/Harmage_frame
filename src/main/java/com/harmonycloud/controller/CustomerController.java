@@ -1,6 +1,11 @@
 package com.harmonycloud.controller;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.util.Region;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.harmonycloud.bean.Message;
@@ -1341,7 +1346,7 @@ public class CustomerController {
         if (authority.contains("Contract_RW_A") || authority.contains("Contract_RO")) {
             List<ContractListView> list1 = contractService.listAllContract();
             List<ContractReceivedView> list2 = contractService.selectReceived();
-            if (list1.size() > 0 && list2.size() > 0) {
+            if (list1.size() > 0) {
                 for (ContractListView contractListView : list1) {
                     for (ContractReceivedView contractReceivedView : list2) {
                         if (contractListView.getId() == contractReceivedView.getFkContractId()) {
@@ -1364,7 +1369,7 @@ public class CustomerController {
         if (authority.contains("Contract_RW_S")) {
             List<ContractListView> list1 = contractService.listContract(employeeGh);
             List<ContractReceivedView> list2 = contractService.selectReceived();
-            if (list1.size() > 0 && list2.size() > 0) {
+            if (list1.size() > 0) {
                 for (ContractListView contractListView : list1) {
                     for (ContractReceivedView contractReceivedView : list2) {
                         if (contractListView.getId() == contractReceivedView.getFkContractId()) {
@@ -1407,7 +1412,7 @@ public class CustomerController {
                     }
                 }
                 List<ContractReceivedView> list2 = contractService.selectReceived();
-                if (list.size() > 0 && list2.size() > 0) {
+                if (list.size() > 0) {
                     for (ContractListView contractListView : list) {
                         for (ContractReceivedView contractReceivedView : list2) {
                             if (contractListView.getId() == contractReceivedView.getFkContractId()) {
@@ -1612,6 +1617,308 @@ public class CustomerController {
             res.message.setMessage(200, "合同阶段信息修改成功");
         } else {
             res.message.setMessage(400, "合同阶段信息修改失败");
+        }
+        return res.message;
+    }
+
+
+    /**
+     * 合同数据导出
+     *
+     * @return res.message
+     */
+    @GetMapping("/exportContract")
+    @ApiOperation(value = "合同数据导出")
+    public Message exportContract() {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        try {
+            short num = 0;
+            HSSFWorkbook wb = new HSSFWorkbook();
+            HSSFSheet sheet = wb.createSheet("合同报表");
+            // 样式
+            HSSFCellStyle styleTitel = wb.createCellStyle();
+            styleTitel.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            styleTitel.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            styleTitel.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+            styleTitel.setBottomBorderColor(HSSFColor.BLACK.index);
+            styleTitel.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
+            styleTitel.setLeftBorderColor(HSSFColor.BLACK.index);
+            styleTitel.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
+            styleTitel.setRightBorderColor(HSSFColor.BLACK.index);
+            styleTitel.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
+            styleTitel.setTopBorderColor(HSSFColor.BLACK.index);
+            HSSFCellStyle style = wb.createCellStyle();
+            style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            HSSFCellStyle styleDate = wb.createCellStyle();
+            styleDate.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            styleDate.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            styleDate.setDataFormat(wb.createDataFormat().getFormat("yyyy-MM-dd"));
+            HSSFCellStyle styleDouble = wb.createCellStyle();
+            styleDouble.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            styleDouble.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            styleDouble.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
+            HSSFCellStyle styleDone = wb.createCellStyle();
+            styleDone.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            styleDone.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            styleDone.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            styleDone.setFillForegroundColor(HSSFColor.BRIGHT_GREEN.index);
+            HSSFCellStyle styleNotDone = wb.createCellStyle();
+            styleNotDone.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            styleNotDone.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            styleNotDone.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            styleNotDone.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+
+            HSSFRow row1 = sheet.createRow(num);
+            num += 1;
+            HSSFCell cell;
+            String[] s = new String[]{"项目编号", "产品线", "项目名称", "行业", "客户名称", "销售合同金额（万元）", "合同签署日期", "合同阶段", "比例", "金额（万元）", "验收标准", "预计开票时间", "验收报告", "上传时间", "开票证明", "上传时间", "回款证明", "上传时间", "负责人", "备注"};
+            for (short i = 0; i < s.length; i++) {
+                cell = row1.createCell(i);
+                cell.setCellValue(s[i]);
+                cell.setCellStyle(styleTitel);
+            }
+            List<ExcelContractView> excelContractViews = contractService.selectAllContract();
+            if (excelContractViews.size() > 0) {
+                for (ExcelContractView excelContractView : excelContractViews) {
+                    List<ExcelContractStepView> excelContractStepViews = contractService.selectAllContractStep(excelContractView.getId());
+                    if (excelContractStepViews.size() == 0) {
+                        HSSFRow row = sheet.createRow(num);
+                        cell = row.createCell((short) 0);
+                        cell.setCellValue(excelContractView.getFkProjectId());
+                        cell.setCellStyle(style);
+
+                        cell = row.createCell((short) 1);
+                        cell.setCellValue(excelContractView.getProjLine());
+                        cell.setCellStyle(style);
+
+                        cell = row.createCell((short) 2);
+                        cell.setCellValue(excelContractView.getProjName());
+                        cell.setCellStyle(style);
+
+                        if (excelContractView.getCustomerIndustry() !=null){
+                            cell = row.createCell((short) 3);
+                            cell.setCellValue(excelContractView.getCustomerIndustry());
+                            cell.setCellStyle(style);
+                        }
+
+                        if (excelContractView.getCustomerName()!=null){
+                            cell = row.createCell((short) 4);
+                            cell.setCellValue(excelContractView.getCustomerName());
+                            cell.setCellStyle(style);
+                        }
+
+                        cell = row.createCell((short) 5);
+                        cell.setCellValue(excelContractView.getContractMoney());
+                        cell.setCellStyle(styleDouble);
+
+                        cell = row.createCell((short) 6);
+                        cell.setCellValue(excelContractView.getContractDate());
+                        cell.setCellStyle(styleDate);
+                        num += 1;
+                    } else {
+                        HSSFRow row = sheet.createRow(num);
+                        sheet.addMergedRegion(new Region(num, (short) 0, num + excelContractStepViews.size() - 1, (short) 0));
+                        cell = row.createCell((short) 0);
+                        cell.setCellValue(excelContractView.getFkProjectId());
+                        cell.setCellStyle(style);
+
+                        sheet.addMergedRegion(new Region(num, (short) 1, num + excelContractStepViews.size() - 1, (short) 1));
+                        cell = row.createCell((short) 1);
+                        cell.setCellValue(excelContractView.getProjLine());
+                        cell.setCellStyle(style);
+
+                        sheet.addMergedRegion(new Region(num, (short) 2, num + excelContractStepViews.size() - 1, (short) 2));
+                        cell = row.createCell((short) 2);
+                        cell.setCellValue(excelContractView.getProjName());
+                        cell.setCellStyle(style);
+
+                        if (excelContractView.getCustomerIndustry()!=null){
+                            sheet.addMergedRegion(new Region(num, (short) 3, num + excelContractStepViews.size() - 1, (short) 3));
+                            cell = row.createCell((short) 3);
+                            cell.setCellValue(excelContractView.getCustomerIndustry());
+                            cell.setCellStyle(style);
+                        }
+
+                        if (excelContractView.getCustomerName()!=null){
+                            sheet.addMergedRegion(new Region(num, (short) 4, num + excelContractStepViews.size() - 1, (short) 4));
+                            cell = row.createCell((short) 4);
+                            cell.setCellValue(excelContractView.getCustomerName());
+                            cell.setCellStyle(style);
+                        }
+
+                        sheet.addMergedRegion(new Region(num, (short) 5, num + excelContractStepViews.size() - 1, (short) 5));
+                        cell = row.createCell((short) 5);
+                        cell.setCellValue(excelContractView.getContractMoney());
+                        cell.setCellStyle(styleDouble);
+
+                        sheet.addMergedRegion(new Region(num, (short) 6, num + excelContractStepViews.size() - 1, (short) 6));
+                        cell = row.createCell((short) 6);
+                        cell.setCellValue(excelContractView.getContractDate());
+                        cell.setCellStyle(styleDate);
+
+                        cell = row.createCell((short) 7);
+                        cell.setCellValue(excelContractStepViews.get(0).getContractStage());
+                        cell.setCellStyle(style);
+
+                        cell = row.createCell((short) 8);
+                        cell.setCellValue(excelContractStepViews.get(0).getContractProportion());
+                        cell.setCellStyle(style);
+
+                        cell = row.createCell((short) 9);
+                        cell.setCellValue(excelContractStepViews.get(0).getContractAmount());
+                        cell.setCellStyle(styleDouble);
+
+                        cell = row.createCell((short) 10);
+                        cell.setCellValue(excelContractStepViews.get(0).getContractStandard());
+                        cell.setCellStyle(style);
+
+                        cell = row.createCell((short) 11);
+                        cell.setCellValue(excelContractStepViews.get(0).getContractTime());
+                        cell.setCellStyle(styleDate);
+
+                        cell = row.createCell((short) 12);
+                        cell.setCellValue(excelContractStepViews.get(0).getAcceptanceDone());
+                        if(excelContractStepViews.get(0).getAcceptanceDone().equals("已上传")){
+                            cell.setCellStyle(styleDone);
+                        }else {
+                            cell.setCellStyle(styleNotDone);
+                        }
+
+                        if(excelContractStepViews.get(0).getAcceptanceTime()!=null){
+                            cell = row.createCell((short) 13);
+                            cell.setCellValue(excelContractStepViews.get(0).getAcceptanceTime());
+                            cell.setCellStyle(styleDate);
+                        }
+
+                        cell = row.createCell((short) 14);
+                        cell.setCellValue(excelContractStepViews.get(0).getInvoiceDone());
+                        if(excelContractStepViews.get(0).getInvoiceDone().equals("已上传")){
+                            cell.setCellStyle(styleDone);
+                        }else {
+                            cell.setCellStyle(styleNotDone);
+                        }
+
+                        if(excelContractStepViews.get(0).getInvoiceTime()!=null){
+                            cell = row.createCell((short) 15);
+                            cell.setCellValue(excelContractStepViews.get(0).getInvoiceTime());
+                            cell.setCellStyle(styleDate);
+                        }
+
+                        cell = row.createCell((short) 16);
+                        cell.setCellValue(excelContractStepViews.get(0).getPaymentDone());
+                        if(excelContractStepViews.get(0).getPaymentDone().equals("已上传")){
+                            cell.setCellStyle(styleDone);
+                        }else {
+                            cell.setCellStyle(styleNotDone);
+                        }
+
+                        if(excelContractStepViews.get(0).getPaymentTime()!=null){
+                            cell = row.createCell((short) 17);
+                            cell.setCellValue(excelContractStepViews.get(0).getPaymentTime());
+                            cell.setCellStyle(styleDate);
+                        }
+
+                        cell = row.createCell((short) 18);
+                        cell.setCellValue(excelContractStepViews.get(0).getEmployeeName());
+                        cell.setCellStyle(style);
+
+                        cell = row.createCell((short) 19);
+                        cell.setCellValue(excelContractStepViews.get(0).getContractRemark());
+                        cell.setCellStyle(style);
+                        num += 1;
+                        if (excelContractStepViews.size() > 1) {
+                            for (short z = 1; z < excelContractStepViews.size(); z++) {
+                                row = sheet.createRow(num);
+                                cell = row.createCell((short) 7);
+                                cell.setCellValue(excelContractStepViews.get(z).getContractStage());
+                                cell.setCellStyle(style);
+
+                                cell = row.createCell((short) 8);
+                                cell.setCellValue(excelContractStepViews.get(z).getContractProportion());
+                                cell.setCellStyle(style);
+
+                                cell = row.createCell((short) 9);
+                                cell.setCellValue(excelContractStepViews.get(z).getContractAmount());
+                                cell.setCellStyle(styleDouble);
+
+                                cell = row.createCell((short) 10);
+                                cell.setCellValue(excelContractStepViews.get(z).getContractStandard());
+                                cell.setCellStyle(style);
+
+                                cell = row.createCell((short) 11);
+                                cell.setCellValue(excelContractStepViews.get(z).getContractTime());
+                                cell.setCellStyle(styleDate);
+
+                                cell = row.createCell((short) 12);
+                                cell.setCellValue(excelContractStepViews.get(z).getAcceptanceDone());
+                                if(excelContractStepViews.get(z).getAcceptanceDone().equals("已上传")){
+                                    cell.setCellStyle(styleDone);
+                                }else {
+                                    cell.setCellStyle(styleNotDone);
+                                }
+
+                                if(excelContractStepViews.get(z).getAcceptanceTime()!=null){
+                                    cell = row.createCell((short) 13);
+                                    cell.setCellValue(excelContractStepViews.get(z).getAcceptanceTime());
+                                    cell.setCellStyle(styleDate);
+                                }
+
+                                cell = row.createCell((short) 14);
+                                cell.setCellValue(excelContractStepViews.get(z).getInvoiceDone());
+                                if(excelContractStepViews.get(z).getInvoiceDone().equals("已上传")){
+                                    cell.setCellStyle(styleDone);
+                                }else {
+                                    cell.setCellStyle(styleNotDone);
+                                }
+
+                                if(excelContractStepViews.get(z).getInvoiceTime()!=null){
+                                    cell = row.createCell((short) 15);
+                                    cell.setCellValue(excelContractStepViews.get(z).getInvoiceTime());
+                                    cell.setCellStyle(styleDate);
+                                }
+
+                                cell = row.createCell((short) 16);
+                                cell.setCellValue(excelContractStepViews.get(z).getPaymentDone());
+                                if(excelContractStepViews.get(z).getPaymentDone().equals("已上传")){
+                                    cell.setCellStyle(styleDone);
+                                }else {
+                                    cell.setCellStyle(styleNotDone);
+                                }
+
+                                if(excelContractStepViews.get(z).getPaymentTime()!=null){
+                                    cell = row.createCell((short) 17);
+                                    cell.setCellValue(excelContractStepViews.get(z).getPaymentTime());
+                                    cell.setCellStyle(styleDate);
+                                }
+
+                                cell = row.createCell((short) 18);
+                                cell.setCellValue(excelContractStepViews.get(z).getEmployeeName());
+                                cell.setCellStyle(style);
+
+                                cell = row.createCell((short) 19);
+                                cell.setCellValue(excelContractStepViews.get(z).getContractRemark());
+                                cell.setCellStyle(style);
+                                num += 1;
+                            }
+                        }
+                    }
+                }
+            }
+            FileOutputStream fileOut = new FileOutputStream("/var/upload/Excel/Contract.xls");
+            wb.write(fileOut);
+            fileOut.close();
+            log.info("Excel文件已成功导出!");
+            Map<String,Object> data = new HashMap<>();
+            data.put("url","http://47.92.161.179:9000/Excel/Contract.xls");
+            res.message.setMessage(200, "excel导出成功",data);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            res.message.setMessage(400, "excel导出成功");
         }
         return res.message;
     }
