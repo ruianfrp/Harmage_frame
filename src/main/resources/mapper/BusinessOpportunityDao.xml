@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.BusinessOpportunityDao">
+   <select id="listBizOpp" resultType="com.harmonycloud.bean.customer.BusinessOpportunity">
+      select * from business_opportunity
+   </select>
+
+   <delete id="deleteBizOpp" parameterType="java.lang.Integer">
+      delete from business_opportunity
+      where id = #{id}
+   </delete>
+
+   <insert id="insertBizOpp" parameterType="com.harmonycloud.bean.customer.BusinessOpportunity">
+      insert into business_opportunity
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+         <if test="id!=null">id,</if>
+         <if test="bizOppName!=null">biz_opp_name,</if>
+         <if test="assCustomer!=null">ass_customer,</if>
+         <if test="assProject!=null">ass_project,</if>
+         <if test="projLine!=null">proj_line,</if>
+         <if test="channelSource!=null">channel_source,</if>
+         <if test="currentState!=null">current_state,</if>
+         <if test="competitors!=null">competitors,</if>
+         <if test="bizOppOutline!=null">biz_opp_outline,</if>
+         <if test="historyOutLine!=null">history_outline,</if>
+         <if test="difficulty!=null">difficulty,</if>
+         <if test="probability!=null">probability,</if>
+         <if test="estCost!=null">est_cost,</if>
+         <if test="estBidTime!=null">est_bit_time,</if>
+         <if test="bizDevExpert!=null">biz_dev_expert,</if>
+      </trim>
+      <trim prefix="values(" suffix=")" suffixOverrides=",">
+         <if test="bizOppName!=null">#{bizOppName},</if>
+         <if test="assCustomer!=null">#{assCustomer},</if>
+         <if test="assProject!=null">#{assProject},</if>
+         <if test="projLine!=null">#{projLine},</if>
+         <if test="channelSource!=null">#{channelSource},</if>
+         <if test="currentState!=null">#{currentState},</if>
+         <if test="competitors!=null">#{competitors},</if>
+         <if test="bizOppOutline!=null">#{bizOppOutline},</if>
+         <if test="historyOutLine!=null">#{historyOutline},</if>
+         <if test="difficulty!=null">#{difficulty},</if>
+         <if test="probability!=null">#{probability},</if>
+         <if test="estCost!=null">#{estCost},</if>
+         <if test="estBidTime!=null">#{estBidTime},</if>
+         <if test="bizDevExpert!=null">#{bizDevExpert},</if>
+      </trim>
+   </insert>
+
+   <update id="updateBizOpp" parameterType="com.harmonycloud.bean.customer.BusinessOpportunity">
+      update business_opportunity
+      <set>
+         <if test="bizOppName!=null">biz_opp_name = #{bizOppName},</if>
+         <if test="assCustomer!=null">ass_customer = #{assCustomer},</if>
+         <if test="assProject!=null">ass_project = #{assProject},</if>
+         <if test="projLine!=null">proj_line = #{projLine},</if>
+         <if test="channelSource!=null">channel_source = #{channelSource},</if>
+         <if test="currentState!=null">current_state = #{currentState},</if>
+         <if test="competitors!=null">competitors = #{competitors},</if>
+         <if test="bizOppOutline!=null">biz_opp_outline = #{bizOppOutline},</if>
+         <if test="historyOutLine!=null">history_outline = #{historyOutline},</if>
+         <if test="difficulty!=null">difficulty = #{difficulty},</if>
+         <if test="probability!=null">probability = #{probability},</if>
+         <if test="estCost!=null">est_cost = #{estCost},</if>
+         <if test="estBidTime!=null">est_bid_time = #{estBidTime},</if>
+         <if test="bizDevExpert!=null">biz_dev_expert = #{bizDevExpert},</if>
+      </set>
+      where id = #{id}
+   </update>
+</mapper>
