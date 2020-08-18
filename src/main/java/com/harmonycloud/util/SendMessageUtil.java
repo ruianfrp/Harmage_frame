@@ -36,7 +36,7 @@ public class SendMessageUtil {
         List<OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList> btnJsonLists = new ArrayList<>();
         OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList btnJson1 = new OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList();
         btnJson1.setTitle("查看详情");
-        btnJson1.setActionUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f58.16.78.136%3a33029%2flogin&pc_slide=false");
+        btnJson1.setActionUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
         btnJsonLists.add(0,btnJson1);
         msg.getActionCard().setBtnJsonList(btnJsonLists);
         msg.getActionCard().setBtnOrientation("0");
@@ -65,7 +65,7 @@ public class SendMessageUtil {
         List<OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList> btnJsonLists = new ArrayList<>();
         OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList btnJson1 = new OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList();
         btnJson1.setTitle("查看详情");
-        btnJson1.setActionUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f58.16.78.136%3a33029%2flogin&pc_slide=false");
+        btnJson1.setActionUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
         btnJsonLists.add(btnJson1);
         msg.getActionCard().setBtnOrientation("0");
         msg.getActionCard().setBtnJsonList(btnJsonLists);
@@ -115,7 +115,7 @@ public class SendMessageUtil {
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
-        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f58.16.78.136%3a33029%2flogin&pc_slide=false");
+        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
         msg.getOa().getHead().setText("结项申请审批");
         msg.getOa().getHead().setBgcolor("FFBBBBBB");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
@@ -175,7 +175,7 @@ public class SendMessageUtil {
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
-        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f58.16.78.136%3a33029%2flogin&pc_slide=false");
+        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
         msg.getOa().getHead().setText("终止项目申请审批");
         msg.getOa().getHead().setBgcolor("FFBBBBBB");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
@@ -228,7 +228,7 @@ public class SendMessageUtil {
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
-        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f58.16.78.136%3a33029%2flogin&pc_slide=false");
+        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
         msg.getOa().getHead().setText("结项会议申请审批");
         msg.getOa().getHead().setBgcolor("FFBBBBBB");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
@@ -282,7 +282,7 @@ public class SendMessageUtil {
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
-        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f58.16.78.136%3a33029%2flogin&pc_slide=false");
+        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
         msg.getOa().getHead().setText("终止项目会议申请审批");
         msg.getOa().getHead().setBgcolor("FFBBBBBB");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
