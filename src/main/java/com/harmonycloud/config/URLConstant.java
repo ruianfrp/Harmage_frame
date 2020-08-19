@@ -17,6 +17,11 @@ public class URLConstant {
     public static final String URL_GET_USER_LIST = "https://oapi.dingtalk.com/user/list";
 
     /**
+     * 获取部门用户
+     * */
+    public static final String URL_GET_USER_SIMPLE_LIST = "https://oapi.dingtalk.com/user/simplelist";
+
+    /**
      *根据临时授权码从钉钉获取登录用户信息
      */
     public static final String URL_GET_USER_INFO_BYCODE = "https://oapi.dingtalk.com/sns/getuserinfo_bycode";
@@ -40,4 +45,17 @@ public class URLConstant {
      * 获取用户详情
      */
     public static final String URL_GET_USER_INFO = "https://oapi.dingtalk.com/user/get";
+
+    public static final String URL_GET_ROLE_LIST = "https://oapi.dingtalk.com/topapi/role/list";
+
+    /**
+     * 根据角色获取用户名ID信息
+    * */
+    public static final String URL_GET_ROLE_SIMPLELIST = "https://oapi.dingtalk.com/topapi/role/simplelist";
+
+    public static final String URL_GET_REPORT_LIST = "https://oapi.dingtalk.com/topapi/report/list";
+
+    public static final String URL_GET_PROCESSINSTANCE_LISTIDS = "https://oapi.dingtalk.com/topapi/processinstance/listids";
+
+    public static final String URL_GET_PROCESSINSTANCE = "https://oapi.dingtalk.com/topapi/processinstance/get";
 }

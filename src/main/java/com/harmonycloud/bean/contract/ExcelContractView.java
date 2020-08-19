@@ -4,13 +4,22 @@ import java.util.Date;
 
 public class ExcelContractView {
     private Integer id;
-    private Integer fkProjectId;
+    private String contractNo;
     private String projLine;
     private String projName;
     private String customerName;
     private String customerIndustry;
     private Double contractMoney;
     private Date contractDate;
+    private String employeeName;
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
 
     public Integer getId() {
         return id;
@@ -20,12 +29,12 @@ public class ExcelContractView {
         this.id = id;
     }
 
-    public Integer getFkProjectId() {
-        return fkProjectId;
+    public String getContractNo() {
+        return contractNo;
     }
 
-    public void setFkProjectId(Integer fkProjectId) {
-        this.fkProjectId = fkProjectId;
+    public void setContractNo(String contractNo) {
+        this.contractNo = contractNo;
     }
 
     public String getProjLine() {

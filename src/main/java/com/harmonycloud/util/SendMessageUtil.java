@@ -19,13 +19,17 @@ import static com.harmonycloud.config.URLConstant.URL_SEND_WORK_MESSAGE;
 
 @Slf4j
 public class SendMessageUtil {
+    public static final String USER_ID_LIST = "15848927472119248";
+    public static final Long AGENT_ID = 305862497L;
+    public static final String ACTION_URL = "dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false";
+    public static final String BG_COLOR = "FFBBBBBB";
 
     public static void PMOMessageSend(String res) throws Exception {
         DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
 
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
-        request.setAgentId(305862497L);
-        request.setUseridList("15848927472119248");
+        request.setAgentId(AGENT_ID);
+        request.setUseridList(USER_ID_LIST);
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setActionCard(new OapiMessageCorpconversationAsyncsendV2Request.ActionCard());
@@ -36,7 +40,7 @@ public class SendMessageUtil {
         List<OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList> btnJsonLists = new ArrayList<>();
         OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList btnJson1 = new OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList();
         btnJson1.setTitle("查看详情");
-        btnJson1.setActionUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
+        btnJson1.setActionUrl(ACTION_URL);
         btnJsonLists.add(0,btnJson1);
         msg.getActionCard().setBtnJsonList(btnJsonLists);
         msg.getActionCard().setBtnOrientation("0");
@@ -55,7 +59,7 @@ public class SendMessageUtil {
         DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
 
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
-        request.setAgentId(305862497L);
+        request.setAgentId(AGENT_ID);
         request.setUseridList(userId);
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
@@ -65,7 +69,7 @@ public class SendMessageUtil {
         List<OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList> btnJsonLists = new ArrayList<>();
         OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList btnJson1 = new OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList();
         btnJson1.setTitle("查看详情");
-        btnJson1.setActionUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
+        btnJson1.setActionUrl(ACTION_URL);
         btnJsonLists.add(btnJson1);
         msg.getActionCard().setBtnOrientation("0");
         msg.getActionCard().setBtnJsonList(btnJsonLists);
@@ -109,15 +113,15 @@ public class SendMessageUtil {
         list.add(5,form5);
 
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
-        request.setAgentId(305862497L);
-        request.setUseridList("15848927472119248");
+        request.setAgentId(AGENT_ID);
+        request.setUseridList(USER_ID_LIST);
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
-        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
+        msg.getOa().setMessageUrl(ACTION_URL);
         msg.getOa().getHead().setText("结项申请审批");
-        msg.getOa().getHead().setBgcolor("FFBBBBBB");
+        msg.getOa().getHead().setBgcolor("BG_COLOR");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
         msg.getOa().getBody().setTitle("Harmage消息通知");
         msg.getOa().getBody().setForm(Collections.singletonList(new OapiMessageCorpconversationAsyncsendV2Request.Form()));
@@ -169,15 +173,15 @@ public class SendMessageUtil {
         list.add(5,form5);
 
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
-        request.setAgentId(305862497L);
-        request.setUseridList("15848927472119248");
+        request.setAgentId(AGENT_ID);
+        request.setUseridList(USER_ID_LIST);
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
-        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
+        msg.getOa().setMessageUrl(ACTION_URL);
         msg.getOa().getHead().setText("终止项目申请审批");
-        msg.getOa().getHead().setBgcolor("FFBBBBBB");
+        msg.getOa().getHead().setBgcolor("BG_COLOR");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
         msg.getOa().getBody().setTitle("Harmage消息通知");
         msg.getOa().getBody().setForm(Collections.singletonList(new OapiMessageCorpconversationAsyncsendV2Request.Form()));
@@ -222,15 +226,15 @@ public class SendMessageUtil {
         list.add(4,form4);
 
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
-        request.setAgentId(305862497L);
-        request.setUseridList("15848927472119248");
+        request.setAgentId(AGENT_ID);
+        request.setUseridList(USER_ID_LIST);
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
-        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
+        msg.getOa().setMessageUrl(ACTION_URL);
         msg.getOa().getHead().setText("结项会议申请审批");
-        msg.getOa().getHead().setBgcolor("FFBBBBBB");
+        msg.getOa().getHead().setBgcolor("BG_COLOR");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
         msg.getOa().getBody().setTitle("Harmage消息通知");
         msg.getOa().getBody().setForm(Collections.singletonList(new OapiMessageCorpconversationAsyncsendV2Request.Form()));
@@ -276,15 +280,15 @@ public class SendMessageUtil {
         list.add(4,form4);
 
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
-        request.setAgentId(305862497L);
-        request.setUseridList("15848927472119248");
+        request.setAgentId(AGENT_ID);
+        request.setUseridList(USER_ID_LIST);
 
         OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
         msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
         msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
-        msg.getOa().setMessageUrl("dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false");
+        msg.getOa().setMessageUrl(ACTION_URL);
         msg.getOa().getHead().setText("终止项目会议申请审批");
-        msg.getOa().getHead().setBgcolor("FFBBBBBB");
+        msg.getOa().getHead().setBgcolor("BG_COLOR");
         msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
         msg.getOa().getBody().setTitle("Harmage消息通知");
         msg.getOa().getBody().setForm(Collections.singletonList(new OapiMessageCorpconversationAsyncsendV2Request.Form()));

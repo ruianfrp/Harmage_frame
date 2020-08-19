@@ -125,9 +125,9 @@
     </update>
 
     <select id="selectAllContract" resultType="com.harmonycloud.bean.contract.ExcelContractView">
-        SELECT co.id,co.fk_project_id,p.proj_line,p.proj_name,c.customer_name,cdd.dic_data_sort as customer_industry,co.contract_money,co.contract_date
+        SELECT co.id,co.contract_no,p.proj_line,p.proj_name,c.customer_name,cdd.dic_data_sort as customer_industry,co.contract_money,co.contract_date,e.employee_name
         FROM contract as co left join project as p on p.id=co.fk_project_id left join customer as c on c.id=co.fk_customer_id left join
-        customer_dic_data as cdd on cdd.id=c.customer_industry;
+        customer_dic_data as cdd on cdd.id=c.customer_industry left join employee as e on e.employee_gh=c.default_employee_gh;
     </select>
 
     <select id="selectAllContractStep" resultType="com.harmonycloud.bean.contract.ExcelContractStepView">

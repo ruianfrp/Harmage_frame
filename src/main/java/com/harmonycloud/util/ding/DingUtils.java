@@ -7,6 +7,8 @@ import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
 import com.harmonycloud.bean.report.ProjectReport;
+import com.harmonycloud.config.DingConstant;
+import com.harmonycloud.config.URLConstant;
 import com.harmonycloud.service.ProjectReportService;
 import com.harmonycloud.util.date.DateUtils;
 import com.taobao.api.ApiException;
@@ -58,12 +60,13 @@ public class DingUtils {
 
     /**
      * 初始化的时候生成
-     * 根据钉钉开发平台，个人看的时候觉得获取角色类型，然后获取角色类型的人物信息，注入HashMap中较为轻盈（获取角色员工列表返回之后名字和userId）
+     * 根据钉钉开发平台，个人看的时候觉得获取角色类型，然后获取角色类型的人物信息
+     * 注入HashMap中较为轻盈（获取角色员工列表返回之后名字和userId）
      */
     public static Set<Long> getRoles() {
         Set<Long> rolesIdSet = new HashSet<>();
         try {
-            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/role/list");
+            DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_GET_ROLE_LIST);
             OapiRoleListRequest req = new OapiRoleListRequest();
             OapiRoleListResponse rsp = client.execute(req, accessToken);
             System.out.println(rsp.getBody());
@@ -84,7 +87,7 @@ public class DingUtils {
      */
     public static void getUserIdMap(Set<Long> roles) {
         try {
-            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/role/simplelist");
+            DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_GET_ROLE_SIMPLELIST);
             OapiRoleSimplelistRequest req = new OapiRoleSimplelistRequest();
             for (Long role : roles) {
                 req.setRoleId(role);
@@ -98,13 +101,12 @@ public class DingUtils {
 
     /**
      * 获取公司部门信息
-     *
      * @return
      */
     public static Set<Long> getDepartment() {
         Set<Long> departmentSet = new HashSet<>();
         try {
-            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/department/list");
+            DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_GET_DEPARTMENT_LIST);
             OapiDepartmentListRequest req = new OapiDepartmentListRequest();
             req.setHttpMethod("GET");
             OapiDepartmentListResponse rsp = client.execute(req, accessToken);
@@ -121,7 +123,6 @@ public class DingUtils {
 
     /**
      * 通过部门获取用户名id信息
-     *
      * @param departmentSet
      */
     public static void getUserIdMapByDepartment(Set<Long> departmentSet) {
@@ -129,7 +130,7 @@ public class DingUtils {
         for (Long departmentId : departmentSet) {
             try {
                 System.out.println(i++);
-                DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/simplelist");
+                DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_GET_USER_SIMPLE_LIST);
                 OapiUserSimplelistRequest req = new OapiUserSimplelistRequest();
                 req.setDepartmentId(departmentId);
                 req.setHttpMethod("GET");
@@ -150,11 +151,11 @@ public class DingUtils {
     public static void getToken() {
         try {
             //获取accessToken实现免登陆
-            DefaultDingTalkClient cli = new DefaultDingTalkClient("https://oapi.dingtalk.com/gettoken");
+            DefaultDingTalkClient cli = new DefaultDingTalkClient(URLConstant.URL_GET_TOKKEN);
             OapiGettokenRequest req = new OapiGettokenRequest();
             //后期导入配置文件
-            req.setAppkey("dingzzkrbdzs0cwejowr");
-            req.setAppsecret("1Aalbn0MIOHBGHb5phlMSyjuShbttI7EVzovd7zUYBnJXdbp_8bvpazr-OHay0Zu");
+            req.setAppkey(DingConstant.APP_KEY);
+            req.setAppsecret(DingConstant.APP_SECRET);
             req.setHttpMethod("GET");
             OapiGettokenResponse res = cli.execute(req);
             accessToken = res.getAccessToken();
@@ -172,7 +173,7 @@ public class DingUtils {
      * @return
      */
     public static JSONObject getProjectReport(String userName, String projectName, String reportType) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
+        DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_GET_REPORT_LIST);
         OapiReportListRequest request = new OapiReportListRequest();
         request.setTemplateName(reportType);
         request.setStartTime(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * (30 * 6 - 1));
@@ -222,7 +223,7 @@ public class DingUtils {
      * @return
      */
     public static List<ProjectReport> insertReportDataBase(String reportType) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/report/list");
+        DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_GET_REPORT_LIST);
         OapiReportListRequest request = new OapiReportListRequest();
         request.setTemplateName(reportType);
         request.setStartTime(System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 7);
@@ -269,7 +270,7 @@ public class DingUtils {
         getToken();
         List<String> instanceList = new ArrayList<>();
         try {
-            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/listids");
+            DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_GET_PROCESSINSTANCE_LISTIDS);
             OapiProcessinstanceListRequest req = new OapiProcessinstanceListRequest();
             req.setProcessCode("PROC-F2883F47-184A-48FC-9B20-781CFE9C3F39");
             Date day2 = new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24);
@@ -295,7 +296,7 @@ public class DingUtils {
     public static OapiProcessinstanceGetResponse getDeliverTheProject(String instanceId) {
         getToken();
         try {
-            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/processinstance/get");
+            DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_GET_PROCESSINSTANCE);
             OapiProcessinstanceGetRequest request = new OapiProcessinstanceGetRequest();
             request.setProcessInstanceId(instanceId);
             OapiProcessinstanceGetResponse response = client.execute(request, accessToken);
