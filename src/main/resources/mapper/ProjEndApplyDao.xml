@@ -117,8 +117,15 @@
     <select id="selectProjectEndFilePath" resultType="java.lang.String">
         SELECT distinct file_save_path FROM project_file where fk_project_id=(select fk_proj_id from proj_end_apply where id=#{id}) and file_proj_stage="终验报告";
     </select>
-    
+
+
+    <select id="getProjectEndTime" resultType="java.lang.String">
+        select proj_end_time from proj_end_apply where fk_proj_id=#{id} and end_apply_status="审批通过"
+    </select>
+
     <delete id="deleteProjectEndFiles">
         delete from project_file where fk_project_id=(select fk_proj_id from proj_end_apply where id=#{id}) and file_proj_stage="终验报告";
     </delete>
+
+
 </mapper>

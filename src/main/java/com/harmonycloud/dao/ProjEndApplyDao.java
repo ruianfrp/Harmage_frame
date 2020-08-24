@@ -3,6 +3,7 @@ package com.harmonycloud.dao;
 import com.harmonycloud.bean.project.ProjEndApplyDetailView;
 import com.harmonycloud.bean.project.ProjEndApplyListView;
 import com.harmonycloud.bean.project.ProjectEndMsgView;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -42,4 +43,6 @@ public interface ProjEndApplyDao {
     String selectProjectEndFilePath(Integer id);
 
     Integer deleteProjectEndFiles(Integer id);
+
+    String getProjectEndTime(String end_apply_status,@Param("id") int id);
 }

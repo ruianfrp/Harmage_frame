@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.harmonycloud.dao.ProjectPreSaleApplyDao">
+    <insert id="insertProjectPreSaleApply" parameterType="com.harmonycloud.bean.project.ProjectPreSaleApply">
+        insert into proj_pre_sale_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fkProjectId!=null">
+                fk_project_id,
+            </if>
+            <if test="projName!=null">
+                proj_name,
+            </if>
+            <if test="projType!=null">
+                proj_type,
+            </if>
+            <if test="channel!=null">
+                channel,
+            </if>
+            <if test="projManager!=null">
+                proj_manager,
+            </if>
+            <if test="preSaleManager!=null">
+                pre_sale_manager,
+            </if>
+            <if test="industry!=null">
+                industry,
+            </if>
+            <if test="projBudget!=null">
+                proj_budget,
+            </if>
+            <if test="expectStartTime!=null">
+                expect_start_time,
+            </if>
+            <if test="assCustomer!=null">
+                ass_customer,
+            </if>
+            <if test="assBusinessOpp!=null">
+                ass_business_opp,
+            </if>
+            <if test="projLine!=null">
+                proj_line,
+            </if>
+            <if test="projOverview!=null">
+                proj_overview,
+            </if>
+            <if test="personRqmt!=null">
+                person_rqmt,
+            </if>
+            <if test="schedule!=null">
+                schedule,
+            </if>
+            <if test="status!=null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="fkProjectId!=null">
+                #{fkProjectId},
+            </if>
+            <if test="projName!=null">
+                #{projName},
+            </if>
+            <if test="projType!=null">
+                #{projType},
+            </if>
+            <if test="channel!=null">
+                #{channel},
+            </if>
+            <if test="projManager!=null">
+                #{projManager},
+            </if>
+            <if test="preSaleManager!=null">
+                #{preSaleManager},
+            </if>
+            <if test="industry!=null">
+                #{industry},
+            </if>
+            <if test="projBudget!=null">
+                #{projBudget},
+            </if>
+            <if test="expectStartTime!=null">
+                #{expectStartTime,
+            </if>
+            <if test="assCustomer!=null">
+                #{assCustomer},
+            </if>
+            <if test="assBusinessOpp!=null">
+                #{assBusinessOpp},
+            </if>
+            <if test="projLine!=null">
+                #{projLine},
+            </if>
+            <if test="projOverview!=null">
+                #{projOverview},
+            </if>
+            <if test="personRqmt!=null">
+                #{personRqmt},
+            </if>
+            <if test="schedule!=null">
+                #{schedule},
+            </if>
+            <if test="status!=null">
+                #{status},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateProjectPreSaleApply" parameterType="com.harmonycloud.bean.project.ProjectPreSaleApply">
+        update proj_pre_sale_apply
+        <set>
+            <if test="fkProjectId!=null">
+                fk_project_id = #{fkProjectId},
+            </if>
+            <if test="projName!=null">
+                proj_name = #{projName},
+            </if>
+            <if test="projType!=null">
+                proj_type = #{projType},
+            </if>
+            <if test="channel!=null">
+                channel = #{channel},
+            </if>
+            <if test="projManager!=null">
+                proj_manager=#{projManager},
+            </if>
+            <if test="preSaleManager!=null">
+                pre_sale_manager=#{preSaleManager},
+            </if>
+            <if test="industry!=null">
+                industry=#{industry},
+            </if>
+            <if test="projBudget!=null">
+                proj_budget=#{projBudget},
+            </if>
+            <if test="expectStartTime!=null">
+                expect_start_time=#{expectStartTime},
+            </if>
+            <if test="assCustomer!=null">
+                ass_customer=#{assCustomer},
+            </if>
+            <if test="assBusinessOpp!=null">
+                ass_business_opp=#{assBusinessOpp},
+            </if>
+            <if test="projLine!=null">
+                proj_line=#{assBusinessOpp},
+            </if>
+            <if test="projOverview!=null">
+                proj_overview=#{projOverView},
+            </if>
+            <if test="personRqmt!=null">
+                person_rqmt=#{personRqmt},
+            </if>
+            <if test="schedule!=null">
+                schedule=#{schedule},
+            </if>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+        </set>
+    </update>
+
+    <update id="updateStatus">
+        update proj_pre_sale_apply
+        set status=#{status}
+        where id=#{id}
+    </update>
+
+    <select id="listProjectPreSaleApply" resultType="com.harmonycloud.bean.project.ProjectPreSaleApply">
+        select * from proj_pre_sale_apply
+    </select>
+</mapper>

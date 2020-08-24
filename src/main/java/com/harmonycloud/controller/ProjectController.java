@@ -8,10 +8,7 @@ import com.harmonycloud.bean.customer.Customer;
 import com.harmonycloud.bean.project.Project;
 import com.harmonycloud.bean.project.ProjectListView;
 import com.harmonycloud.bean.report.ProjectReport;
-import com.harmonycloud.service.CustomerService;
-import com.harmonycloud.service.ProjectReportService;
-import com.harmonycloud.service.ProjectService;
-import com.harmonycloud.service.ProjectStatusCacheService;
+import com.harmonycloud.service.*;
 import com.harmonycloud.util.date.DateUtils;
 import com.harmonycloud.util.ding.DingUtils;
 import io.swagger.annotations.*;
@@ -19,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -43,6 +41,10 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
 
+    @Autowired
+    ProjEndApplyService projEndApplyService;
+    
+    
     @Autowired
     CustomerService customerService;
 
@@ -566,18 +568,21 @@ public class ProjectController {
      * @return res.message
      * @throws ParseException
      */
-
     @PostMapping("/getProjectReport")
     @ApiOperation(value = "获取项目周报")
     public Message getProjectReport(@RequestParam String projectName) throws ParseException {
         VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
-        if (res.message.getCode() == 401) {
-            log.error("Authorization参数校验失败");
-            return res.message;
-        }
+//        if (res.message.getCode() == 401) {
+//            log.error("Authorization参数校验失败");
+//            return res.message;
+//        }
         DingUtils.getToken();
         ArrayList<ProjectReport> ndata = projectReportService.getProjectReport(projectName);
 
+        if(ndata.size()==0){
+            res.message.setMessage(200, "获取项目周报失败", "数据库无数据");
+            return res.message;
+        }
         ArrayList<ProjectReport> data=new ArrayList<>();
         data.add(ndata.get(0));
         for(int i=1;i<ndata.size();i++){
@@ -596,20 +601,25 @@ public class ProjectController {
 
         }
 
-        for(int i=0;i<data.size();i++){
-            System.out.println("newstart="+data.get(i).getStartTime());
-        }
         Project project = projectService.getProject(projectName);
         List<String> projectDate = DateUtils.getProjectDate(project.getProjStartTime(), ObjectUtils.isEmpty(project.getProjEndTime()) ? new Date() : project.getProjEndTime());
-        for(String i:projectDate){
-            System.out.println("i="+i);
-        }
+
+
+        String end_time=projEndApplyService.getProjectEndTime("",project.getId().intValue());
+
 
         int index = 0;
-        System.out.println(data.size());
         JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
+        Stack<String> key=new Stack<String>();
+        Stack<String> value=new Stack<String>();
         for(int  i =projectDate.size()-1;i>=0; i--) {
             String monday=projectDate.get(i);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//注意月份是MM
+            Date apply_end_time = simpleDateFormat.parse(end_time);
+
+            if((apply_end_time.getTime()>simpleDateFormat.parse(monday).getTime())&&(apply_end_time.getTime()<=(simpleDateFormat.parse(monday).getTime()+7*60*60*1000*24))){
+                break;
+            }
             ProjectReport projectReport = null;
             Date startTime = null;
             Date endTime=null;
@@ -618,21 +628,33 @@ public class ProjectController {
                 startTime = simpleDateFormat.parse(projectReport.getStartTime());
                 endTime=simpleDateFormat.parse(projectReport.getEndTime());
             }
-            System.out.println(monday+" "+startTime.getTime()+" "+endTime.getTime());
-            System.out.println("start:"+startTime.getTime()+"end:"+simpleDateFormat.parse(monday).getTime());
-            System.out.println(simpleDateFormat.parse(monday).getTime()+7*60*60*1000*24);
+//            System.out.println(monday+" "+startTime.getTime()+" "+endTime.getTime());
+//            System.out.println("start:"+startTime.getTime()+"end:"+simpleDateFormat.parse(monday).getTime());
+//            System.out.println(simpleDateFormat.parse(monday).getTime()+7*60*60*1000*24);
             if(index<data.size()&&!ObjectUtils.isEmpty(projectReport.getReport()) && (endTime.getTime() >= simpleDateFormat.parse(monday).getTime())&&(endTime.getTime()<=(simpleDateFormat.parse(monday).getTime()+7*60*60*1000*24))) {
-                jsonObject.put(projectReport.getStartTime() + "~" + projectReport.getEndTime(), projectReport.getReport());
+                key.push(projectReport.getStartTime() + "~" + projectReport.getEndTime());
+                value.push(projectReport.getReport());
                 index++;
             }else {
                 Calendar c_friday = new GregorianCalendar();
                 c_friday.setTime(simpleDateFormat.parse(monday));
 //                System.out.println("时间：" + simpleDateFormat.format(c_friday.getTime().getTime()));
                 c_friday.add(Calendar.DAY_OF_MONTH, 4);
-                jsonObject.put(monday + "~" + simpleDateFormat.format(c_friday.getTime().getTime()), "There is no data");
+                key.push(monday + "~" + simpleDateFormat.format(c_friday.getTime().getTime()));
+                value.push("There is no data");
             }
+
         }
-        res.message.setMessage(200, "获取项目周报成功", jsonObject);
+
+        JSONObject jsonObject_new = new JSONObject(new LinkedHashMap<>());
+
+        for(int i=0;i<key.size();i++){
+            String key_v=key.pop();
+            String value_v=value.pop();
+            jsonObject_new.put(key_v,value_v);
+        }
+
+        res.message.setMessage(200, "获取项目周报成功", jsonObject_new);
         return res.message;
 
     }

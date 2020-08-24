@@ -102,4 +102,10 @@ public class ProjEndApplyServiceImp implements ProjEndApplyService {
         return projEndApplyDao.deleteProjectEndFiles(id);
     }
 
+    @Override
+    public String getProjectEndTime(String end_apply_status,int id) {
+        System.out.println("ZHi ");
+        return projEndApplyDao.getProjectEndTime(end_apply_status,id);
+    }
+
 }

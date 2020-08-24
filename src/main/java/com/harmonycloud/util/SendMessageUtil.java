@@ -3,16 +3,17 @@ package com.harmonycloud.util;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.request.OapiMessageCorpconversationAsyncsendV2Request;
+import com.dingtalk.api.request.OapiOrgListshortcutRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
 import com.harmonycloud.bean.project.ProjectEndMsgView;
+import com.harmonycloud.bean.project.ProjectPreSaleApply;
 import com.harmonycloud.config.DingConstant;
+import com.harmonycloud.config.URLConstant;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.harmonycloud.config.URLConstant.URL_GET_TOKKEN;
 import static com.harmonycloud.config.URLConstant.URL_SEND_WORK_MESSAGE;
@@ -23,6 +24,8 @@ public class SendMessageUtil {
     public static final Long AGENT_ID = 305862497L;
     public static final String ACTION_URL = "dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f47.92.161.179%3a31800%2flogin&pc_slide=false";
     public static final String BG_COLOR = "FFBBBBBB";
+    public static final String OK_URL = "dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f10.1.11.97%3a8080%2fprojPreSaleApply%2fnotifyMessage%3fstatus%3d1%26projectId%3d";
+    public static final String VETO_URL = "dingtalk://dingtalkclient/page/link?url=http%3a%2f%2f10.1.11.97%3a8080%2fprojPreSaleApply%2fnotifyMessage%3fstatus%3d0%26projectId%3d";
 
     public static void PMOMessageSend(String res) throws Exception {
         DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
@@ -140,10 +143,6 @@ public class SendMessageUtil {
         }
     }
 
-
-
-
-
     public static void projectTerminateMessageSend(ProjectEndMsgView projectEndMsgView) throws Exception {
         DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
         OapiMessageCorpconversationAsyncsendV2Request.Form form0 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
@@ -200,7 +199,6 @@ public class SendMessageUtil {
         }
     }
 
-
     public static void projectEndMeetingMsgSend(ProjectEndMsgView projectEndMsgView) throws Exception {
         DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
         OapiMessageCorpconversationAsyncsendV2Request.Form form0 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
@@ -253,8 +251,6 @@ public class SendMessageUtil {
         }
     }
 
-
-
     public static void projectTerminateMeetingMsgSend(ProjectEndMsgView projectEndMsgView) throws Exception {
         DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
         OapiMessageCorpconversationAsyncsendV2Request.Form form0 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
@@ -306,6 +302,109 @@ public class SendMessageUtil {
             log.error("钉钉发送工作通知消息失败");
         }
     }
+
+    public static Map projPreSaleApplyMsgSend(ProjectPreSaleApply projectPreSaleApply, String userId) throws ApiException {
+        DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
+        OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
+        request.setAgentId(AGENT_ID);
+        request.setUseridList(userId);
+        /**
+         * 构建OA消息体
+         * */
+        OapiMessageCorpconversationAsyncsendV2Request.Form form0 = new OapiMessageCorpconversationAsyncsendV2Request.Form();
+
+        form0.setKey("项目名称：");
+        form0.setValue(projectPreSaleApply.getProjName());
+
+        List<OapiMessageCorpconversationAsyncsendV2Request.Form> list = new ArrayList<>();
+        list.add(0,form0);
+
+        OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
+        msg.setOa(new OapiMessageCorpconversationAsyncsendV2Request.OA());
+        msg.setMsgtype("oa");
+        msg.getOa().setHead(new OapiMessageCorpconversationAsyncsendV2Request.Head());
+        msg.getOa().setBody(new OapiMessageCorpconversationAsyncsendV2Request.Body());
+        msg.getOa().setMessageUrl(ACTION_URL);
+
+        msg.getOa().getHead().setBgcolor(BG_COLOR);
+        msg.getOa().getHead().setText("售前项目立项审批");
+
+        msg.getOa().getBody().setTitle("Harmage消息通知");
+        msg.getOa().getBody().setForm(list);
+        msg.getOa().getBody().setContent(projectPreSaleApply.getProjOverview());
+        msg.getOa().getBody().setAuthor(projectPreSaleApply.getPreSaleManager());
+
+        request.setMsg(msg);
+        OapiMessageCorpconversationAsyncsendV2Response response = client.execute(request, getToken());
+        Map<String,Object> map = new HashMap<>();
+        if(response.isSuccess()){
+            map.put("result",response);
+            log.info("dingding send message success");
+        }else{
+            map.put("result","failed");
+            log.info("ding ding send message failed");
+        }
+        return map;
+    }
+
+    public static Map approvalMsgSend(String markdownContent,String projectId,String userId) throws ApiException {
+        DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
+        OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
+        request.setAgentId(AGENT_ID);
+        request.setUseridList(userId);
+
+        OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
+        msg.setMsgtype("action_card");
+        msg.setActionCard(new OapiMessageCorpconversationAsyncsendV2Request.ActionCard());
+        msg.getActionCard().setTitle("Harmage消息通知");
+        msg.getActionCard().setMarkdown(markdownContent);
+        msg.getActionCard().setBtnOrientation("0");//0：竖直排列 1：横向排列
+        List<OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList> btnJsonList = new ArrayList<>();
+        OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList btnOk = new OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList();
+        /**
+         * URL中包含status id字段
+         * pc_slide=false表示在浏览器中打开链接
+        * */
+        btnOk.setTitle("通过");
+        btnOk.setActionUrl(OK_URL+projectId+"&pc_slide=false");
+        OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList btnVeto = new OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList();
+        btnVeto.setTitle("驳回");
+        btnVeto.setActionUrl(VETO_URL+projectId+"&pc_slide=false");
+        OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList btnDetail = new OapiMessageCorpconversationAsyncsendV2Request.BtnJsonList();
+        btnDetail.setTitle("查看详情");
+        btnDetail.setActionUrl(ACTION_URL);
+        btnJsonList.add(btnOk);
+        btnJsonList.add(btnVeto);
+        btnJsonList.add(btnDetail);
+        msg.getActionCard().setBtnJsonList(btnJsonList);
+
+        request.setMsg(msg);
+
+        OapiMessageCorpconversationAsyncsendV2Response response = client.execute(request,getToken());
+        Map<String,Object> map = new HashMap<>();
+        map.put("result",response);
+        return map;
+    }
+
+    public static Map textMsgSend(String content,String userId) throws ApiException {
+        DefaultDingTalkClient client = new DefaultDingTalkClient(URL_SEND_WORK_MESSAGE);
+        OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
+        request.setAgentId(AGENT_ID);
+        request.setUseridList(userId);
+
+        OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
+        msg.setMsgtype("text");
+        msg.setText(new OapiMessageCorpconversationAsyncsendV2Request.Text());
+        msg.getText().setContent(content);
+
+        request.setMsg(msg);
+
+        OapiMessageCorpconversationAsyncsendV2Response response = client.execute(request,getToken());
+        Map<String,Object> map = new HashMap<>();
+        map.put("result",response);
+        return map;
+    }
+
     private static String getToken() {
         DefaultDingTalkClient client = new
                 DefaultDingTalkClient(URL_GET_TOKKEN);

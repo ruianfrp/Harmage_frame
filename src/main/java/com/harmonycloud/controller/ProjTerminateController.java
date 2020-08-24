@@ -1,8 +1,11 @@
 package com.harmonycloud.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.harmonycloud.bean.Message;
 import com.harmonycloud.bean.VerifyMessage;
 import com.harmonycloud.bean.project.ProjEndApplyDetailView;
+import com.harmonycloud.bean.project.ProjEndApplyListView;
 import com.harmonycloud.bean.project.ProjectEndMsgView;
 import com.harmonycloud.bean.project.ProjectFileView;
 import com.harmonycloud.service.ProjEndApplyService;
@@ -42,13 +45,73 @@ public class ProjTerminateController {
 
 
 
-    @Autowired
-    ProjEndApplyService projEndApplyService;
-
-
 
     @Autowired
     ProjectFileService projectFileService;
+
+
+
+
+    /**
+     * 返回PM终止申请列表
+     *
+     * @return message
+     * @throws Exception
+     */
+    @PostMapping("/listPMProjectEndApply")
+    @ApiOperation(value = "返回PM终止申请列表")
+    public Message listPMProjEndApply(@RequestBody Integer pageNum) throws Exception {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        String projPMGh = res.user.getId();
+        Map<String, Object> data = new HashMap<>();
+        PageHelper.startPage(pageNum,10);
+        List<ProjEndApplyListView> list = projTermApplyService.listPMProjEndApply(projPMGh);
+        PageInfo<ProjEndApplyListView> pageInfo = new PageInfo<>(list);
+        if (pageInfo.getTotal()>0) {
+            log.info("终止申请列表返回成功");
+            data.put("pageInfo", pageInfo);
+            res.message.setMessage(200, "终止申请列表返回成功", data);
+        } else {
+            log.error("返回错误，终止申请列表数据为空");
+            res.message.setMessage(400, "返回错误，终止申请列表数据为空");
+        }
+        return res.message;
+    }
+
+
+
+    /**
+     * 返回PMO终止申请列表
+     *
+     * @return message
+     * @throws Exception
+     */
+    @PostMapping("/listProjectTerminateApply")
+    @ApiOperation(value = "返回PMO终止申请列表")
+    public Message listPMOProjEndApply(@RequestBody Integer pageNum) throws Exception {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        Map<String, Object> data = new HashMap<>();
+        PageHelper.startPage(pageNum,10);
+        List<ProjEndApplyListView> list = projTermApplyService.listPMOProjEndApply();
+        PageInfo<ProjEndApplyListView> pageInfo = new PageInfo<>(list);
+        if (pageInfo.getTotal()>0) {
+            log.info("终止申请列表返回成功");
+            data.put("pageInfo", pageInfo);
+            res.message.setMessage(200, "终止申请列表返回成功", data);
+        } else {
+            log.error("返回错误，终止申请列表数据为空");
+            res.message.setMessage(400, "返回错误，终止申请列表数据为空");
+        }
+        return res.message;
+    }
 
 
     /**
