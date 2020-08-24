@@ -25,6 +25,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,9 @@ import static com.harmonycloud.util.JsonWebToken.VerifyCode;
 @Api(value="客户controller",tags={"客户操作接口"})
 @RequestMapping("/customer")
 public class CustomerController {
+
+    @Value("${frame.ip}")
+    private String frame;
 
     @Autowired
     CustomerService customerService;
@@ -1669,7 +1673,7 @@ public class CustomerController {
             HSSFCellStyle styleDouble = wb.createCellStyle();
             styleDouble.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
             styleDouble.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-            styleDouble.setDataFormat(wb.createDataFormat().getFormat("¥###,##0,000"));
+            styleDouble.setDataFormat(wb.createDataFormat().getFormat("¥###,###,###"));
             //已完成样式
             HSSFCellStyle styleDone = wb.createCellStyle();
             styleDone.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
@@ -1938,7 +1942,7 @@ public class CustomerController {
             fileOut.close();
             log.info("Excel文件已成功导出!");
             Map<String, Object> data = new HashMap<>();
-            data.put("url", "http://47.92.161.179:9000/Excel/Contract.xls");
+            data.put("url", frame + "/Excel/Contract.xls");
             res.message.setMessage(200, "excel导出成功", data);
         } catch (Exception ex) {
             ex.printStackTrace();
