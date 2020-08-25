@@ -1946,7 +1946,271 @@ public class CustomerController {
             res.message.setMessage(200, "excel导出成功", data);
         } catch (Exception ex) {
             ex.printStackTrace();
-            res.message.setMessage(400, "excel导出成功");
+            res.message.setMessage(400, "excel导出失败");
+        }
+        return res.message;
+    }
+
+    @GetMapping("/exportCustomer")
+    @ApiOperation(value = "客户数据导出")
+    public Message exportCustomer() {
+        VerifyMessage res = VerifyCode(request.getHeader("Authorization"));
+        if (res.message.getCode() == 401) {
+            log.error("Authorization参数校验失败");
+            return res.message;
+        }
+        try {
+            short num = 0;
+            HSSFWorkbook wb = new HSSFWorkbook();
+            HSSFSheet sheet = wb.createSheet("客户信息");
+            // 样式
+            // 表头标题
+            HSSFCellStyle styleTitel = wb.createCellStyle();
+            styleTitel.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            styleTitel.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            styleTitel.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+            styleTitel.setBottomBorderColor(HSSFColor.BLACK.index);
+            styleTitel.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
+            styleTitel.setLeftBorderColor(HSSFColor.BLACK.index);
+            styleTitel.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
+            styleTitel.setRightBorderColor(HSSFColor.BLACK.index);
+            styleTitel.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
+            styleTitel.setTopBorderColor(HSSFColor.BLACK.index);
+            styleTitel.setDataFormat(wb.createDataFormat().getFormat("@"));
+            styleTitel.setWrapText(true);
+            //普通样式
+            HSSFCellStyle style = wb.createCellStyle();
+            style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            style.setDataFormat(wb.createDataFormat().getFormat("@"));
+            style.setWrapText(true);
+            //日期样式
+            HSSFCellStyle styleDate = wb.createCellStyle();
+            styleDate.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            styleDate.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            styleDate.setDataFormat(wb.createDataFormat().getFormat("yyyy-MM-dd"));
+            Map<Integer, Integer> maxWidth = new HashMap<Integer, Integer>();
+            HSSFRow row1 = sheet.createRow(num);
+            num += 1;
+            HSSFCell cell;
+            String[] tableHead = new String[]{"客户ID", "客户名称", "省", "市", "详细地址", "邮编", "官网", "邮箱", "联系人姓名", "联系人职位", "联系人具体职位",
+                    "联系人手机", "联系人微信", "产品分类", "客户来源", "客户行业", "单位类型", "技术部门总规格", "外包人员规模", "服务器规模", "主要服务器类型",
+                    "机房网络封闭程度", "IT运维发展阶段", "软件架构发展阶段", "主流技术框架", "IT监控的发展阶段", "现有痛点", "主要诉求", "未来1～2年关注的技术方向",
+                    "关心的技术点", "用了什么中间件", "技术人员工资平均水平", "年度IT建设总预算", "哪些架构在朝分布式方向转型", "备注其他", "录入时间"};
+            for (short i = 0; i < tableHead.length; i++) {
+                cell = row1.createCell(i);
+                cell.setCellValue(tableHead[i]);
+                cell.setCellStyle(styleTitel);
+                maxWidth.put((int) i, cell.getStringCellValue().getBytes().length * 256 + 200);
+            }
+            for (int i = 0; i < tableHead.length; i++) {
+                sheet.setColumnWidth(i, maxWidth.get(i));
+            }
+            List<CustomerDetailView> customerDetailViews = customerService.selectAllCustomerDetails();
+            if (customerDetailViews.size() > 0) {
+                for (CustomerDetailView customerDetailView : customerDetailViews) {
+                    HSSFRow row = sheet.createRow(num);
+
+                    cell = row.createCell((short) 0);
+                    cell.setCellValue(customerDetailView.getId());
+                    cell.setCellStyle(style);
+
+                    cell = row.createCell((short) 1);
+                    cell.setCellValue(customerDetailView.getCustomerName());
+                    cell.setCellStyle(style);
+
+                    if (customerDetailView.getCustomerProvince() != null) {
+                        cell = row.createCell((short) 2);
+                        cell.setCellValue(customerDetailView.getCustomerProvince());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCustomerCity() != null) {
+                        cell = row.createCell((short) 3);
+                        cell.setCellValue(customerDetailView.getCustomerCity());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCustomerPlace() != null) {
+                        cell = row.createCell((short) 4);
+                        cell.setCellValue(customerDetailView.getCustomerPlace());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCustomerCode() != null) {
+                        cell = row.createCell((short) 5);
+                        cell.setCellValue(customerDetailView.getCustomerCode());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCustomerWeb() != null) {
+                        cell = row.createCell((short) 6);
+                        cell.setCellValue(customerDetailView.getCustomerWeb());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCustomerEmail() != null) {
+                        cell = row.createCell((short) 7);
+                        cell.setCellValue(customerDetailView.getCustomerEmail());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getContactsName() != null) {
+                        cell = row.createCell((short) 8);
+                        cell.setCellValue(customerDetailView.getContactsName());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getContactsPosition() != null) {
+                        cell = row.createCell((short) 9);
+                        cell.setCellValue(customerDetailView.getContactsPosition());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getContactsSpecificPosition() != null) {
+                        cell = row.createCell((short) 10);
+                        cell.setCellValue(customerDetailView.getContactsSpecificPosition());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getContactsTel() != null) {
+                        cell = row.createCell((short) 11);
+                        cell.setCellValue(customerDetailView.getContactsTel());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getContactsWechat() != null) {
+                        cell = row.createCell((short) 12);
+                        cell.setCellValue(customerDetailView.getContactsWechat());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCustomerProdSort() != null) {
+                        cell = row.createCell((short) 13);
+                        if (customerDetailView.getCustomerProdText() != null) {
+                            cell.setCellValue(customerDetailView.getCustomerIndustry() + "  " + customerDetailView.getCustomerProdText());
+                        } else {
+                            cell.setCellValue(customerDetailView.getCustomerIndustry());
+                        }
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCustomerSourceSort() != null) {
+                        cell = row.createCell((short) 14);
+                        if (customerDetailView.getCustomerSourceText() != null) {
+                            cell.setCellValue(customerDetailView.getCustomerIndustry() + "  " + customerDetailView.getCustomerSourceText());
+                        } else {
+                            cell.setCellValue(customerDetailView.getCustomerSourceSort());
+                        }
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCustomerIndustry() != null) {
+                        cell = row.createCell((short) 15);
+                        cell.setCellValue(customerDetailView.getCustomerIndustry());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCustomerType() != null) {
+                        cell = row.createCell((short) 16);
+                        cell.setCellValue(customerDetailView.getCustomerType());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getTeamTotal() != null) {
+                        cell = row.createCell((short) 17);
+                        cell.setCellValue(customerDetailView.getTeamTotal());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getTeamOutsource() != null) {
+                        cell = row.createCell((short) 18);
+                        cell.setCellValue(customerDetailView.getTeamOutsource());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getServerCount() != null) {
+                        cell = row.createCell((short) 19);
+                        cell.setCellValue(customerDetailView.getServerCount());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getServerType() != null) {
+                        cell = row.createCell((short) 20);
+                        cell.setCellValue(customerDetailView.getServerType());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getServerNetwork() != null) {
+                        cell = row.createCell((short) 21);
+                        cell.setCellValue(customerDetailView.getServerNetwork());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getOperationStage() != null) {
+                        cell = row.createCell((short) 22);
+                        cell.setCellValue(customerDetailView.getOperationStage());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getSorftStage() != null) {
+                        cell = row.createCell((short) 23);
+                        cell.setCellValue(customerDetailView.getSorftStage());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getTechnologyStage() != null) {
+                        cell = row.createCell((short) 24);
+                        cell.setCellValue(customerDetailView.getTechnologyStage());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getMonitorStage() != null) {
+                        cell = row.createCell((short) 25);
+                        cell.setCellValue(customerDetailView.getMonitorStage());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getExistingPain() != null) {
+                        cell = row.createCell((short) 26);
+                        cell.setCellValue(customerDetailView.getExistingPain());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getPetition() != null) {
+                        cell = row.createCell((short) 27);
+                        cell.setCellValue(customerDetailView.getPetition());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getDirection() != null) {
+                        cell = row.createCell((short) 28);
+                        cell.setCellValue(customerDetailView.getDirection());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getFollowPoint() != null) {
+                        cell = row.createCell((short) 29);
+                        cell.setCellValue(customerDetailView.getFollowPoint());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getMiddleware() != null) {
+                        cell = row.createCell((short) 30);
+                        cell.setCellValue(customerDetailView.getMiddleware());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getWages() != null) {
+                        cell = row.createCell((short) 31);
+                        cell.setCellValue(customerDetailView.getWages());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getBudgetTotal() != null) {
+                        cell = row.createCell((short) 32);
+                        cell.setCellValue(customerDetailView.getBudgetTotal());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getTransformation() != null) {
+                        cell = row.createCell((short) 33);
+                        cell.setCellValue(customerDetailView.getTransformation());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCustomerRemark() != null) {
+                        cell = row.createCell((short) 34);
+                        cell.setCellValue(customerDetailView.getCustomerRemark());
+                        cell.setCellStyle(style);
+                    }
+                    if (customerDetailView.getCreateTime() != null) {
+                        cell = row.createCell((short) 35);
+                        cell.setCellValue(customerDetailView.getCreateTime());
+                        cell.setCellStyle(styleDate);
+                    }
+                    num += 1;
+                }
+            }
+            FileOutputStream fileOut = new FileOutputStream("/var/upload/Excel/Customer.xls");
+            wb.write(fileOut);
+            fileOut.close();
+            log.info("Excel文件已成功导出!");
+            Map<String, Object> data = new HashMap<>();
+            data.put("url", frame + "/Excel/Customer.xls");
+            res.message.setMessage(200, "excel导出成功", data);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            res.message.setMessage(400, "excel导出失败");
         }
         return res.message;
     }

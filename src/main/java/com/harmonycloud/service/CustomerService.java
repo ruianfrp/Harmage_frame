@@ -32,6 +32,8 @@ public interface CustomerService {
 
     CustomerDetailView selectCustomerDetails(Integer id);
 
+    List<CustomerDetailView> selectAllCustomerDetails();
+
     Integer insertCustomerContact(CustomerContacts contact);
 
     Integer selectCustomerContactId(String contactsName,Integer contactsPosition,String contactsTel);

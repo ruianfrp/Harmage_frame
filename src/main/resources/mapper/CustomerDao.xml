@@ -155,6 +155,46 @@
         order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa5 on aaa5.id=c.id group by c.id;
     </select>
 
+    <select id="selectAllCustomerDetails" resultType="com.harmonycloud.bean.customer.CustomerDetailView">
+        select c.id,c.customer_name,c.customer_province,c.customer_city,c.customer_place,c.customer_code,c.customer_web,c.customer_email,cc.contacts_name,
+        cdd1.dic_data_sort as contacts_position,cc.contacts_specific_position,cc.contacts_tel,cc.contacts_wechat,cdd2.dic_data_sort as customer_prod_sort,
+        cdd2.dic_data_text as customer_prod_text,cdd3.dic_data_sort as customer_source_sort,c.customer_source_text,cdd4.dic_data_sort as customer_industry,
+        cdd5.dic_data_sort as customer_type,cdd6.dic_data_sort as team_total,cdd7.dic_data_sort as team_outsource,cdd8.dic_data_sort as server_count,
+        cdd9.dic_data_sort as server_type,cdd10.dic_data_sort as server_network,cdd11.dic_data_sort as operation_stage,cdd12.dic_data_sort as sorft_stage,
+        cdd13.dic_data_sort as technology_stage,cdd14.dic_data_sort as monitor_stage,aaa1.existing_pain,aaa2.petition,aaa3.direction,aaa4.follow_point,
+        c.wages,cdd19.dic_data_sort as budget_total,cdd20.dic_data_sort as transformation,aaa5.middleware,c.customer_remark,
+        DATE_FORMAT(c.create_time,'%Y-%m-%d %H:%i:%S') as create_time,DATE_FORMAT(c.update_time,'%Y-%m-%d %H:%i:%S') as update_time
+        from customer as c left join customer_contacts as cc on c.default_contact_id=cc.id
+        left join customer_dic_data as cdd1 on cdd1.id=cc.contacts_position left join customer_dic_data as cdd2 on c.customer_prod_sort=cdd2.id
+        left join customer_dic_data as cdd3 on cdd3.id=c.customer_source left join customer_dic_data as cdd4 on c.customer_industry=cdd4.id
+        left join customer_dic_data as cdd5 on c.customer_type=cdd5.id left join customer_dic_data as cdd6 on c.team_total=cdd6.id
+        left join customer_dic_data as cdd7 on cdd7.id=c.team_outsource left join customer_dic_data as cdd8 on c.server_count=cdd8.id
+        left join customer_dic_data as cdd9 on cdd9.id=c.server_type left join customer_dic_data as cdd10 on c.server_network=cdd10.id
+        left join customer_dic_data as cdd11 on cdd11.id=c.operation_stage left join customer_dic_data as cdd12 on c.sorft_stage=cdd12.id
+        left join customer_dic_data as cdd13 on cdd13.id=c.technology_stage left join customer_dic_data as cdd14 on c.monitor_stage=cdd14.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as existing_pain from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.existing_pain,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.existing_pain)-length(replace(a.existing_pain,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa1 on aaa1.id=c.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as petition from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.petition,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.petition)-length(replace(a.petition,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa2 on aaa2.id=c.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as direction from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.direction,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.direction)-length(replace(a.direction,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa3 on aaa3.id=c.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as follow_point from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.follow_point,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.follow_point)-length(replace(a.follow_point,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa4 on aaa4.id=c.id left join customer_dic_data as cdd19 on c.budget_total=cdd19.id
+        left join customer_dic_data as cdd20 on c.transformation=cdd20.id
+        left join (select id,GROUP_CONCAT(shopname SEPARATOR';') as middleware from (select s.dic_data_sort as shopname,a.id from customer_dic_data s
+        inner JOIN (select a.id,substring_index(substring_index(a.middleware,',',b.help_topic_id+1),',',-1) shopid from customer as a
+        join mysql.help_topic b on (length(a.middleware)-length(replace(a.middleware,',',''))+1) > b.help_topic_id
+        order by a.id) as a on s.id=a.shopid) as a GROUP BY id) as aaa5 on aaa5.id=c.id group by c.id;
+    </select>
+
     <select id="selectCustomerAfterUpdate" resultType="com.harmonycloud.bean.customer.Customer">
         select c.*,cc.contacts_name,cc.contacts_position,cc.contacts_specific_position,cc.contacts_tel,cc.contacts_wechat from
         (SELECT * FROM customer where id=#{id}) as c left join customer_contacts as cc on c.default_contact_id=cc.id;

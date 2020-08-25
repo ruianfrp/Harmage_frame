@@ -64,6 +64,11 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
+    public List<CustomerDetailView> selectAllCustomerDetails(){
+        return customerDao.selectAllCustomerDetails();
+    }
+
+    @Override
     public Integer insertCustomerContact(CustomerContacts contact){
         return customerDao.insertCustomerContact(contact);
     }
