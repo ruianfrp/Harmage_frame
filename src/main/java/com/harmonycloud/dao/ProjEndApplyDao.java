@@ -44,5 +44,5 @@ public interface ProjEndApplyDao {
 
     Integer deleteProjectEndFiles(Integer id);
 
-    String getProjectEndTime(String end_apply_status,@Param("id") int id);
+    String getProjectEndTime(int id);
 }

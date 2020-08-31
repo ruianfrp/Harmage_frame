@@ -103,9 +103,8 @@ public class ProjEndApplyServiceImp implements ProjEndApplyService {
     }
 
     @Override
-    public String getProjectEndTime(String end_apply_status,int id) {
-        System.out.println("ZHi ");
-        return projEndApplyDao.getProjectEndTime(end_apply_status,id);
+    public String getProjectEndTime(int id) {
+        return projEndApplyDao.getProjectEndTime(id);
     }
 
 }

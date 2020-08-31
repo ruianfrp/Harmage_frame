@@ -179,7 +179,7 @@ DATE_FORMAT(proj_start_time,'%Y-%m-%d') as proj_start_time,DATE_FORMAT(proj_end_
     </update>
 
     <select id="getProject" resultType="com.harmonycloud.bean.project.Project">
-        select proj_start_time, proj_end_time from project where proj_name = #{projectName}
+        select id, proj_start_time, proj_end_time from project where proj_name = #{projectName}
     </select>
 
     <insert id="insertProject">

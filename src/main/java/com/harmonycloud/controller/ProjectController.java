@@ -43,8 +43,8 @@ public class ProjectController {
 
     @Autowired
     ProjEndApplyService projEndApplyService;
-    
-    
+
+
     @Autowired
     CustomerService customerService;
 
@@ -579,23 +579,21 @@ public class ProjectController {
         DingUtils.getToken();
         ArrayList<ProjectReport> ndata = projectReportService.getProjectReport(projectName);
 
-        if(ndata.size()==0){
+        if (ndata.size() == 0) {
             res.message.setMessage(200, "获取项目周报失败", "数据库无数据");
             return res.message;
         }
-        ArrayList<ProjectReport> data=new ArrayList<>();
+        ArrayList<ProjectReport> data = new ArrayList<>();
         data.add(ndata.get(0));
-        for(int i=1;i<ndata.size();i++){
-            ProjectReport lastest=data.get(data.size()-1);
-            System.out.println(lastest.getStartTime()+","+ndata.get(i).getStartTime());
-            String a=new String(lastest.getStartTime());
-            String b=new String(ndata.get(i).getStartTime());
+        for (int i = 1; i < ndata.size(); i++) {
+            ProjectReport lastest = data.get(data.size() - 1);
+            System.out.println(lastest.getStartTime() + "," + ndata.get(i).getStartTime());
+            String a = new String(lastest.getStartTime());
+            String b = new String(ndata.get(i).getStartTime());
 
-            if(a.equals(b)){
+            if (a.equals(b)) {
                 System.out.println("xiangdeng");
-            }
-            else
-            {
+            } else {
                 data.add(ndata.get(i));
             }
 
@@ -604,38 +602,41 @@ public class ProjectController {
         Project project = projectService.getProject(projectName);
         List<String> projectDate = DateUtils.getProjectDate(project.getProjStartTime(), ObjectUtils.isEmpty(project.getProjEndTime()) ? new Date() : project.getProjEndTime());
 
-
-        String end_time=projEndApplyService.getProjectEndTime("",project.getId().intValue());
+        System.out.println(project.getId().intValue());
+        String end_time = projEndApplyService.getProjectEndTime(project.getId().intValue());
 
 
         int index = 0;
         JSONObject jsonObject = new JSONObject(new LinkedHashMap<>());
-        Stack<String> key=new Stack<String>();
-        Stack<String> value=new Stack<String>();
-        for(int  i =projectDate.size()-1;i>=0; i--) {
-            String monday=projectDate.get(i);
+        Stack<String> key = new Stack<String>();
+        Stack<String> value = new Stack<String>();
+        for (int i = projectDate.size() - 1; i >= 0; i--) {
+            String monday = projectDate.get(i);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//注意月份是MM
-            Date apply_end_time = simpleDateFormat.parse(end_time);
+            Date apply_end_time = new Date();
+            if(end_time!=null){
+                apply_end_time = simpleDateFormat.parse(end_time);
+            }
 
-            if((apply_end_time.getTime()>simpleDateFormat.parse(monday).getTime())&&(apply_end_time.getTime()<=(simpleDateFormat.parse(monday).getTime()+7*60*60*1000*24))){
+            if ((apply_end_time.getTime() > simpleDateFormat.parse(monday).getTime()) && (apply_end_time.getTime() <= (simpleDateFormat.parse(monday).getTime() + 7 * 60 * 60 * 1000 * 24))) {
                 break;
             }
             ProjectReport projectReport = null;
             Date startTime = null;
-            Date endTime=null;
-            if(index < data.size()) {
+            Date endTime = null;
+            if (index < data.size()) {
                 projectReport = data.get(index);
                 startTime = simpleDateFormat.parse(projectReport.getStartTime());
-                endTime=simpleDateFormat.parse(projectReport.getEndTime());
+                endTime = simpleDateFormat.parse(projectReport.getEndTime());
             }
 //            System.out.println(monday+" "+startTime.getTime()+" "+endTime.getTime());
 //            System.out.println("start:"+startTime.getTime()+"end:"+simpleDateFormat.parse(monday).getTime());
 //            System.out.println(simpleDateFormat.parse(monday).getTime()+7*60*60*1000*24);
-            if(index<data.size()&&!ObjectUtils.isEmpty(projectReport.getReport()) && (endTime.getTime() >= simpleDateFormat.parse(monday).getTime())&&(endTime.getTime()<=(simpleDateFormat.parse(monday).getTime()+7*60*60*1000*24))) {
+            if (index < data.size() && !ObjectUtils.isEmpty(projectReport.getReport()) && (endTime.getTime() >= simpleDateFormat.parse(monday).getTime()) && (endTime.getTime() <= (simpleDateFormat.parse(monday).getTime() + 7 * 60 * 60 * 1000 * 24))) {
                 key.push(projectReport.getStartTime() + "~" + projectReport.getEndTime());
                 value.push(projectReport.getReport());
                 index++;
-            }else {
+            } else {
                 Calendar c_friday = new GregorianCalendar();
                 c_friday.setTime(simpleDateFormat.parse(monday));
 //                System.out.println("时间：" + simpleDateFormat.format(c_friday.getTime().getTime()));
@@ -643,15 +644,14 @@ public class ProjectController {
                 key.push(monday + "~" + simpleDateFormat.format(c_friday.getTime().getTime()));
                 value.push("There is no data");
             }
-
         }
 
         JSONObject jsonObject_new = new JSONObject(new LinkedHashMap<>());
 
-        for(int i=0;i<key.size();i++){
-            String key_v=key.pop();
-            String value_v=value.pop();
-            jsonObject_new.put(key_v,value_v);
+        for (int i = 0; i < key.size(); i++) {
+            String key_v = key.pop();
+            String value_v = value.pop();
+            jsonObject_new.put(key_v, value_v);
         }
 
         res.message.setMessage(200, "获取项目周报成功", jsonObject_new);

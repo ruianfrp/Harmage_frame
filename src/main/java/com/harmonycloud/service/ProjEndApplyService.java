@@ -47,5 +47,5 @@ public interface ProjEndApplyService {
     Integer deleteProjectEndFiles(Integer id);
 
 
-    String getProjectEndTime(String end_apply_status,int id);
+    String getProjectEndTime(int id);
 }
